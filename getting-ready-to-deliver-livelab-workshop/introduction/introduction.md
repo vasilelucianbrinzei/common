@@ -10,7 +10,7 @@ In this workshop, you will:
 
 - Build one delivery plan.
 - Test the attendee path before the event.
-- Record the final decision and account-team acceptance.
+- Confirm the final readiness decision before delivery.
 
 <!-- Estimated Workshop Time: intentionally not shown in this readiness guide. -->
 
@@ -19,7 +19,7 @@ In this workshop, you will:
 <div class="getting-ready-video-player">
   <!-- Replace this local test source with the approved Object Storage video path when the final recording is ready. -->
   <video class="getting-ready-video-element" controls preload="none" aria-label="Getting Ready walkthrough video">
-    <source src="../../introduction/videos/getting-ready-test-video.webm?v=20260727-object-storage-ready-v1" type="video/webm">
+    <source src="../../introduction/videos/getting-ready-test-video.webm?v=20260728-six-lab-guide-v1" type="video/webm">
   </video>
 </div>
 
@@ -37,13 +37,12 @@ Use this table when you need the delivery plan quickly.
 | [Lab 4](?lab=lab-4-send-attendee-preflight-prerequisites) | Prepare attendees. | Send the verified attendee URL, event code, access path, Oracle account steps, first ready screen, expected provisioning time, and support contact early. |
 | [Lab 5](?lab=lab-5-run-live-prep-checks) | Run the live opening check. | Confirm the verified event values, roles, support route, fallback, and final readiness state before hands-on work starts. |
 | [Lab 6](?lab=lab-6-how-to-troubleshoot-common-issues) | Keep troubleshooting ready. | Use the symptom table, route issues, capture evidence, and keep individual blockers from stopping the main session. |
-| [Lab 7](?lab=facilitator-run-of-show-template) | Record and accept the run of show. | Complete the event record, account-team acceptance, readiness decision, and print or save the approved record. |
 
-## Account and Acceptance Rules
+## Account Rules
 
 - Do not share a personal Oracle account with attendees.
-- Use Lab 7 to record that the account-team representative accepted the delivery plan and owns any remaining actions.
-- Store the completed Lab 7 record in the approved event system so the team can find the decision later.
+- Confirm the account-team representative understands the delivery plan and owns any remaining account-team actions.
+- Store final delivery notes in the approved event system so the team can find the decision later.
 
 ## Acknowledgements
 

@@ -61,7 +61,7 @@ In this lab, you will:
 
 3. Follow [Lab 6: How to Troubleshoot Common Issues](?lab=lab-6-how-to-troubleshoot-common-issues) for the canonical diagnosis and escalation path. Do not duplicate those instructions here.
 
-4. Keep the verified URL, access path, first ready screen, measured time, and unresolved risks with the event notes. After Labs 1 through 6, enter them in the [Lab 7 facilitator record](?lab=facilitator-run-of-show-template).
+4. Keep the verified URL, access path, first ready screen, measured time, and unresolved risks with the event notes.
 
 ## Legend
 

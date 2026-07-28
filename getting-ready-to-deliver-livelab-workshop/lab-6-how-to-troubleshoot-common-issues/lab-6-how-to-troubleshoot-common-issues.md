@@ -29,7 +29,7 @@ In this lab, you will:
     | Attendee used the wrong access path | Return them to the tested sandbox, own-tenancy, Secure Desktop, or other selected path. |
     | Launch is slow | Confirm the expected wait and use the prepared provisioning-time talk track. |
     | Launch, booking, or provisioning fails | Capture the exact error and check whether one attendee or many are affected. |
-    | Corporate network blocks a page, noVNC, or Secure Desktop | Use the approved alternate browser, network, or fallback recorded in the [Lab 7 facilitator record](?lab=facilitator-run-of-show-template). |
+    | Corporate network blocks a page, noVNC, or Secure Desktop | Use the approved alternate browser, network, or fallback recorded in the event runbook. |
     | OCI screen, region, compartment, or user is unclear | State the tested region, compartment, and user, then show the expected screen. |
     | A step, command, image, link, or page control is broken | Capture the exact lab, task, step, URL, and screenshot, then report it to [LiveLabs Authors Help](#legend). |
 
@@ -38,7 +38,7 @@ In this lab, you will:
     - **Many attendees blocked by the same issue:** pause, apply one common fix, and reassess readiness.
     - **One or two attendees blocked:** keep the group moving; use chat or [breakout support](#legend).
     - **Individual issue remains unresolved:** use the approved fallback or [watch-only mode](#legend).
-    - **The event cannot continue safely:** stop hands-on work and update the final state and decision in Lab 7.
+    - **The event cannot continue safely:** stop hands-on work and update the final state and decision in the event notes.
 
 ## Task 2: Capture Evidence
 
@@ -56,7 +56,7 @@ In this lab, you will:
 
 2. Remove credentials, email addresses, and customer data from text and screenshots.
 
-3. Record whether the issue changes readiness, which fallback is active, and who owns the follow-up in Lab 7.
+3. Record whether the issue changes readiness, which fallback is active, and who owns the follow-up in the event notes.
 
 ## Task 3: Route the Issue
 
@@ -80,7 +80,7 @@ In this lab, you will:
 
 2. Use the recorded fallback when a fix will take more than a few minutes.
 
-3. Capture unresolved issues and owners in Lab 7 for follow-up.
+3. Capture unresolved issues and owners in the event notes for follow-up.
 
 ## Legend
 

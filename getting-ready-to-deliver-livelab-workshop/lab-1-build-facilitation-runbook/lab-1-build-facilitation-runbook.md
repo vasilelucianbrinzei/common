@@ -16,7 +16,7 @@ In this lab, you will:
 
 ![Facilitation runbook flow](./images/lab-1-runbook-flow.svg " ")
 
-Use [Lab 7](?lab=facilitator-run-of-show-template) to record the event-specific people, timing, backups, status, and final acceptance.
+Use this lab to record the event-specific people, timing, backups, status, and delivery notes.
 
 ## Task 1: Confirm Roles
 
@@ -32,7 +32,7 @@ Use [Lab 7](?lab=facilitator-run-of-show-template) to record the event-specific 
 
 2. One person may cover several roles for a small event, but every role must have an owner.
 
-3. Record each owner and backup in Lab 7.
+3. Record each owner and backup in the event runbook.
 
 ## Task 2: Build the Run of Show
 
@@ -45,7 +45,7 @@ Use [Lab 7](?lab=facilitator-run-of-show-template) to record the event-specific 
     | Main session | Hands-on lab and discussion | Complete core work and connect it to the event scenario. |
     | Final 10 minutes | Wrap-up | Close and assign follow-up. |
 
-2. Record the event timing, owners, and backups in Lab 7.
+2. Record the event timing, owners, and backups in the event runbook.
 
 3. Mark what changes if lab spaces start early, and name the [support channel](#legend) for blocked attendees.
 
@@ -59,7 +59,7 @@ Use [Lab 7](?lab=facilitator-run-of-show-template) to record the event-specific 
     We are returning to the lab at [step].
     ```
 
-2. Give the lead facilitator responsibility for every handoff. Record the event-specific lines in Lab 7.
+2. Give the lead facilitator responsibility for every handoff. Record the event-specific lines in the event runbook.
 
 ## Task 4: Prepare the First Three Instructions
 
@@ -71,7 +71,7 @@ Use [Lab 7](?lab=facilitator-run-of-show-template) to record the event-specific 
     3. Confirm in chat when you see [expected first screen].
     ```
 
-2. Record the final lines in Lab 7 and keep them visible to the presenter team.
+2. Record the final lines in the event runbook and keep them visible to the presenter team.
 
 3. Confirm that the chat/support owner can triage responses without stopping the main session.
 

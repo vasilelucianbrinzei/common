@@ -64,8 +64,6 @@ In this lab, you will:
 
 1. Keep the send date, message owner, verified attendee URL, event code, first ready screen, and support contact with the event notes.
 
-2. After Labs 1 through 6, enter them in the [Lab 7 facilitator record](?lab=facilitator-run-of-show-template).
-
 ## Legend
 
 | Term | Meaning |

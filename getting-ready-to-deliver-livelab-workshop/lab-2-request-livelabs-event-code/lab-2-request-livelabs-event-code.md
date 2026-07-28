@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Use this lab to make the access, capacity, and [Workshop Management System (WMS)](#legend) event-request decisions once. The approved [event code](#legend) values become the source for later testing, attendee communication, and the facilitator record.
+Use this lab to make the access, capacity, and [Workshop Management System (WMS)](#legend) event-request decisions once. The approved [event code](#legend) values become the source for later testing, attendee communication, and event notes.
 
 ### Objectives
 
@@ -103,7 +103,7 @@ In this lab, you will:
 
 3. When approval arrives, confirm the event code, [event-code link](#legend), QR-code availability, and expected first attendee screen.
 
-4. Keep those approved values for the Lab 3 test and the Lab 4 attendee preflight message. After Labs 1 through 6, enter them once in [Lab 7: Complete and Accept the Facilitator Run of Show](?lab=facilitator-run-of-show-template).
+4. Keep those approved values for the Lab 3 test, the Lab 4 attendee preflight message, and the final event notes.
 
 ## Legend
 
