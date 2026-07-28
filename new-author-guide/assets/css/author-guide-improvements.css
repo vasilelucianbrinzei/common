@@ -4164,3 +4164,28 @@ body.author-nav-closed #app[data-redwood-creator-pass="2026-05-25"] .app-shell {
     display: none !important;
   }
 }
+
+/* Home must remain reachable when viewport height or width is constrained. */
+body.home-no-scroll {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body.home-no-scroll #app .app-shell {
+  grid-template-rows: auto minmax(min-content, 1fr) auto;
+  height: auto;
+}
+
+body.home-no-scroll #app #hub.hub-screen {
+  min-height: min-content;
+  overflow: visible;
+}
+
+body.home-no-scroll #app #hub > .container,
+body.home-no-scroll #app .hub-hero {
+  min-height: min-content;
+}
+
+@media (max-height: 820px) {
+  body.home-no-scroll #app #hub.hub-screen {
+    align-items: flex-start;

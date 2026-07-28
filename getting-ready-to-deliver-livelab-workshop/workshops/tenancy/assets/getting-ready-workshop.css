@@ -1,0 +1,72 @@
+:root {
+    --getting-ready-border: #d7d2cb;
+    --getting-ready-border-strong: #8b8178;
+    --getting-ready-surface: #f8f7f5;
+    --getting-ready-text: #161513;
+    --getting-ready-muted: #5f5852;
+    --getting-ready-action: #c74634;
+}
+
+/* Keep the summary table's Lab column compact after LiveLabs renders markdown. */
+#module-content .getting-ready-tldr-table,
+#module-content h2[id*="deliverypathsummary"] + p + table,
+#module-content h2[id*="tl-dr"] + p + table,
+#module-content h2[id*="tldr"] + p + table {
+    table-layout: auto;
+    width: 100%;
+}
+
+#module-content .getting-ready-tldr-table th:first-child,
+#module-content .getting-ready-tldr-table td:first-child,
+#module-content h2[id*="deliverypathsummary"] + p + table th:first-child,
+#module-content h2[id*="deliverypathsummary"] + p + table td:first-child,
+#module-content h2[id*="tl-dr"] + p + table th:first-child,
+#module-content h2[id*="tl-dr"] + p + table td:first-child,
+#module-content h2[id*="tldr"] + p + table th:first-child,
+#module-content h2[id*="tldr"] + p + table td:first-child {
+    white-space: nowrap;
+    width: 1%;
+}
+
+/* Local placeholder video frame; replace the source in introduction.md when the final recording is ready. */
+#module-content .getting-ready-video-player {
+    background: #fff;
+    border: 1px solid var(--getting-ready-border);
+    border-radius: 0.25rem;
+    box-sizing: border-box;
+    margin: 1rem 0 1.5rem;
+    max-width: 56rem;
+    overflow: hidden;
+    width: 100%;
+}
+
+#module-content .getting-ready-video-element {
+    aspect-ratio: 16 / 9;
+    background: #161513;
+    display: block;
+    height: auto !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    object-fit: contain;
+    width: 100% !important;
+}
+
+@media (max-width: 52rem) {
+    #module-content .getting-ready-tldr-table,
+    #module-content h2[id*="deliverypathsummary"] + p + table,
+    #module-content h2[id*="tl-dr"] + p + table,
+    #module-content h2[id*="tldr"] + p + table {
+        min-width: 42rem;
+    }
+
+    #module-content .getting-ready-video-player {
+        max-width: 100%;
+    }
+}
+
+/* Do not print the test video frame or future media player. */
+@media print {
+    #module-content .getting-ready-video-player {
+        display: none;
+    }
+}

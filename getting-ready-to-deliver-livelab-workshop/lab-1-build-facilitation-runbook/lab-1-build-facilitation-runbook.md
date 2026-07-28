@@ -2,29 +2,25 @@
 
 ## Introduction
 
-A LiveLab delivery team needs one clear flow. The customer should not watch presenters decide who drives, who speaks, or where to click.
-
-In this lab, you confirm the [delivery roles](#legend), session flow, and handoff lines that keep the event moving.
+Assign the delivery team, set the session flow, and script the handoffs before attendees join. Confirm the [delivery roles](#legend) before the live session starts.
 
 ### Objectives
 
 In this lab, you will:
 
 - Confirm delivery roles.
-- Define the session flow.
-- Script handoffs between talk, setup, hands-on lab, custom demo, Q&A, and wrap-up.
-- Route side issues to chat or a parking lot.
-- Prepare the first three instructions attendees will hear.
+- Build the run of show.
+- Script handoffs and the first three attendee instructions.
 
 <!-- Estimated Time: intentionally not shown in this readiness guide. -->
 
 ![Facilitation runbook flow](./images/lab-1-runbook-flow.svg " ")
 
-Use the [one-page facilitator run-of-show template](?lab=facilitator-run-of-show-template) to record blank owner, time, backup, and status fields for this event.
+Use [Lab 7](?lab=facilitator-run-of-show-template) to record the event-specific people, timing, backups, status, and final acceptance.
 
 ## Task 1: Confirm Roles
 
-1. Review the [role map](#legend).
+1. Assign every role in this [role map](#legend).
 
     | Role | What This Role Does |
     | --- | --- |
@@ -34,50 +30,40 @@ Use the [one-page facilitator run-of-show template](?lab=facilitator-run-of-show
     | [Technical SME](#legend) | Handles deeper architecture and workshop-specific topics. |
     | [Event coordinator](#legend) | Sends prerequisites, confirms event code, and tracks readiness. |
 
-2. Name the people for these roles in your event notes, not in this guide.
+2. One person may cover several roles for a small event, but every role must have an owner.
 
-3. For a small event, one person may cover more than one role.
-
-4. Confirm that no one plans to hand attendees a personal Oracle account.
+3. Record each owner and backup in Lab 7.
 
 ## Task 2: Build the Run of Show
 
-1. Start with this flow.
+1. Adapt this sequence to the event.
 
     | Time | Block | Purpose |
     | --- | --- | --- |
-    | 0:00-0:10 | Welcome, roles, and prep check | Confirm access state and first screen. |
-    | 0:10-0:20 | Access and lab space start | Start event code, sandbox, or tenancy path. |
-    | 0:20-0:35 | Introduction while lab spaces build | Use provisioning time productively. |
-    | 0:35-1:15 | Hands-on lab | Complete core lab steps. |
-    | 1:15-1:35 | Customer discussion or demo | Connect the lab to the event scenario. |
-    | 1:35-1:45 | Wrap-up and next steps | Close and assign follow-up. |
+    | First 10 minutes | Welcome and access check | Confirm the attendee path and first screen. |
+    | Setup | Launch and context | Start lab spaces; use the wait for product context. |
+    | Main session | Hands-on lab and discussion | Complete core work and connect it to the event scenario. |
+    | Final 10 minutes | Wrap-up | Close and assign follow-up. |
 
-2. Adjust this sequence in your event runbook.
+2. Record the event timing, owners, and backups in Lab 7.
 
-3. Mark blocks that change when the lab space starts early.
-
-4. Add a [support channel](#legend) for blocked attendees.
+3. Mark what changes if lab spaces start early, and name the [support channel](#legend) for blocked attendees.
 
 ## Task 3: Script Handoffs
 
-1. Write the [handoff](#legend) lines before the session. A handoff tells attendees what is changing, what they do next, and where individual blockers go.
+1. Write each [handoff](#legend) as an action and a destination.
 
     ```text
-    We are leaving setup and starting the hands-on lab.
-    We are switching from the official lab to a short customer-specific example.
-    We are pausing hands-on work for a technical explanation.
-    We are returning to the lab steps.
+    We are leaving setup and starting the hands-on lab at [step].
     We are moving individual access issues to chat so the group can continue.
+    We are returning to the lab at [step].
     ```
 
-2. Add event-specific handoff lines.
-
-3. Make the lead facilitator responsible for calling each handoff.
+2. Give the lead facilitator responsibility for every handoff. Record the event-specific lines in Lab 7.
 
 ## Task 4: Prepare the First Three Instructions
 
-1. Write the first three instructions attendees will hear.
+1. Complete these lines with the values tested in Labs 2 and 3.
 
     ```text
     1. Please open [LiveLab URL] in your browser.
@@ -85,24 +71,25 @@ Use the [one-page facilitator run-of-show template](?lab=facilitator-run-of-show
     3. Confirm in chat when you see [expected first screen].
     ```
 
-2. Confirm that the chat/support owner knows how to triage responses.
+2. Record the final lines in Lab 7 and keep them visible to the presenter team.
 
-3. Keep these instructions visible to the presenter team.
+3. Confirm that the chat/support owner can triage responses without stopping the main session.
 
 ## Legend
 
-| Term | Meaning | Why It Matters |
-| --- | --- | --- |
-| Chat/support owner | Person who watches chat and routes access issues. | Keeps side issues from stopping the main flow. |
-| Delivery role | Assigned work for the live session. | Prevents presenters from negotiating ownership live. |
-| Event coordinator | Person who tracks ready state and event-code logistics. | Keeps prep, invites, and status updates moving. |
-| Handoff | Short line that moves the group from one segment to another. | Makes transitions clear for attendees. |
-| Lead facilitator | Person who owns flow, timing, and spoken guidance. | Keeps the session coordinated. |
-| Role map | Table that lists each delivery role and work area. | Shows gaps before the event starts. |
-| Run of show | Time-based session plan. | Helps the team manage access checks, lab time, and wrap-up. |
-| Screen driver | Person who shares screen and performs lab steps. | Gives attendees one visible path to follow. |
-| Support channel | Chat, bridge, or other route for blocked attendees. | Lets support continue while the session moves. |
-| Technical SME | Subject matter expert for deeper technical questions. | Routes advanced questions to the right owner. |
+| Term | Meaning |
+| --- | --- |
+| Chat/support owner | Person who watches chat and routes access issues. |
+| Delivery role | Assigned work for the live session. |
+| Event coordinator | Person who tracks ready state and event-code logistics. |
+| Handoff | Short instruction that moves the group to the next segment or support route. |
+| Lead facilitator | Person who owns flow, timing, and spoken guidance. |
+| Role map | Table that lists each delivery role and work area. |
+| Run of show | Time-based delivery plan. |
+| Screen driver | Person who shares screen and performs lab steps. |
+| Support channel | Chat, bridge, or other route for blocked attendees. |
+| Support route | Chat, bridge, or other path for individual blockers. |
+| Technical SME | Subject matter expert for deeper technical questions. |
 
 ## Acknowledgements
 

@@ -16,7 +16,7 @@
       <text x="660" y="140" font-size="22" font-weight="700">2. Test the launch path</text>
       <text x="660" y="176" font-size="18">Use the green button, sandbox, secure desktop,</text>
       <text x="660" y="202" font-size="18">booking flow, or customer-tenancy route</text>
-      <text x="660" y="228" font-size="18">selected in Lab 3.</text>
+      <text x="660" y="228" font-size="18">selected in Lab 2.</text>
     </g>
     <g class="card">
       <rect x="70" y="300" width="500" height="150" rx="8" fill="#ffffff" stroke="#6b5876" stroke-width="3"/>
