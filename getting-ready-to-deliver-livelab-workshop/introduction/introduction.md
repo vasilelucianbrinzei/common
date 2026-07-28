@@ -1,29 +1,18 @@
-# Getting Ready to Deliver a LiveLab
+# Request and Deliver a LiveLabs Event
 
 ## Introduction
 
-Use this workshop to prepare, test, deliver, and document a customer-facing Oracle LiveLabs session without searching through repeated checklists.
+Use this guide to request, prepare, test, deliver, and document a customer-facing Oracle LiveLabs event without searching through repeated checklists.
 
 ### Objectives
 
 In this workshop, you will:
 
-- Build one delivery plan.
+- Build one event delivery plan.
 - Test the attendee path before the event.
 - Confirm the final readiness decision before delivery.
 
-<!-- Estimated Workshop Time: intentionally not shown in this readiness guide. -->
-
-## Walkthrough Video
-
-<div class="getting-ready-video-player">
-  <!-- Replace this local test source with the approved Object Storage video path when the final recording is ready. -->
-  <video class="getting-ready-video-element" controls preload="none" aria-label="Getting Ready walkthrough video">
-    <source src="../../introduction/videos/getting-ready-test-video.webm?v=20260728-six-lab-guide-v1" type="video/webm">
-  </video>
-</div>
-
-<!-- Replace the placeholder above with a standard approved LiveLabs videohub or YouTube link when the recording is ready. -->
+Estimated Workshop Time: 1 hour 35 minutes
 
 ## Delivery Path Summary
 

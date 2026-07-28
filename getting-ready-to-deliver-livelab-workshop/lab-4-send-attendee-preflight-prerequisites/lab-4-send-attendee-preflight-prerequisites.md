@@ -11,7 +11,7 @@ In this lab, you will:
 - Build one concise attendee [prerequisite](#legend) checklist.
 - Send a preflight email with the verified URL, event code, and first ready screen.
 
-<!-- Estimated Time: intentionally not shown in this readiness guide. -->
+Estimated Time: 10 minutes
 
 ![Attendee preflight flow](./images/lab-4-attendee-preflight-flow.svg " ")
 

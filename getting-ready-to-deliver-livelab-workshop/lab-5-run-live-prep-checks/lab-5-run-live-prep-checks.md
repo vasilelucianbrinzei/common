@@ -14,7 +14,7 @@ In this lab, you will:
 - Run one [opening prep check](#legend) for access and roles.
 - Record the final state and decision in the event notes.
 
-<!-- Estimated Time: intentionally not shown in this readiness guide. -->
+Estimated Time: 15 minutes
 
 ![Live prep check flow](./images/lab-5-prep-check-flow.svg " ")
 

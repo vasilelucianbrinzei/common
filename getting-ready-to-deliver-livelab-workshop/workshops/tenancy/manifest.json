@@ -1,10 +1,10 @@
 {
-  "workshoptitle": "Getting Ready to Deliver a LiveLab",
+  "workshoptitle": "Request and Deliver a LiveLabs Event",
   "help": "livelabs-help-db_us@oracle.com",
   "tutorials": [
     {
       "title": "Introduction",
-      "description": "Understand the readiness model for a customer-facing LiveLabs delivery.",
+      "description": "Understand the event delivery model for a customer-facing LiveLabs event.",
       "type": "livelabs",
       "filename": "../../introduction/introduction.md"
     },

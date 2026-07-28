@@ -10,9 +10,9 @@ In this lab, you will:
 
 - Confirm delivery roles.
 - Build the run of show.
-- Script handoffs and the first three attendee instructions.
+- Script handoffs and the first three attendee prompts.
 
-<!-- Estimated Time: intentionally not shown in this readiness guide. -->
+Estimated Time: 15 minutes
 
 ![Facilitation runbook flow](./images/lab-1-runbook-flow.svg " ")
 
@@ -28,7 +28,7 @@ Use this lab to record the event-specific people, timing, backups, status, and d
     | [Screen driver](#legend) | Shares screen and performs lab steps. |
     | [Chat/support owner](#legend) | Watches chat, answers access topics, and escalates common blockers. |
     | [Technical SME](#legend) | Handles deeper architecture and workshop-specific topics. |
-    | [Event coordinator](#legend) | Sends prerequisites, confirms event code, and tracks readiness. |
+    | [Event coordinator](#legend) | Sends prerequisites, confirms event code, and tracks the go/no-go state. |
 
 2. One person may cover several roles for a small event, but every role must have an owner.
 
@@ -36,7 +36,7 @@ Use this lab to record the event-specific people, timing, backups, status, and d
 
 ## Task 2: Build the Run of Show
 
-1. Adapt this sequence to the event.
+1. Adapt this flow to the event.
 
     | Time | Block | Purpose |
     | --- | --- | --- |
@@ -51,7 +51,7 @@ Use this lab to record the event-specific people, timing, backups, status, and d
 
 ## Task 3: Script Handoffs
 
-1. Write each [handoff](#legend) as an action and a destination.
+1. Write each [handoff](#legend) as a next step and target owner.
 
     ```text
     We are leaving setup and starting the hands-on lab at [step].
@@ -59,7 +59,7 @@ Use this lab to record the event-specific people, timing, backups, status, and d
     We are returning to the lab at [step].
     ```
 
-2. Give the lead facilitator responsibility for every handoff. Record the event-specific lines in the event runbook.
+2. Make the lead facilitator own every handoff. Record the event-specific lines in the event runbook.
 
 ## Task 4: Prepare the First Three Instructions
 
@@ -82,8 +82,8 @@ Use this lab to record the event-specific people, timing, backups, status, and d
 | Chat/support owner | Person who watches chat and routes access issues. |
 | Delivery role | Assigned work for the live session. |
 | Event coordinator | Person who tracks ready state and event-code logistics. |
-| Handoff | Short instruction that moves the group to the next segment or support route. |
-| Lead facilitator | Person who owns flow, timing, and spoken guidance. |
+| Handoff | Short prompt that moves the group to the next step or support route. |
+| Lead facilitator | Person who owns flow, timing, and spoken help. |
 | Role map | Table that lists each delivery role and work area. |
 | Run of show | Time-based delivery plan. |
 | Screen driver | Person who shares screen and performs lab steps. |
