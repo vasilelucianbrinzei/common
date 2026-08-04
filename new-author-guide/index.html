@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Oracle LiveLabs Author Guide refresh with a guided path, reference toolkit, full guide, unified search, and a real workshop example.">
+  <meta name="description" content="Oracle LiveLabs Author Guide refresh with a guided path, reference toolkit, Step by Step Guide, unified search, and a real workshop example.">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='4' fill='%23C74634'/%3E%3C/svg%3E">
   <title>Oracle LiveLabs Author Guide</title>
   <script>
@@ -2147,7 +2147,7 @@
       background: linear-gradient(90deg, rgba(156, 106, 0, 0.88), rgba(156, 106, 0, 0.16));
     }
 
-    /* Full guide + Redwood cleanup */
+    /* Step by Step Guide + Redwood cleanup */
     #app {
       --accent-red: #ac3e2e;
       --accent-red-wash: rgba(255, 248, 247, 0.98);
@@ -5063,7 +5063,7 @@
       }
     }
 
-    /* Full Guide reset: keep the compact card-based section view stable. */
+    /* Step by Step Guide reset: keep the compact card-based section view stable. */
     #guideMode .guide-layout {
       display: grid;
       grid-template-columns: minmax(214px, 244px) minmax(0, 1fr);
@@ -5281,7 +5281,7 @@
     }
   </style>
   <link rel="stylesheet" href="./assets/css/redwood-video-player.css">
-  <link rel="stylesheet" href="./assets/css/author-guide-improvements.css?v=20260708-skill-generator-livestack">
+  <link rel="stylesheet" href="./assets/css/author-guide-improvements.css?v=20260729-nodoc-layout-fix">
 </head>
 <body>
   <div id="app" data-redwood-creator-pass="2026-05-25">
@@ -5334,7 +5334,16 @@
                     </span>
                     <span class="nav-control-text">Cheatsheet</span>
                   </button>
-                  <a class="btn nav-control" href="./workshops/livelabs/" data-full-guide-link target="_blank" rel="noreferrer" aria-label="Open full guide">
+                  <button class="btn nav-control" type="button" data-mode-target="nodoc" aria-label="Open NoDoc guide">
+                    <span class="nav-control-icon" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" focusable="false">
+                        <path d="M6 3.5h9l3 3V20H6V3.5Z" />
+                        <path d="M15 3.5V7h3M9 11h6M9 14h6M9 17h4" />
+                      </svg>
+                    </span>
+                    <span class="nav-control-text">NoDoc</span>
+                  </button>
+                  <a class="btn nav-control" href="./workshops/livelabs/" data-full-guide-link target="_blank" rel="noreferrer" aria-label="Open Step by Step Guide">
                     <span class="nav-control-icon" aria-hidden="true">
                       <svg viewBox="0 0 24 24" focusable="false">
                         <path d="M6.5 4.5h9.2a1.8 1.8 0 0 1 1.8 1.8v13.2H8.3a1.8 1.8 0 0 1-1.8-1.8V4.5Z" />
@@ -5342,7 +5351,7 @@
                         <path d="M4.5 6.5h2M4.5 9h2M4.5 11.5h2M4.5 14h2M4.5 16.5h2" />
                       </svg>
                     </span>
-                    <span class="nav-control-text">Full Guide</span>
+                    <span class="nav-control-text">Step by Step Guide</span>
                   </a>
                   <a class="btn nav-control" href="https://oracle-livelabs.github.io/developer/dev-ai-app-dev-finance/workshops/sandbox/" data-workshop-example-link target="_blank" rel="noreferrer" aria-label="Open a real LiveLabs workshop example">
                     <span class="nav-control-icon" aria-hidden="true">
@@ -5447,7 +5456,7 @@
                     <span class="progress-mark" aria-hidden="true">2</span>
                     <span class="progress-label">
                       <small>Step 2</small>
-                      <strong>Setup environment + Create Workshop</strong>
+                      <strong>Create Workshop</strong>
                     </span>
                   </button>
                   <button type="button" class="progress-button" data-step-target="2" role="tab">
@@ -5669,29 +5678,101 @@
               </article>
             </section>
 
-            <section class="rabbit-step" id="step-2" data-step-index="1" data-step-name="Setup environment + Create Workshop" data-depth="2">
+            <section class="rabbit-step" id="step-2" data-step-index="1" data-step-name="Create Workshop" data-depth="2">
               <div class="step-orb" aria-hidden="true">2</div>
               <article class="step-shell">
                 <div class="lockable">
                   <div class="step-heading">
-                    <div class="step-kicker">Step 2 / Environment setup</div>
-                    <h2 class="step-title">Setup environment + Create Workshop</h2>
-                    <p class="step-summary">Set up the workstation, fork and clone the right repositories, copy the sample structure, and make preview work early so the workshop is cheap to fix.</p>
+                    <div class="step-kicker">Step 2 / Workshop authoring</div>
+                    <h2 class="step-title">Create Workshop</h2>
+                    <p class="step-summary">Choose NoDoc as the recommended default path or open the existing GitHub process when direct source control is needed.</p>
                     <div class="step-meta-row">
-                      <span class="meta-pill">Output: live preview</span>
-                      <span class="meta-pill">Time: 15 to 20 minutes</span>
+                      <span class="meta-pill">Output: workshop draft</span>
+                      <span class="meta-pill">Path: NoDoc by default</span>
                       <span class="meta-pill">Leads to: content authoring</span>
                     </div>
                   </div>
 
-                  <div
-                    data-video-card
-                    data-video-title="Template: Create Workshop and GitHub setup walkthrough"
-                    data-video-summary="This silent template clip marks where the final GitHub setup walkthrough should appear. Use the definitions, screenshots, and copy blocks below as the authoritative setup guidance until the recording is replaced."
-                    data-video-features="Fork and clone|Sample structure|Preview setup"
-                  ></div>
+                  <div class="authoring-route-shell">
+                    <div class="authoring-route-header">
+                      <div>
+                        <div class="panel-kicker">Choose an authoring path</div>
+                        <h3>Create the workshop with NoDoc or GitHub</h3>
+                        <p>NoDoc is the recommended default. The existing GitHub process remains available as the second path.</p>
+                      </div>
+                    </div>
+                    <div class="authoring-route-tabs" role="tablist" aria-label="Workshop authoring paths">
+                      <button
+                        class="authoring-route-tab is-active"
+                        id="authoring-tab-no-doc"
+                        type="button"
+                        role="tab"
+                        aria-selected="true"
+                        aria-controls="authoring-panel-no-doc"
+                        data-authoring-route="no-doc"
+                        tabindex="0"
+                      >
+                        <span>NoDoc</span>
+                        <span class="authoring-route-badge">Recommended</span>
+                      </button>
+                      <button
+                        class="authoring-route-tab"
+                        id="authoring-tab-source"
+                        type="button"
+                        role="tab"
+                        aria-selected="false"
+                        aria-controls="authoring-panel-source"
+                        data-authoring-route="source"
+                        tabindex="-1"
+                      >
+                        Github
+                      </button>
+                    </div>
 
-                  <div class="step-sequence">
+                    <section
+                      class="authoring-route-panel"
+                      id="authoring-panel-no-doc"
+                      role="tabpanel"
+                      aria-labelledby="authoring-tab-no-doc"
+                      data-authoring-panel="no-doc"
+                    >
+                      <div class="nodoc-route-placeholder">
+                        <div class="nodoc-route-copy">
+                          <div class="panel-kicker">Default path</div>
+                          <h3>Build with NoDoc</h3>
+                          <p>NoDoc is now the first authoring option in Quickstart. Detailed access, creation, editing, preview, validation, and handoff instructions will be added from the approved NoDoc source material.</p>
+                          <p class="mb-0">Until those details are added, use this panel to choose the route without treating placeholder copy as product guidance.</p>
+                        </div>
+                        <div class="nodoc-route-status" role="note" aria-label="NoDoc content status">
+                          <strong>Content status</strong>
+                          <span>Page structure ready. Detailed NoDoc instructions are coming soon.</span>
+                        </div>
+                      </div>
+                      <div class="step-footer">
+                        <div class="step-note">NoDoc is selected by default; the existing GitHub process remains available in the second tab.</div>
+                        <div class="d-flex flex-wrap gap-2">
+                          <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-action="prev">Back</button>
+                          <button type="button" class="btn btn-outline-primary rounded-pill px-4" data-mode-target="nodoc">Open NoDoc Page</button>
+                          <button type="button" class="btn btn-primary rounded-pill px-4" data-action="next">Next Step</button>
+                        </div>
+                      </div>
+                    </section>
+
+                    <section
+                      class="authoring-route-panel"
+                      id="authoring-panel-source"
+                      role="tabpanel"
+                      aria-labelledby="authoring-tab-source"
+                      data-authoring-panel="source"
+                      hidden
+                    >
+                    <div
+                      data-video-card
+                      data-video-title="Template: Create Workshop and GitHub setup walkthrough"
+                      data-video-summary="This silent template clip marks where the final GitHub setup walkthrough should appear. Use the definitions, screenshots, and copy blocks below as the authoritative setup guidance until the recording is replaced."
+                      data-video-features="Fork and clone|Sample structure|Preview setup"
+                    ></div>
+                    <div class="step-sequence">
                     <section class="step-block">
                       <div class="step-block-header">
                         <div class="panel-kicker">Setup</div>
@@ -5989,6 +6070,8 @@ git push origin main</code></pre>
                       <button type="button" class="btn btn-primary rounded-pill px-4" data-action="next">Next Step</button>
                     </div>
                   </div>
+                    </section>
+                  </div>
                 </div>
               </article>
             </section>
@@ -6277,7 +6360,7 @@ Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
                     <div class="d-flex flex-wrap gap-2">
                       <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-action="prev">Back</button>
                       <button type="button" class="btn btn-outline-primary rounded-pill px-4" data-mode-target="explorer">Open Cheatsheet</button>
-                      <a class="btn btn-primary rounded-pill px-4" href="./workshops/livelabs/" data-full-guide-link target="_blank" rel="noreferrer">Open Full Guide</a>
+                      <a class="btn btn-primary rounded-pill px-4" href="./workshops/livelabs/" data-full-guide-link target="_blank" rel="noreferrer">Open Step by Step Guide</a>
                     </div>
                   </div>
                 </div>
@@ -6318,8 +6401,9 @@ Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
                   <label for="toolkitSort" class="form-label filter-label">Sort cards</label>
                   <select class="form-select form-select-lg" id="toolkitSort" aria-label="Sort cheatsheet cards">
                     <option value="alphabetical" selected>Alphabetical</option>
-                    <option value="relevance">Most relevant</option>
                     <option value="latest">Latest</option>
+                    <option value="relevance">Most relevant</option>
+                    <option value="topic">Topic</option>
                   </select>
                 </div>
 
@@ -6342,14 +6426,68 @@ Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
           </div>
         </div>
       </section>
-      <!-- Full Guide -->
+      <!-- NoDoc -->
+      <section class="mode-screen d-none" id="nodocMode" aria-labelledby="nodocHeading">
+        <div class="container">
+          <div class="card mode-hero nodoc-page-hero">
+            <div class="card-body">
+              <div class="row g-4 align-items-stretch">
+                <div class="col-xl-8">
+                  <div class="mode-overline">Recommended authoring path</div>
+                  <h2 class="mode-title" id="nodocHeading">Create workshops with NoDoc.</h2>
+                  <p class="mode-copy">Use NoDoc as the default path for creating and maintaining LiveLabs workshop content. This page follows the same Redwood layout and navigation patterns as the rest of the Author Guide.</p>
+                  <div class="mode-chip-row">
+                    <span class="mode-chip">Default path</span>
+                    <span class="mode-chip">Guided authoring</span>
+                    <span class="mode-chip">LiveLabs workflow</span>
+                  </div>
+                </div>
+
+                <div class="col-xl-4">
+                  <div class="compact-panel h-100 nodoc-status-panel">
+                    <div class="d-flex align-items-center justify-content-between gap-3">
+                      <div class="panel-kicker mb-0">Content status</div>
+                      <span class="authoring-route-badge">Recommended</span>
+                    </div>
+                    <h3>Detailed guidance is coming soon</h3>
+                    <p class="panel-copy mb-3">The NoDoc route is ready. Approved access steps, screenshots, supported operations, and publishing guidance will be added here.</p>
+                    <div class="guide-panel mb-0" role="note">
+                      This page intentionally avoids unverified product instructions.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="nodoc-decoration-strip" aria-hidden="true"></div>
+          </div>
+
+          <section class="card content-card nodoc-next-card" aria-labelledby="nodocNextHeading">
+            <div class="card-body">
+              <div class="row g-4 align-items-center">
+                <div class="col-lg-7">
+                  <div class="panel-kicker">Continue authoring</div>
+                  <h3 id="nodocNextHeading">Choose the guidance you need next.</h3>
+                  <p class="panel-copy mb-0">Open Quickstart at the workshop-creation step, or use the Cheatsheet for a focused authoring answer.</p>
+                </div>
+                <div class="col-lg-5">
+                  <div class="nodoc-page-actions">
+                    <button type="button" class="btn btn-primary rounded-pill px-4" data-mode-target="beginner" data-open-step="2">Open Quickstart Step 2</button>
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-mode-target="explorer">Open Cheatsheet</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </section>
+      <!-- Step by Step Guide -->
       <section class="mode-screen d-none" id="guideMode" aria-labelledby="guideHeading">
         <div class="container">
           <div class="card mode-hero guide-mode-hero">
             <div class="card-body">
               <div class="row g-4 align-items-start">
                 <div class="col-xl-8">
-                  <div class="mode-overline">Full Guide</div>
+                  <div class="mode-overline">Step by Step Guide</div>
                   <h2 class="mode-title" id="guideHeading">Read the full author guide in the original page order.</h2>
                   <p class="mode-copy">
                     This mode keeps the original guide order, but each entry opens as a redesigned section surface with its own player, working dropdowns, and a direct link to the live original guide.
@@ -6376,7 +6514,7 @@ Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
           </div>
 
           <div class="guide-layout">
-            <aside class="guide-sidebar" aria-label="Full guide section navigation">
+            <aside class="guide-sidebar" aria-label="Step by Step Guide section navigation">
               <div class="guide-sidebar-card">
                 <div class="guide-nav-stack" id="guideSectionNav"></div>
               </div>
@@ -6574,7 +6712,7 @@ Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
             </div>
 
             <div class="modal-footer">
-              <a class="btn btn-outline-secondary rounded-pill px-4 d-none" id="bubbleModalSourceLink" href="#" target="_blank" rel="noreferrer">Open Full Guide</a>
+              <a class="btn btn-outline-secondary rounded-pill px-4 d-none" id="bubbleModalSourceLink" href="#" target="_blank" rel="noreferrer">Open Step by Step Guide</a>
               <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
             </div>
           </div>
@@ -6601,11 +6739,11 @@ Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="./assets/js/guide-content.js?v=20260708-skill-generator-livestack"></script>
+  <script src="./assets/js/guide-content.js?v=20260729-topic-sort-guide-label"></script>
   <script src="./assets/js/workshop-generator.js?v=20260708-skill-generator-livestack"></script>
   <script src="./assets/js/redwood-video-player.js"></script>
   <script src="./assets/js/shared-side-nav.js?v=20260529-shared-nav-v2"></script>
-  <script src="./assets/js/author-guide-app.js?v=20260708-skill-generator-livestack"></script>
+  <script src="./assets/js/author-guide-app.js?v=20260729-topic-groups"></script>
   <script src="./assets/js/shared-footer.js?v=20260516-followup"></script>
 </body>
 </html>

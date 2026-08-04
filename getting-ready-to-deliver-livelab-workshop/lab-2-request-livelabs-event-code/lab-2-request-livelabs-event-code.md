@@ -44,6 +44,14 @@ Estimated Time: 20 minutes
 
     Attendees must use an account they can verify and access during the event. Never share a personal Oracle account that belongs to a facilitator. List only the credentials required by the selected workshop path.
 
+5. Coordinate capacity with the platform team.
+
+    Ask the platform team to review the event even when the event is small. Confirm that another event is not consuming the shared capacity needed for this event, and record the reviewer, date, attendee count, selected access path, and outcome in the event notes.
+
+6. Determine whether Secure Desktops are required.
+
+    Record whether the selected workshop path needs Secure Desktops. If it does, confirm capacity, access instructions, network requirements, and a tested fallback before you submit the event request or send attendee instructions.
+
 ## Task 2: Complete the Event Request in WMS
 
 1. In the [Workshop Management System (WMS)](#legend), open **Events** and select **Request an Event Code**. Click [here](https://livelabs.oracle.com/wms) to go to the WMS Platform.

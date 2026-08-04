@@ -3,7 +3,58 @@
 (function () {
   var content = window.authorGuideContent || {};
   var stepMeta = content.stepMeta || [];
-  var explorerItems = content.explorerItems || [];
+  var githubCheatsheetItemIds = {
+    "github-setup": true,
+    "sync-preview": true
+  };
+
+  function removeGithubMentions(value, key) {
+    if (Array.isArray(value)) {
+      return value.map(function (item) {
+        return removeGithubMentions(item, key);
+      }).filter(function (item) {
+        return item !== "";
+      });
+    }
+
+    if (value && typeof value === "object") {
+      return Object.keys(value).reduce(function (copy, property) {
+        copy[property] = removeGithubMentions(value[property], property);
+        return copy;
+      }, {});
+    }
+
+    if (typeof value !== "string" || key === "href" || key === "src" || key === "sourceHref") {
+      return value;
+    }
+
+    if (key === "snippet") {
+      return value.split("\n").filter(function (line) {
+        return !/github/i.test(line);
+      }).join("\n");
+    }
+
+    return value
+      .replace(/github\s*\/\s*gitlab/gi, "source repository")
+      .replace(/github pages/gi, "hosted preview")
+      .replace(/github desktop/gi, "desktop source-control client")
+      .replace(/github actions/gi, "automated checks")
+      .replace(/github\.io/gi, "hosted preview")
+      .replace(/github\.com/gi, "source repository")
+      .replace(/github/gi, "source repository");
+  }
+
+  var explorerItems = (content.explorerItems || [])
+    .filter(function (item) {
+      return !githubCheatsheetItemIds[item.id];
+    })
+    .map(function (item) {
+      return removeGithubMentions(Object.assign({}, item, {
+        tags: (item.tags || []).filter(function (tag) {
+          return tag !== "github";
+        })
+      }));
+    });
   var guideSections = [];
   var guideSectionMap = {};
   var guideManifestHref = "./workshops/author-guide/manifest.json";
@@ -73,7 +124,8 @@
   var allowedToolkitSorts = {
     alphabetical: true,
     relevance: true,
-    latest: true
+    latest: true,
+    topic: true
   };
   var tagFacetOrder = [
     "wms",
@@ -149,9 +201,22 @@
     }
   }
 
+  function normalizeAuthoringRoute(route) {
+    return route === "source" ? "source" : "no-doc";
+  }
+
+  function initialAuthoringRoute() {
+    try {
+      return normalizeAuthoringRoute(new URLSearchParams(window.location.search).get("authoring"));
+    } catch (error) {
+      return "no-doc";
+    }
+  }
+
   var state = {
     mode: "hub",
     currentStep: 0,
+    authoringRoute: initialAuthoringRoute(),
     fastTrack: "guided",
     activeTag: "all",
     activeTags: [],
@@ -167,8 +232,8 @@
       leads: "repository work"
     },
     {
-      output: "live preview",
-      time: "15 to 20 minutes",
+      output: "workshop draft",
+      time: "depends on authoring path",
       leads: "content authoring"
     },
     {
@@ -374,6 +439,7 @@
   var hub = document.getElementById("hub");
   var beginnerMode = document.getElementById("beginnerMode");
   var explorerMode = document.getElementById("explorerMode");
+  var nodocMode = document.getElementById("nodocMode");
   var guideMode = document.getElementById("guideMode");
   var generatorMode = document.getElementById("generatorMode");
   var searchMode = document.getElementById("searchMode");
@@ -382,6 +448,8 @@
   var progressButtons = Array.from(document.querySelectorAll(".progress-button"));
   var progressShell = document.getElementById("progressShell");
   var progressCaption = document.getElementById("progressCaption");
+  var authoringRouteTabs = Array.from(document.querySelectorAll("[data-authoring-route]"));
+  var authoringRoutePanels = Array.from(document.querySelectorAll("[data-authoring-panel]"));
   var fastTrackToggle = document.getElementById("fastTrackToggle");
   var fastTrackStatus = document.getElementById("fastTrackStatus");
   var quickstartProcessTitle = document.getElementById("quickstartProcessTitle");
@@ -601,6 +669,7 @@
       __authorGuideRoute: true,
       mode: state.mode,
       currentStep: state.currentStep,
+      authoringRoute: state.authoringRoute,
       fastTrack: state.fastTrack,
       activeTag: state.activeTag,
       activeTags: state.activeTags,
@@ -666,6 +735,11 @@
 
     if (state.mode === "explorer") {
       setHash("#quick-reference", options);
+      return;
+    }
+
+    if (state.mode === "nodoc") {
+      setHash("#nodoc", options);
       return;
     }
 
@@ -1190,7 +1264,7 @@
       labs: [],
       sourcePath: resolveGuideSourcePath(filename),
       sectionHref: fullGuideLabHref(id),
-      sectionLabel: "Open Full Guide",
+      sectionLabel: "Open Step by Step Guide",
       embedHref: fullGuideLabHref(id, { embed: "1" })
     };
   }
@@ -1337,6 +1411,73 @@
 
     region.classList.toggle("d-none", !isVisible);
     region.setAttribute("aria-hidden", isVisible ? "false" : "true");
+  }
+
+  function updateAuthoringRouteUI() {
+    authoringRouteTabs.forEach(function (tab) {
+      var isActive = tab.getAttribute("data-authoring-route") === state.authoringRoute;
+      tab.classList.toggle("is-active", isActive);
+      tab.setAttribute("aria-selected", isActive ? "true" : "false");
+      tab.setAttribute("tabindex", isActive ? "0" : "-1");
+    });
+
+    authoringRoutePanels.forEach(function (panel) {
+      var isActive = panel.getAttribute("data-authoring-panel") === state.authoringRoute;
+      panel.hidden = !isActive;
+      panel.setAttribute("aria-hidden", isActive ? "false" : "true");
+    });
+  }
+
+  function updateAuthoringRouteQuery(options) {
+    var config = Object.assign({ replace: false }, options || {});
+    var url;
+    var payload;
+
+    try {
+      url = new URL(window.location.href);
+      url.searchParams.set("authoring", state.authoringRoute);
+      payload = currentRoutePayload(url.hash, window.pageYOffset);
+      history[config.replace ? "replaceState" : "pushState"](
+        payload,
+        "",
+        url.pathname + url.search + url.hash
+      );
+    } catch (error) {
+      return;
+    }
+  }
+
+  function setAuthoringRoute(route, options) {
+    var config = Object.assign({
+      focus: false,
+      announce: true,
+      history: true,
+      replaceHistory: false
+    }, options || {});
+
+    state.authoringRoute = normalizeAuthoringRoute(route);
+    updateAuthoringRouteUI();
+
+    if (config.history) {
+      updateAuthoringRouteQuery({ replace: config.replaceHistory });
+    }
+
+    if (config.focus) {
+      var activeTab = authoringRouteTabs.find(function (tab) {
+        return tab.getAttribute("data-authoring-route") === state.authoringRoute;
+      });
+      if (activeTab) {
+        activeTab.focus();
+      }
+    }
+
+    if (config.announce) {
+      setLiveMessage(
+        state.authoringRoute === "no-doc"
+          ? "NoDoc authoring path selected."
+          : "GitHub authoring process selected."
+      );
+    }
   }
 
   function updateProgressCaption() {
@@ -1506,6 +1647,21 @@
     });
   }
 
+  function explorerTopic(entry) {
+    var tags = entry.item.__tags || getItemTags(entry.item);
+    return tags[0] || "other";
+  }
+
+  function compareExplorerTopic(left, right) {
+    var leftTopic = explorerTopic(left);
+    var rightTopic = explorerTopic(right);
+    var topicComparison = leftTopic.localeCompare(rightTopic, undefined, {
+      sensitivity: "base"
+    });
+
+    return topicComparison || compareExplorerTitle(left, right);
+  }
+
   function recommendedIndexForEntry(entry) {
     var id = entry && entry.item ? entry.item.id : "";
     return Object.prototype.hasOwnProperty.call(recommendedCheatsheetOrderMap, id)
@@ -1543,6 +1699,10 @@
         return compareExplorerTitle(left, right);
       }
 
+      if (mode === "topic") {
+        return compareExplorerTopic(left, right);
+      }
+
       return compareExplorerTitle(left, right);
     });
   }
@@ -1567,7 +1727,8 @@
     var sortLabels = {
       alphabetical: "Alphabetical",
       latest: "Latest",
-      relevance: "Most relevant"
+      relevance: "Most relevant",
+      topic: "Topic"
     };
 
     return sortLabels[normalizeToolkitSort(state.toolkitSort)] || sortLabels.alphabetical;
@@ -1586,6 +1747,56 @@
 
     tagText = activeTags.length ? "Tags: " + activeTags.map(titleCaseTag).join(", ") : "All tags";
     filterSummary.textContent = currentSortLabel() + " sort. " + tagText + (queryText ? '. Query: "' + queryText + '"' : ".");
+  }
+
+  function renderExplorerCard(entry) {
+    var item = entry.item;
+    return [
+      '<div class="col bubble-item" data-bubble-id="', item.id, '">',
+      '  <button type="button" class="bubble-button" data-open-bubble="', item.id, '" data-accent="red" aria-label="Open ', escapeHtml(item.title), ' details">',
+      '    <span class="bubble-badge">', escapeHtml(titleCaseTag(explorerTopic(entry))), "</span>",
+      '    <span class="bubble-title">', escapeHtml(item.title), "</span>",
+      '    <span class="bubble-text">', escapeHtml(item.short), "</span>",
+      renderExplorerMeta(entry),
+      "  </button>",
+      "</div>"
+    ].join("");
+  }
+
+  function renderExplorerTopicGroups(entries) {
+    var groups = [];
+
+    entries.forEach(function (entry) {
+      var topic = explorerTopic(entry);
+      var group = groups[groups.length - 1];
+
+      if (!group || group.topic !== topic) {
+        group = {
+          topic: topic,
+          entries: []
+        };
+        groups.push(group);
+      }
+
+      group.entries.push(entry);
+    });
+
+    return groups.map(function (group) {
+      var headingId = "cheatsheet-topic-" + group.topic.replace(/[^a-z0-9-]+/g, "-");
+      var countLabel = group.entries.length === 1 ? "1 card" : group.entries.length + " cards";
+
+      return [
+        '<section class="col-12 cheatsheet-topic-group" aria-labelledby="', headingId, '" data-topic="', escapeHtml(group.topic), '">',
+        '  <div class="cheatsheet-topic-heading">',
+        '    <h3 id="', headingId, '">', escapeHtml(titleCaseTag(group.topic)), "</h3>",
+        '    <span>', countLabel, "</span>",
+        "  </div>",
+        '  <div class="row row-cols-1 row-cols-md-2 row-cols-xl-4 g-4">',
+        group.entries.map(renderExplorerCard).join(""),
+        "  </div>",
+        "</section>"
+      ].join("");
+    }).join("");
   }
 
   function renderExplorer() {
@@ -1612,19 +1823,10 @@
 
     visibleEntries = sortExplorerEntries(visibleEntries, query);
 
-    bubbleGrid.innerHTML = visibleEntries.map(function (entry) {
-      var item = entry.item;
-      return [
-        '<div class="col bubble-item" data-bubble-id="', item.id, '">',
-        '  <button type="button" class="bubble-button" data-open-bubble="', item.id, '" data-accent="red" aria-label="Open ', escapeHtml(item.title), ' details">',
-        '    <span class="bubble-badge">', escapeHtml(titleCaseTag((item.__tags || item.tags || [])[0])), "</span>",
-        '    <span class="bubble-title">', escapeHtml(item.title), "</span>",
-        '    <span class="bubble-text">', escapeHtml(item.short), "</span>",
-        renderExplorerMeta(entry),
-        "  </button>",
-        "</div>"
-      ].join("");
-    }).join("");
+    bubbleGrid.classList.toggle("is-topic-grouped", state.toolkitSort === "topic");
+    bubbleGrid.innerHTML = state.toolkitSort === "topic"
+      ? renderExplorerTopicGroups(visibleEntries)
+      : visibleEntries.map(renderExplorerCard).join("");
 
     updateExplorerSummary(visibleEntries.length);
     emptyState.classList.toggle("d-none", visibleEntries.length !== 0);
@@ -2627,7 +2829,7 @@
     sourceLink = document.getElementById("bubbleModalSourceLink");
     if (item.sourceHref) {
       sourceLink.setAttribute("href", item.sourceHref);
-      sourceLink.textContent = item.sourceLabel || "Open Full Guide";
+      sourceLink.textContent = item.sourceLabel || "Open Step by Step Guide";
       sourceLink.classList.remove("d-none");
     } else {
       sourceLink.classList.add("d-none");
@@ -2782,7 +2984,7 @@
       '  <p class="search-result-summary">', escapeHtml(result.summary), "</p>",
       '  <div class="search-result-actions">',
       '    <button type="button" class="btn btn-primary rounded-pill px-4" data-search-open="', result.id, '">Open Result</button>',
-      result.sourceHref ? '<a class="btn btn-outline-secondary rounded-pill px-4" href="' + escapeHtml(result.sourceHref) + '" target="_blank" rel="noreferrer">Open Full Guide</a>' : "",
+      result.sourceHref ? '<a class="btn btn-outline-secondary rounded-pill px-4" href="' + escapeHtml(result.sourceHref) + '" target="_blank" rel="noreferrer">Open Step by Step Guide</a>' : "",
       "  </div>",
       "</article>"
     ].join("");
@@ -3267,7 +3469,7 @@
     var sectionSummary = guideSectionCountLabel(panelCount).toLowerCase();
     var detailCopy = taskCount > 0
       ? guideTaskSectionLabel(taskCount) + " available below, with the remaining reference sections still preserved."
-      : "Open the original guide sections below inside the redesigned Full Guide surface.";
+      : "Open the original guide sections below inside the redesigned Step by Step Guide surface.";
 
     return [
       '<div class="guide-source-toolbar">',
@@ -3408,7 +3610,7 @@
   function buildGuideBreadcrumb(section) {
     return [
       '<div class="guide-inline-breadcrumb" aria-label="Current guide section">',
-      "  <span>Full Guide</span>",
+      "  <span>Step by Step Guide</span>",
       "  <span>/</span>",
       "  <span>", escapeHtml(section.label), "</span>",
       "  <span>/</span>",
@@ -3448,7 +3650,7 @@
     }
 
     if (!section) {
-      guideSectionMount.innerHTML = '<article class="guide-section-card"><p class="guide-section-summary">The full guide is still loading.</p></article>';
+      guideSectionMount.innerHTML = '<article class="guide-section-card"><p class="guide-section-summary">The Step by Step Guide is still loading.</p></article>';
       renderGuideNav();
       updateBreadcrumb();
       return;
@@ -3479,7 +3681,7 @@
       ),
       '      <div class="guide-section-actions">',
       '        <button type="button" class="btn btn-outline-primary rounded-pill px-4" data-mode-target="explorer">Open Cheatsheet</button>',
-      section.sectionHref ? '<a class="btn btn-outline-secondary rounded-pill px-4" href="' + escapeHtml(section.sectionHref) + '" target="_blank" rel="noreferrer">Open Full Guide</a>' : "",
+      section.sectionHref ? '<a class="btn btn-outline-secondary rounded-pill px-4" href="' + escapeHtml(section.sectionHref) + '" target="_blank" rel="noreferrer">Open Step by Step Guide</a>' : "",
       "      </div>",
       "    </div>",
       "  </div>",
@@ -3546,8 +3748,8 @@
       sourceShell.innerHTML = [
         '<div class="guide-source-error">',
         "  <strong>Source content could not be rendered in the redesigned guide right now.</strong>",
-        "  <p>Open this page in the live Full Guide while the redesigned surface is refreshed.</p>",
-        section.sectionHref ? '  <a class="btn btn-outline-secondary rounded-pill px-4" href="' + escapeHtml(section.sectionHref) + '" target="_blank" rel="noreferrer">Open Full Guide</a>' : "",
+        "  <p>Open this page in the live Step by Step Guide while the redesigned surface is refreshed.</p>",
+        section.sectionHref ? '  <a class="btn btn-outline-secondary rounded-pill px-4" href="' + escapeHtml(section.sectionHref) + '" target="_blank" rel="noreferrer">Open Step by Step Guide</a>' : "",
         "</div>"
       ].join("");
       scheduleLayoutSync();
@@ -3752,7 +3954,7 @@
       searchEntryMap[entry.id] = entry;
     });
 
-    // Keep search scoped to visible redesigned surfaces. The original Full Guide remains available through explicit links only.
+    // Keep search scoped to visible redesigned surfaces. The original Step by Step Guide remains available through explicit links only.
   }
 
   function runGlobalSearch(rawQuery) {
@@ -3829,6 +4031,7 @@
     setModeRegionVisibility(hub, mode === "hub");
     setModeRegionVisibility(beginnerMode, mode === "beginner");
     setModeRegionVisibility(explorerMode, mode === "explorer");
+    setModeRegionVisibility(nodocMode, mode === "nodoc");
     setModeRegionVisibility(guideMode, mode === "guide");
     setModeRegionVisibility(generatorMode, mode === "generator");
     setModeRegionVisibility(searchMode, mode === "search");
@@ -3857,6 +4060,15 @@
           window.scrollTo({ top: 0, behavior: smoothBehavior() });
         } else {
           scrollToTarget(explorerMode);
+        }
+      }
+    } else if (mode === "nodoc") {
+      updateBreadcrumb();
+      if (config.scroll !== false) {
+        if (config.forceTop) {
+          window.scrollTo({ top: 0, behavior: smoothBehavior() });
+        } else {
+          scrollToTarget(nodocMode);
         }
       }
     } else if (mode === "guide") {
@@ -3916,8 +4128,10 @@
         setLiveMessage("Quickstart opened.");
       } else if (mode === "explorer") {
         setLiveMessage("Cheatsheet opened.");
+      } else if (mode === "nodoc") {
+        setLiveMessage("NoDoc guide opened.");
       } else if (mode === "guide") {
-        setLiveMessage("Full Guide opened at " + (currentGuideSection() ? currentGuideSection().title : "Start Guide") + ".");
+        setLiveMessage("Step by Step Guide opened at " + (currentGuideSection() ? currentGuideSection().title : "Start Guide") + ".");
       } else if (mode === "generator") {
         setLiveMessage("Markdown Workshop Generator opened.");
       } else if (mode === "search") {
@@ -4069,6 +4283,11 @@
       return;
     }
 
+    if (cleaned === "nodoc" || cleaned === "no-doc") {
+      switchMode("nodoc", { scroll: true, forceTop: true, hash: false, announce: false });
+      return;
+    }
+
     if (cleaned === "generator" || cleaned === "markdown-generator" || cleaned === "workshop-markdown-generator") {
       switchMode("generator", { scroll: true, forceTop: true, hash: false, announce: false });
       return;
@@ -4117,6 +4336,7 @@
 
     isRestoringHistory = true;
     state.currentStep = Math.max(0, Math.min(Number(route.currentStep || 0), stepSections.length - 1));
+    state.authoringRoute = normalizeAuthoringRoute(route.authoringRoute || initialAuthoringRoute());
     state.fastTrack = route.fastTrack || state.fastTrack;
     state.activeTags = normalizeTagSelection(route.activeTags || route.activeTag || []);
     state.activeTag = state.activeTags[0] || "all";
@@ -4138,6 +4358,7 @@
     }
 
     updateTagPillState();
+    updateAuthoringRouteUI();
 
     switchMode(route.mode || "hub", {
       scroll: false,
@@ -4192,6 +4413,7 @@
 
   document.addEventListener("click", function (event) {
     var modeButton = event.target.closest("[data-mode-target]");
+    var authoringRouteTab = event.target.closest("[data-authoring-route]");
     var progressButton = event.target.closest("[data-step-target]");
     var actionButton = event.target.closest("[data-action]");
     var guideButton = event.target.closest("[data-guide-target]");
@@ -4226,10 +4448,23 @@
           forceTop: isPrimaryNav
         });
       } else if (modeButton.getAttribute("data-mode-target") === "beginner") {
-        switchMode("beginner", { resetStep: true, forceTop: isPrimaryNav || !!modeButton.closest(".hero-actions") });
+        var requestedStep = Number(modeButton.getAttribute("data-open-step") || "0");
+        switchMode("beginner", {
+          resetStep: !requestedStep,
+          forceTop: isPrimaryNav || !!modeButton.closest(".hero-actions"),
+          scroll: !requestedStep
+        });
+        if (requestedStep) {
+          goToStep(requestedStep - 1);
+        }
       } else {
         switchMode(modeButton.getAttribute("data-mode-target"), { forceTop: isPrimaryNav });
       }
+      return;
+    }
+
+    if (authoringRouteTab) {
+      setAuthoringRoute(authoringRouteTab.getAttribute("data-authoring-route"));
       return;
     }
 
@@ -4505,6 +4740,30 @@
     });
   }
 
+  authoringRouteTabs.forEach(function (tab, tabIndex) {
+    tab.addEventListener("keydown", function (event) {
+      var nextIndex = tabIndex;
+
+      if (event.key === "ArrowRight") {
+        nextIndex = (tabIndex + 1) % authoringRouteTabs.length;
+      } else if (event.key === "ArrowLeft") {
+        nextIndex = (tabIndex - 1 + authoringRouteTabs.length) % authoringRouteTabs.length;
+      } else if (event.key === "Home") {
+        nextIndex = 0;
+      } else if (event.key === "End") {
+        nextIndex = authoringRouteTabs.length - 1;
+      } else {
+        return;
+      }
+
+      event.preventDefault();
+      setAuthoringRoute(
+        authoringRouteTabs[nextIndex].getAttribute("data-authoring-route"),
+        { focus: true }
+      );
+    });
+  });
+
   window.addEventListener("hashchange", function () {
     if (isRestoringHistory) {
       return;
@@ -4558,6 +4817,7 @@
   updateNav();
   updateNavSearch();
   updateBeginnerUI();
+  updateAuthoringRouteUI();
   renderTagPills();
   renderExplorer();
   renderGuideNav();
