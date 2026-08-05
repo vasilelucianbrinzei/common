@@ -5281,7 +5281,7 @@
     }
   </style>
   <link rel="stylesheet" href="./assets/css/redwood-video-player.css">
-  <link rel="stylesheet" href="./assets/css/author-guide-improvements.css?v=20260729-nodoc-layout-fix">
+  <link rel="stylesheet" href="./assets/css/author-guide-improvements.css?v=20260805-nodoc-hero-lab-video">
 </head>
 <body>
   <div id="app" data-redwood-creator-pass="2026-05-25">
@@ -6431,53 +6431,63 @@ Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
         <div class="container">
           <div class="card mode-hero nodoc-page-hero">
             <div class="card-body">
-              <div class="row g-4 align-items-stretch">
-                <div class="col-xl-8">
-                  <div class="mode-overline">Recommended authoring path</div>
-                  <h2 class="mode-title" id="nodocHeading">Create workshops with NoDoc.</h2>
-                  <p class="mode-copy">Use NoDoc as the default path for creating and maintaining LiveLabs workshop content. This page follows the same Redwood layout and navigation patterns as the rest of the Author Guide.</p>
-                  <div class="mode-chip-row">
-                    <span class="mode-chip">Default path</span>
-                    <span class="mode-chip">Guided authoring</span>
-                    <span class="mode-chip">LiveLabs workflow</span>
-                  </div>
-                </div>
-
-                <div class="col-xl-4">
-                  <div class="compact-panel h-100 nodoc-status-panel">
-                    <div class="d-flex align-items-center justify-content-between gap-3">
-                      <div class="panel-kicker mb-0">Content status</div>
-                      <span class="authoring-route-badge">Recommended</span>
-                    </div>
-                    <h3>Detailed guidance is coming soon</h3>
-                    <p class="panel-copy mb-3">The NoDoc route is ready. Approved access steps, screenshots, supported operations, and publishing guidance will be added here.</p>
-                    <div class="guide-panel mb-0" role="note">
-                      This page intentionally avoids unverified product instructions.
-                    </div>
-                  </div>
-                </div>
+              <div class="mode-overline">Recommended authoring path</div>
+              <h2 class="mode-title" id="nodocHeading">Create workshops with <a class="nodoc-title-link" href="https://nodoc.oraclecorp.com/" target="_blank" rel="noopener noreferrer" aria-label="Open NoDoc platform in a new tab">NoDoc <span aria-hidden="true">↗</span></a>.</h2>
+              <p class="mode-copy">Use NoDoc as the default path for creating and maintaining LiveLabs workshop content.</p>
+              <div class="mode-chip-row">
+                <span class="mode-chip">Default path</span>
+                <span class="mode-chip">Guided authoring</span>
+                <span class="mode-chip">LiveLabs workflow</span>
               </div>
             </div>
             <div class="nodoc-decoration-strip" aria-hidden="true"></div>
           </div>
 
-          <section class="card content-card nodoc-next-card" aria-labelledby="nodocNextHeading">
+          <section class="card content-card nodoc-full-workshop-card" aria-label="Workshop content">
             <div class="card-body">
-              <div class="row g-4 align-items-center">
-                <div class="col-lg-7">
-                  <div class="panel-kicker">Continue authoring</div>
-                  <h3 id="nodocNextHeading">Choose the guidance you need next.</h3>
-                  <p class="panel-copy mb-0">Open Quickstart at the workshop-creation step, or use the Cheatsheet for a focused authoring answer.</p>
+              <form class="nodoc-search-form" id="nodocSearchForm" role="search" aria-label="Search NoDoc workshop documentation">
+                <label class="visually-hidden" for="nodocSearchInput">Search NoDoc documentation, labs, and tasks</label>
+                <div class="search-group input-group">
+                  <span class="input-group-text" aria-hidden="true">⌕</span>
+                  <input class="form-control" id="nodocSearchInput" type="search" autocomplete="off" placeholder="Search documentation, knowledge, labs, or tasks">
+                  <button class="btn btn-primary" type="submit">Search</button>
                 </div>
-                <div class="col-lg-5">
-                  <div class="nodoc-page-actions">
-                    <button type="button" class="btn btn-primary rounded-pill px-4" data-mode-target="beginner" data-open-step="2">Open Quickstart Step 2</button>
-                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" data-mode-target="explorer">Open Cheatsheet</button>
+              </form>
+              <div class="nodoc-search-status" id="nodocSearchStatus" aria-live="polite"></div>
+              <div class="nodoc-search-results" id="nodocSearchResults" hidden></div>
+              <div class="guide-layout nodoc-guide-layout">
+                <aside class="guide-sidebar nodoc-sidebar" aria-label="NoDoc workshop navigation">
+                  <div class="guide-sidebar-card">
+                    <nav class="nodoc-side-nav" aria-label="NoDoc labs and tasks">
+                      <button class="nodoc-nav-title is-active" type="button" data-nodoc-nav="0" aria-current="page">Introduction</button>
+                      <div class="nodoc-nav-group" data-nodoc-group="1"><button class="nodoc-nav-title" type="button" data-nodoc-nav="1" aria-expanded="false" aria-controls="nodoc-nav-tasks-1">Lab 1 · Access and Navigation</button><div class="nodoc-nav-tasks" id="nodoc-nav-tasks-1" hidden><button type="button" data-nodoc-nav="1" data-nodoc-task="1">Sign in and check your role</button><button type="button" data-nodoc-nav="1" data-nodoc-task="2">Open No Doc Repo</button></div></div>
+                      <div class="nodoc-nav-group" data-nodoc-group="2"><button class="nodoc-nav-title" type="button" data-nodoc-nav="2" aria-expanded="false" aria-controls="nodoc-nav-tasks-2">Lab 2 · Authoring and Structure</button><div class="nodoc-nav-tasks" id="nodoc-nav-tasks-2" hidden><button type="button" data-nodoc-nav="2" data-nodoc-task="1">Create the article shell</button><button type="button" data-nodoc-nav="2" data-nodoc-task="2">Add pages</button><button type="button" data-nodoc-nav="2" data-nodoc-task="3">Add structured content</button></div></div>
+                      <div class="nodoc-nav-group" data-nodoc-group="3"><button class="nodoc-nav-title" type="button" data-nodoc-nav="3" aria-expanded="false" aria-controls="nodoc-nav-tasks-3">Lab 3 · Review and Drafts</button><div class="nodoc-nav-tasks" id="nodoc-nav-tasks-3" hidden><button type="button" data-nodoc-nav="3" data-nodoc-task="1">Add a comment</button><button type="button" data-nodoc-nav="3" data-nodoc-task="2">Create a draft</button><button type="button" data-nodoc-nav="3" data-nodoc-task="3">Review and approve</button></div></div>
+                      <div class="nodoc-nav-group" data-nodoc-group="4"><button class="nodoc-nav-title" type="button" data-nodoc-nav="4" aria-expanded="false" aria-controls="nodoc-nav-tasks-4">Lab 4 · AI Correction and Maps</button><div class="nodoc-nav-tasks" id="nodoc-nav-tasks-4" hidden><button type="button" data-nodoc-nav="4" data-nodoc-task="1">Run AI correction safely</button><button type="button" data-nodoc-nav="4" data-nodoc-task="2">Try an inline correction</button><button type="button" data-nodoc-nav="4" data-nodoc-task="3">Generate the information map</button></div></div>
+                      <div class="nodoc-nav-group" data-nodoc-group="5"><button class="nodoc-nav-title" type="button" data-nodoc-nav="5" aria-expanded="false" aria-controls="nodoc-nav-tasks-5">Lab 5 · Ingest and Ask No Doc</button><div class="nodoc-nav-tasks" id="nodoc-nav-tasks-5" hidden><button type="button" data-nodoc-nav="5" data-nodoc-task="1">Ingest approved content</button><button type="button" data-nodoc-nav="5" data-nodoc-task="2">Ask a focused question</button><button type="button" data-nodoc-nav="5" data-nodoc-task="3">Search and export</button></div></div>
+                      <div class="nodoc-nav-group" data-nodoc-group="6"><button class="nodoc-nav-title" type="button" data-nodoc-nav="6" aria-expanded="false" aria-controls="nodoc-nav-tasks-6">Lab 6 · Publish and Release</button><div class="nodoc-nav-tasks" id="nodoc-nav-tasks-6" hidden><button type="button" data-nodoc-nav="6" data-nodoc-task="1">Run pre-publish checks</button><button type="button" data-nodoc-nav="6" data-nodoc-task="2">Generate a preview</button><button type="button" data-nodoc-nav="6" data-nodoc-task="3">Complete the handoff</button></div></div>
+                    </nav>
                   </div>
-                </div>
+                </aside>
+                <main class="guide-stage nodoc-guide-stage" id="nodocWorkshopReader">
+                  <div class="nodoc-full-tree" aria-label="NoDoc workshop content">
+                <details open class="nodoc-tree-group"><summary><span>Introduction · No Doc One Tool</span><small>Workshop orientation</small></summary><div class="nodoc-tree-content">
+                  <p>No Doc is an Oracle APEX documentation workbench for creating, organizing, reviewing, improving, ingesting, and preparing technical content for publication. In this workshop, you build a small documentation set, collaborate through drafts and comments, apply AI-assisted corrections with human review, generate an information map, ingest content for Ask No Doc, and complete a controlled pre-publish review.</p>
+                  <h4>Prerequisites</h4><ul><li>Oracle SSO access to the No Doc environment.</li><li>A No Doc role: <code>CONTRIBUTOR</code> for authoring or <code>READER</code> for review-only activities.</li><li>A disposable Focus Area approved for workshop practice.</li><li>A sample technical topic or feature description that does not contain secrets.</li><li>Access to the No Doc help channel for environment-specific support.</li></ul>
+                  <h4>Objectives</h4><ul><li>Navigate No Doc and select the correct Focus Area.</li><li>Create an article, version, and page set for a documentation topic.</li><li>Edit content, apply metadata, and use supported editor features.</li><li>Collaborate with comments and draft review without overwriting original content accidentally.</li><li>Apply AI-assisted correction and generate an article information map with explicit human review.</li><li>Ingest approved content, query it with Ask No Doc, and inspect source context.</li><li>Prepare a pre-publish preview while keeping release ownership and approvals explicit.</li></ul><p><strong>Estimated Workshop Time:</strong> 90 minutes</p>
+                </div></details>
+                <details class="nodoc-tree-group"><summary><span>Lab 1 · Access And Navigation</span><small>10 minutes</small></summary><div class="nodoc-tree-content"><div data-video-card data-video-title="Lab 1 walkthrough" data-video-summary="Temporary test clip. Replace this source with the Lab 1 recording when it is ready." data-video-features="Access and navigation|Role check|NoDoc Repo"></div><p>Connect to No Doc, identify your role, and select the disposable Focus Area used throughout the workshop.</p><h4>Objectives</h4><ul><li>Sign in through Oracle SSO.</li><li>Distinguish <code>ADMINISTRATOR</code>, <code>CONTRIBUTOR</code>, and <code>READER</code> capabilities.</li><li>Navigate between Focus Area and No Doc Repo.</li></ul><details class="nodoc-task"><summary>Task 1 · Sign In And Check Your Role</summary><ol><li>Open the approved No Doc environment.</li><li>Sign in through Oracle SSO. If the stage environment requests a bypass code, obtain it through the approved manager process; do not paste codes into workshop artifacts.</li><li>Confirm that your assigned role supports the lab actions. Readers can review; contributors can create and maintain their own content.</li></ol></details><details class="nodoc-task"><summary>Task 2 · Open No Doc Repo</summary><ol><li>Open the hamburger menu.</li><li>Select <strong>No Doc Repo</strong>.</li><li>Select the disposable Focus Area provided by your instructor.</li><li>Use <strong>Open All</strong> and <strong>Close All</strong> to inspect the table of contents.</li></ol></details></div></details>
+                <details class="nodoc-tree-group"><summary><span>Lab 2 · Authoring And Structure</span><small>20 minutes</small></summary><div class="nodoc-tree-content"><div data-video-card data-video-title="Lab 2 walkthrough" data-video-summary="Temporary test clip. Replace this source with the Lab 2 recording when it is ready." data-video-features="Article shell|Page structure|Metadata"></div><p>Create a versioned article and page set, then add metadata and structured content that can be reviewed, ingested, and published later.</p><h4>Objectives</h4><ul><li>Create an article from scratch.</li><li>Add pages at the correct TOC location.</li><li>Use metadata, links, code blocks, notes, and supported editor features.</li></ul><details class="nodoc-task"><summary>Task 1 · Create The Article Shell</summary><ol><li>In No Doc Repo, click the <strong>+</strong> icon beside the selected Focus Area.</li><li>Choose <strong>Article</strong>.</li><li>Enter a name such as <code>No Doc Workshop Practice</code> and a version such as <code>2026.08</code>.</li><li>Choose <strong>Create From Scratch</strong>, then create the article.</li><li>Leave the article's first page reserved for metadata and the later information map.</li></ol></details><details class="nodoc-task"><summary>Task 2 · Add Pages</summary><ol><li>Click <strong>+</strong> beside the article or an existing page.</li><li>Choose <strong>Page</strong> and create pages named <code>Prepare</code>, <code>Author</code>, and <code>Review</code>.</li><li>Confirm that pages appear under the intended article.</li><li>Add metadata tags at the top of each page, including product, release, topic type, and audience.</li></ol></details><details class="nodoc-task"><summary>Task 3 · Add Structured Content</summary><ol><li>Edit <code>Prepare</code> and add a short introduction, objectives, and prerequisites.</li><li>Add a numbered procedure, a note, a link, and a code block.</li><li>Use Markdown source mode to inspect the generated content when available.</li><li>Save the page and verify that the TOC and content remain aligned.</li></ol></details></div></details>
+                <details class="nodoc-tree-group"><summary><span>Lab 3 · Review And Drafts</span><small>15 minutes</small></summary><div class="nodoc-tree-content"><div data-video-card data-video-title="Lab 3 walkthrough" data-video-summary="Temporary test clip. Replace this source with the Lab 3 recording when it is ready." data-video-features="Comments|Drafts|Review decisions"></div><p>Use comments and drafts to collaborate without changing source content until the owner approves the change.</p><h4>Objectives</h4><ul><li>Add an anchored review comment.</li><li>Create and inspect a draft.</li><li>Review differences and apply an owner-approved overwrite.</li></ul><details class="nodoc-task"><summary>Task 1 · Add A Comment</summary><ol><li>Open the <code>Prepare</code> page in view or edit mode.</li><li>Select a sentence that needs clarification.</li><li>Add an inline comment with a specific, actionable suggestion.</li><li>Save and confirm the comment is anchored to the selected text.</li></ol></details><details class="nodoc-task"><summary>Task 2 · Create A Draft</summary><ol><li>Sign in as a non-owner reviewer, or use the supplied reviewer account.</li><li>Open the commented page and click <strong>Edit</strong>.</li><li>Accept the prompt to work on a draft.</li><li>Improve the selected sentence and save the draft.</li></ol></details><details class="nodoc-task"><summary>Task 3 · Review And Approve</summary><ol><li>Sign in as the page owner.</li><li>Open <strong>Drafts</strong> and inspect the pending draft.</li><li>Use <strong>View Diff</strong> to review each change.</li><li>Accept or reject changes individually.</li><li>Approve and overwrite only after confirming the final content.</li></ol></details></div></details>
+                <details class="nodoc-tree-group"><summary><span>Lab 4 · AI Correction And Information Maps</span><small>15 minutes</small></summary><div class="nodoc-tree-content"><div data-video-card data-video-title="Lab 4 walkthrough" data-video-summary="Temporary test clip. Replace this source with the Lab 4 recording when it is ready." data-video-features="AI correction|Difference review|Information maps"></div><p>Improve a page with AI-assisted tools while preserving human review, then generate an article information map after all pages exist.</p><h4>Objectives</h4><ul><li>Run a standards or persona-based AI correction.</li><li>Inspect differences before overwrite.</li><li>Generate an information map from the article's first page.</li></ul><details class="nodoc-task"><summary>Task 1 · Run AI Correction Safely</summary><ol><li>Open the <code>Author</code> page as its owner.</li><li>Choose <strong>Vibe Doc-ing</strong> and select <strong>Apply Standards</strong> or a supported persona extraction.</li><li>Review generated content and open <strong>Difference</strong>.</li><li>Reject unsupported changes; keep only improvements that preserve technical meaning.</li><li>Use <strong>Overwrite</strong> only after human review, then save.</li></ol></details><details class="nodoc-task"><summary>Task 2 · Try An Inline Correction</summary><ol><li>Select one sentence on the page.</li><li>Right-click and choose <strong>Vibe Doc-ing</strong>.</li><li>Select <strong>Formal</strong>, <strong>Heading</strong>, or a custom prompt.</li><li>Review the result and replace only the selected text if accurate.</li></ol></details><details class="nodoc-task"><summary>Task 3 · Generate The Information Map</summary><ol><li>Confirm that all workshop pages exist and are saved.</li><li>Open the first page of the article as the owner.</li><li>Choose <strong>Generate Information Map</strong>.</li><li>Confirm that page summaries and source links are generated while metadata remains intact.</li></ol></details></div></details>
+                <details class="nodoc-tree-group"><summary><span>Lab 5 · Ingest And Ask No Doc</span><small>15 minutes</small></summary><div class="nodoc-tree-content"><div data-video-card data-video-title="Lab 5 walkthrough" data-video-summary="Temporary test clip. Replace this source with the Lab 5 recording when it is ready." data-video-features="Ingestion|Focused questions|Source context"></div><p>Make approved content available to Ask No Doc, then constrain a question to the right Focus Area, article, and version.</p><h4>Objectives</h4><ul><li>Ingest a page or article deliberately.</li><li>Select a focused Ask No Doc context.</li><li>Check that answers remain grounded in workshop content.</li></ul><details class="nodoc-task"><summary>Task 1 · Ingest Approved Content</summary><ol><li>Confirm that the article content is approved and saved.</li><li>Select the article or a page and choose <strong>Ingest</strong>.</li><li>Wait for ingestion to complete; record status and timestamp.</li><li>Do not ingest production or confidential content.</li></ol></details><details class="nodoc-task"><summary>Task 2 · Ask A Focused Question</summary><ol><li>Open <strong>Ask No Doc</strong> from the application menu.</li><li>Choose <strong>Focus</strong> and select <strong>NoDoc</strong>.</li><li>Narrow context by Focus Area, article, and release version.</li><li>Ask a question answered by the <code>Prepare</code> page.</li><li>Inspect the answer and source/link context; tighten focus if needed.</li></ol></details><details class="nodoc-task"><summary>Task 3 · Search And Export</summary><ol><li>Use metadata select-and-search or Vibe Searching to find a workshop page.</li><li>Start a new chat if you need a clean context.</li><li>Download the current chat JSON only to the approved local test location.</li></ol></details></div></details>
+                <details class="nodoc-tree-group"><summary><span>Lab 6 · Pre-Publish And Release Handoff</span><small>15 minutes</small></summary><div class="nodoc-tree-content"><div data-video-card data-video-title="Lab 6 walkthrough" data-video-summary="Temporary test clip. Replace this source with the Lab 6 recording when it is ready." data-video-features="Pre-publish checks|Preview|Release handoff"></div><p>Prepare a publish preview and hand off evidence without treating a preview as approval to release.</p><h4>Objectives</h4><ul><li>Validate content before publication.</li><li>Generate a preview or package in the approved non-production path.</li><li>Record release evidence, ownership, and unresolved risks.</li></ul><details class="nodoc-task"><summary>Task 1 · Run The Pre-Publish Checks</summary><ol><li>Confirm required metadata, information-map content, links, code blocks, and page order.</li><li>Review comments, pending drafts, and open review decisions.</li><li>Confirm that no secrets or unsupported internal-only data are present.</li><li>Check representative content in view mode and Markdown source mode when available.</li></ol></details><details class="nodoc-task"><summary>Task 2 · Generate A Preview</summary><ol><li>Open the applicable <strong>LiveLabs Pre-Publish</strong> or OHC preview flow.</li><li>Select the workshop/article and version.</li><li>Generate the preview or download package in the approved test target.</li><li>Inspect rendered output, links, metadata, and navigation.</li><li>Record preview location and defects; do not push to a production repository.</li></ol></details><details class="nodoc-task"><summary>Task 3 · Complete The Handoff</summary><ol><li>Record owner, reviewer, version, environment, preview evidence, and release decision.</li><li>Link open defects or mark them as release risk.</li><li>Obtain release-owner approval before any push or overwrite.</li></ol></details></div></details>
+                  </div>
+                </main>
               </div>
             </div>
           </section>
+
         </div>
       </section>
       <!-- Step by Step Guide -->
@@ -6743,7 +6753,8 @@ Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
   <script src="./assets/js/workshop-generator.js?v=20260708-skill-generator-livestack"></script>
   <script src="./assets/js/redwood-video-player.js"></script>
   <script src="./assets/js/shared-side-nav.js?v=20260529-shared-nav-v2"></script>
-  <script src="./assets/js/author-guide-app.js?v=20260729-topic-groups"></script>
+  <script src="./assets/js/nodoc-workshop.js?v=20260804-search-accordion"></script>
+  <script src="./assets/js/author-guide-app.js?v=20260804-cheatsheet-route"></script>
   <script src="./assets/js/shared-footer.js?v=20260516-followup"></script>
 </body>
 </html>

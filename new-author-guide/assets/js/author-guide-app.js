@@ -657,6 +657,62 @@
     return prefersReducedMotion ? "auto" : "smooth";
   }
 
+  function resolveAppBasePath() {
+    var path = window.location.pathname || "/";
+    var cleanPath = path.replace(/\/+$/, "");
+    var lastSegment = cleanPath.split("/").pop().toLowerCase();
+
+    if (["home", "quickstart", "cheatsheet", "nodoc", "index.html"].indexOf(lastSegment) !== -1) {
+      cleanPath = cleanPath.slice(0, cleanPath.length - lastSegment.length);
+    } else if (!path.endsWith("/")) {
+      cleanPath = path.slice(0, path.lastIndexOf("/") + 1);
+    }
+
+    return (cleanPath || "/").replace(/\/+$/, "/");
+  }
+
+  var appBasePath = resolveAppBasePath();
+
+  function routeTokenFromLocation() {
+    var routeParam = new URLSearchParams(window.location.search).get("route");
+    var pathSegment = (window.location.pathname || "").replace(/\/+$/, "").split("/").pop().toLowerCase();
+    var cleanRoute = String(routeParam || pathSegment || "").toLowerCase();
+
+    if (cleanRoute === "home") {
+      return "#home";
+    }
+    if (cleanRoute === "quickstart") {
+      return "#quickstart";
+    }
+    if (cleanRoute === "cheatsheet" || cleanRoute === "quick-reference") {
+      return "#quick-reference";
+    }
+    if (cleanRoute === "nodoc" || cleanRoute === "no-doc") {
+      return "#nodoc";
+    }
+
+    return window.location.hash || "#home";
+  }
+
+  function routeUrl(hash) {
+    var cleaned = String(hash || "").replace(/^#/, "").toLowerCase();
+
+    if (!cleaned || cleaned === "home" || cleaned === "hub") {
+      return appBasePath + "home";
+    }
+    if (cleaned === "guided" || cleaned === "quickstart" || cleaned.indexOf("step-") === 0) {
+      return appBasePath + "quickstart";
+    }
+    if (cleaned === "toolkit" || cleaned === "quick-reference" || cleaned === "cheatsheet" || cleaned === "explorer") {
+      return appBasePath + "cheatsheet";
+    }
+    if (cleaned === "nodoc" || cleaned === "no-doc") {
+      return appBasePath + "nodoc";
+    }
+
+    return appBasePath + "index.html" + (hash || "");
+  }
+
   function setLiveMessage(message) {
     liveRegion.textContent = "";
     window.setTimeout(function () {
@@ -712,19 +768,21 @@
       scrollY: window.pageYOffset
     }, options || {});
     var payload = currentRoutePayload(hash, config.scrollY);
+    var targetUrl = routeUrl(hash);
+    var currentUrl = window.location.pathname + window.location.search + window.location.hash;
 
-    if (window.location.hash === hash) {
-      history.replaceState(payload, "", hash);
+    if (currentUrl === targetUrl) {
+      history.replaceState(payload, "", targetUrl);
       return;
     }
 
     if (config.replace || isRestoringHistory) {
-      history.replaceState(payload, "", hash);
+      history.replaceState(payload, "", targetUrl);
       return;
     }
 
     persistCurrentHistoryScroll();
-    history.pushState(payload, "", hash);
+    history.pushState(payload, "", targetUrl);
   }
 
   function updateHashFromState(options) {
@@ -4330,7 +4388,7 @@
     var restoreY = Number(route && route.scrollY);
 
     if (!route || !route.__authorGuideRoute) {
-      applyHash(window.location.hash);
+      applyHash(routeTokenFromLocation());
       return;
     }
 
@@ -4822,7 +4880,7 @@
   renderExplorer();
   renderGuideNav();
   loadGuideCatalog().finally(function () {
-    applyHash(window.location.hash);
+    applyHash(routeTokenFromLocation());
     updateHashFromState({ replace: true });
     scheduleLayoutSync();
   });
