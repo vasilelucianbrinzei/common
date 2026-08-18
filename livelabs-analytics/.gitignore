@@ -1,7 +1,6 @@
-# Node deps and lock files
+# Node dependencies and local package-manager logs
 node_modules/
 pnpm-lock.yaml
-package-lock.json
 yarn.lock
 npm-debug.log*
 yarn-error.log*
@@ -37,12 +36,21 @@ Wallet_*/
 *.jks
 backend.env
 
-# Private database model, migrations, wallets, and VM/ADB setup material
+# This project is a static hosted-file bundle. Backend, database, VM, and admin
+# material belongs in the migration archive, not in the deployable subtree.
+/app/
 /database/
-
-# OCI/VM runtime artifacts belong in the VM deployment workspace, not GitHub Pages
-server/
-ops/
+/server/
+/ops/
+/dataset/
+/_local/
+/release/
+/releases/
+/release.previous-*/
+/release.staging-*/
+/admin/
+/admin.html
+/login.html
 
 # IDE/editor settings
 .vscode/
@@ -61,8 +69,9 @@ __codex_*
 MISSING_MARKDOWN_DETAILS_LOG_*.md
 LiveLabs_Analytics_Dashboard_*/
 test-results/
+playwright-report/
+/.ci-release/
+/.ci-preflight.json
 
 # Local QA planning and source datasets
 QA_TEST_PLAN.md
-_local/
-dataset/

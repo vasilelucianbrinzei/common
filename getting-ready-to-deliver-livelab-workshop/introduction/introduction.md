@@ -12,8 +12,6 @@ In this workshop, you will:
 - Test the attendee path before the event.
 - Confirm the final readiness decision before delivery.
 
-Estimated Workshop Time: 1 hour 35 minutes
-
 ![LiveLabs event delivery overview](./images/event-delivery-overview.svg " ")
 
 ## Delivery Path Summary

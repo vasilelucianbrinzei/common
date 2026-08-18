@@ -12,7 +12,8 @@ window.authorGuideContent = (function () {
     validatorBash: "https://raw.githubusercontent.com/oracle-livelabs/common/main/md-validator/.github/scripts/validate-livelabs-markdown.sh",
     validatorPowerShell: "https://raw.githubusercontent.com/oracle-livelabs/common/main/md-validator/.github/scripts/validate-livelabs-markdown.ps1",
     secureDesktopAccess: "https://oracle-livelabs.github.io/common/labs/testing-access/workshops/desktop/index.html?lab=livelabs-sandbox",
-    secureDesktopDocs: "https://oracle-livelabs.github.io/common/support/securedesktops/index.html#BeforeyougetStarted",
+    secureDesktopDocs: "https://oracle-livelabs.github.io/common/support/securedesktops/index.html",
+    secureDesktopStart: "https://oracle-livelabs.github.io/common/support/securedesktops/index.html?lab=securedesktops",
     liveLabsAuthorsSlack: "https://oracle.enterprise.slack.com/archives/CTUPZQ5HA",
     freesql: "https://freesql.com/",
     sprintsRepo: "https://github.com/oracle-livelabs/sprints",
@@ -1301,7 +1302,7 @@ window.authorGuideContent = (function () {
         resourcesIntro: "Keep these two pages open during access testing so you do not guess the launch flow.",
         resourceLinks: [
           resourceLink("Test access guide", officialLinks.secureDesktopAccess, "Use this to validate the full end-to-end participant path."),
-          resourceLink("OCI Secure Desktop docs", officialLinks.secureDesktopDocs, "Use this when you need the broader platform prerequisites and setup context.")
+          resourceLink("OCI Secure Desktop docs", officialLinks.secureDesktopStart, "Use this when you need the participant setup and launch sequence.")
         ],
         snippetMeta: "Decision gate",
         snippetTitle: "Use secure desktop only after this test sequence",
@@ -1344,7 +1345,7 @@ window.authorGuideContent = (function () {
         resourceLinks: [
           resourceLink("LiveLabs Authors Slack", officialLinks.liveLabsAuthorsSlack, "Post the request here with the full event context."),
           resourceLink("Test access guide", officialLinks.secureDesktopAccess, "Share this with participants for the launch flow."),
-          resourceLink("OCI Secure Desktop docs", officialLinks.secureDesktopDocs, "Use this when participants or reviewers need more setup detail.")
+          resourceLink("OCI Secure Desktop docs", officialLinks.secureDesktopStart, "Use this when participants or reviewers need the current setup and launch steps.")
         ],
         snippetMeta: "Bring this to the request",
         snippetTitle: "Secure desktop request details",
@@ -1362,6 +1363,57 @@ window.authorGuideContent = (function () {
         ].join("\n"),
         sourceHref: labLink("secure-desktop-how-to-request"),
         sourceLabel: "Open Step by Step Guide",
+        guideTarget: "specialized-workflows"
+      },
+      {
+        id: "secure-desktop-participant-guide",
+        title: "Secure Desktops: Participant Launch Guide",
+        short: "Use the public participant guide to reserve a LiveLabs workshop, launch Secure Desktop, and recover from common login and pop-up issues.",
+        accent: "sienna",
+        tags: ["secure-desktop", "support"],
+        updatedAt: "2026-03-01",
+        description: "Use this card after the author or event owner has confirmed that Secure Desktops are required. It mirrors the current public participant guide and keeps the reservation, launch, and first-login sequence in one place.",
+        steps: [
+          "Before starting, use Google Chrome, enable pop-ups, and log out of any OCI tenants in that browser.",
+          "Open the assigned LiveLabs workshop, click START, choose Run on LiveLabs Sandbox, and sign in with the Oracle account required by the reservation flow.",
+          "In Reserve Workshop, select Start Workshop Now when appropriate, submit the reservation, and check My Reservations. Sandbox provisioning typically takes 10 to 20 minutes.",
+          "Launch the workshop and open View Login Info so you have the Secure Desktop tenancy and user details needed for the next step.",
+          "Click Launch Secure Desktop. If another OCI session is active, choose Sign in with a different user account, select the Default identity domain when prompted, and set the initial user password.",
+          "Choose an available desktop pool, allow the provisioning window to open, and wait for the desktop to become available. If the window does not appear, check the browser pop-up setting and retry the pool.",
+          "Inside the desktop, finish the initial Linux setup, open Firefox, and navigate to LiveLabs. Use the Secure Desktop clipboard controls when you need to move text into or out of the remote desktop."
+        ],
+        checkpoints: [
+          "Chrome, pop-ups, and OCI sign-out prerequisites are complete before the reservation starts.",
+          "The workshop reservation is visible in My Reservations and reaches an active state before launch.",
+          "The participant can open View Login Info, launch the desktop pool, complete first-login password reset, and open LiveLabs from Firefox.",
+          "The participant knows how to retry a failed pop-up or desktop-pool launch without creating a second reservation."
+        ],
+        watchFor: [
+          "Starting with a different OCI tenancy still signed in, which can route the launch to the wrong account.",
+          "Blocking pop-ups and then treating the missing desktop window as a provisioning failure.",
+          "Trying to use the desktop before the sandbox reservation becomes active.",
+          "Copying credentials or private workshop data through the clipboard without following the event owner guidance."
+        ],
+        resourcesTitle: "Participant guide",
+        resourcesIntro: "Use the public guide for the complete image-supported launch sequence and troubleshooting notes.",
+        resourceLinks: [
+          resourceLink("Secure Desktops guide", officialLinks.secureDesktopDocs, "Open the public guide requested for the Cheatsheet."),
+          resourceLink("Secure Desktops: Get Started", officialLinks.secureDesktopStart, "Open the current participant steps and task navigation."),
+          resourceLink("LiveLabs Secure Desktop access", officialLinks.secureDesktopAccess, "Use the access flow linked from the authoring guide when testing a workshop.")
+        ],
+        snippetMeta: "Participant launch sequence",
+        snippetTitle: "Before you share the launch link",
+        snippet: [
+          "Browser: Google Chrome",
+          "Pop-ups: enabled",
+          "OCI tenants: signed out",
+          "Reservation: active in My Reservations",
+          "Launch: View Login Info -> Launch Secure Desktop",
+          "Identity domain: Default when prompted",
+          "Desktop: wait for the pool and open LiveLabs in Firefox"
+        ].join("\n"),
+        sourceHref: officialLinks.secureDesktopStart,
+        sourceLabel: "Open Secure Desktops guide",
         guideTarget: "specialized-workflows"
       },
       {

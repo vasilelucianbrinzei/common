@@ -489,6 +489,7 @@
   var searchPageClear = document.getElementById("searchPageClear");
   var wmsExampleForm = document.getElementById("wmsExampleForm");
   var wmsExamplePrompt = document.getElementById("wmsExamplePrompt");
+  var wmsExamplePromptCount = document.getElementById("wmsExamplePromptCount");
   var wmsExampleResults = document.getElementById("wmsExampleResults");
   var wmsExampleEmpty = document.getElementById("wmsExampleEmpty");
   var wmsExampleLoading = document.getElementById("wmsExampleLoading");
@@ -516,6 +517,8 @@
   var layoutSyncFrame = 0;
   var generatedMarkdownText = "";
   var defaultWmsExamplePrompt = "Build AI agents with persistent memory using Oracle Database, ADB, Select AI, and OCI GenAI";
+  var wmsExamplePromptMinLength = 24;
+  var wmsExamplePromptMaxLength = 320;
 
   bubbleModalElement.addEventListener("hidden.bs.modal", function () {
     closeImageLightbox({ announce: false, restoreFocus: false });
@@ -1484,6 +1487,12 @@
       panel.hidden = !isActive;
       panel.setAttribute("aria-hidden", isActive ? "false" : "true");
     });
+
+    document.querySelectorAll("[data-authoring-only]").forEach(function (node) {
+      var isActive = node.getAttribute("data-authoring-only") === state.authoringRoute;
+      node.hidden = !isActive;
+      node.setAttribute("aria-hidden", isActive ? "false" : "true");
+    });
   }
 
   function updateAuthoringRouteQuery(options) {
@@ -1939,25 +1948,46 @@
       return;
     }
 
-    wmsExampleResults.classList.remove("d-none");
-    wmsExampleResults.innerHTML = (fields || []).map(function (field, index) {
+    function fieldGroup(label) {
+      if (label === "Workshop Title" || label.indexOf("Description") !== -1) {
+        return "Core workshop fields";
+      }
+      if (label === "Workshop Abstract" || label === "Workshop Outline" || label === "Workshop Prerequisites") {
+        return "WMS review fields";
+      }
+      return "Optional notes";
+    }
+
+    var rows = [];
+    var activeGroup = "";
+    (fields || []).forEach(function (field, index) {
+      var group = fieldGroup(field.label || "");
       var targetId = "wms-example-field-" + index;
-      return [
-        '<details class="generated-example-card">',
-        '  <summary class="generated-example-summary">',
-        '    <span class="generated-example-summary-main">',
-        '      <span class="generated-example-title">', escapeHtml(field.label), "</span>",
-        "    </span>",
-        "  </summary>",
-        '  <div class="generated-example-body">',
-        '    <div class="generated-example-toolbar">',
-        '      <button class="copy-snippet generated-example-copy" type="button" data-copy-target="', targetId, '">Copy</button>',
-        "    </div>",
-        '    <pre class="generated-example-pre"><code id="', targetId, '">', escapeHtml(field.value), "</code></pre>",
-        "  </div>",
-        "</details>"
-      ].join("");
-    }).join("");
+
+      if (group !== activeGroup) {
+        rows.push('<tr class="generated-example-group-row"><th colspan="3" scope="colgroup">' + escapeHtml(group) + "</th></tr>");
+        activeGroup = group;
+      }
+
+      rows.push([
+        '<tr class="generated-example-row">',
+        '  <th scope="row" class="generated-example-label">', escapeHtml(field.label), "</th>",
+        '  <td><pre class="generated-example-pre"><code id="', targetId, '">', escapeHtml(field.value), "</code></pre></td>",
+        '  <td class="generated-example-action"><button class="copy-snippet generated-example-copy" type="button" data-copy-target="', targetId, '">Copy</button></td>',
+        "</tr>"
+      ].join(""));
+    });
+
+    wmsExampleResults.classList.remove("d-none");
+    wmsExampleResults.innerHTML = [
+      '<div class="generated-example-table-wrap">',
+      '  <table class="generated-example-table">',
+      '    <caption>Generated WMS field examples</caption>',
+      '    <thead><tr><th scope="col">Field</th><th scope="col">Example</th><th scope="col">Action</th></tr></thead>',
+      '    <tbody>', rows.join(""), "</tbody>",
+      "  </table>",
+      "</div>"
+    ].join("");
   }
 
   function runWmsExampleGeneration() {
@@ -1986,6 +2016,28 @@
         setGeneratorState(wmsExampleEmpty, wmsExampleLoading, wmsExampleError, false, false, "Examples could not be generated. Try a shorter prompt.");
       }
     }, 180);
+  }
+
+  function validateWmsExamplePrompt() {
+    var prompt = wmsExamplePrompt ? wmsExamplePrompt.value.trim() : "";
+    var message = "";
+
+    if (!prompt) {
+      message = "Enter a workshop idea before generating examples.";
+    } else if (prompt.length < wmsExamplePromptMinLength) {
+      message = "Add more detail: include the audience, outcome, and Oracle products.";
+    } else if (prompt.length > wmsExamplePromptMaxLength) {
+      message = "Shorten the workshop idea to 320 characters or fewer.";
+    }
+
+    if (wmsExamplePrompt) {
+      wmsExamplePrompt.setCustomValidity(message);
+      wmsExamplePrompt.setAttribute("aria-invalid", message ? "true" : "false");
+    }
+    if (wmsExamplePromptCount) {
+      wmsExamplePromptCount.textContent = String((wmsExamplePrompt ? wmsExamplePrompt.value.length : 0)) + " / " + wmsExamplePromptMaxLength;
+    }
+    return message;
   }
 
   function setMarkdownOutput(value) {
@@ -2809,6 +2861,8 @@
     return window.RedwoodVideoPlayer.createMountMarkup(Object.assign({
       src: "./assets/media/guide/author-guide-template.mp4",
       captions: "./assets/media/guide/author-guide-template.vtt",
+      status: "preview",
+      sourceNote: "Preview asset only. Use the written steps and transcript until the approved walkthrough is supplied.",
       autoplay: true,
       loop: true
     }, config || {}));
@@ -2863,13 +2917,14 @@
     setSupportMount(
       "bubbleModalVideoMount",
       renderVideoPlaceholderCard(
-        "Recorded walkthrough for " + item.title,
-        "Watch the quick topic pass first, then use the panel details, snippets, and source links underneath.",
+        "Walkthrough preview for " + item.title,
+        "This player is the capture slot for the Cheatsheet walkthrough. Use the panel details, snippets, and source links underneath until the approved recording is supplied.",
         [
           "Topic walkthrough",
           "Audio controls",
           "Autoplay ready"
-        ]
+        ],
+        "cheatsheet-" + item.id
       )
     );
 
@@ -2903,10 +2958,11 @@
     setLiveMessage(item.title + " opened.");
   }
 
-  function renderVideoPlaceholderCard(title, summary, featureLabels) {
+  function renderVideoPlaceholderCard(title, summary, featureLabels, videoId) {
     return renderVideoCardMount({
       title: title,
       summary: summary,
+      id: videoId || "",
       features: featureLabels || [
         "Controls ready",
         "Audio controls",
@@ -3735,7 +3791,8 @@
       renderVideoPlaceholderCard(
         section.title + " walkthrough",
         section.summary || section.purpose || "Use the section player first, then open the redesigned source sections underneath.",
-        guideSectionVideoFeatures(section)
+        guideSectionVideoFeatures(section),
+        "guide-section-" + section.id
       ),
       '      <div class="guide-section-actions">',
       '        <button type="button" class="btn btn-outline-primary rounded-pill px-4" data-mode-target="explorer">Open Cheatsheet</button>',
@@ -4771,10 +4828,28 @@
   if (wmsExampleForm) {
     wmsExampleForm.addEventListener("submit", function (event) {
       event.preventDefault();
+      var validationMessage = validateWmsExamplePrompt();
+      if (validationMessage) {
+        setGeneratorState(null, wmsExampleLoading, wmsExampleError, false, false, validationMessage);
+        if (wmsExamplePrompt) {
+          wmsExamplePrompt.focus();
+        }
+        return;
+      }
       runWmsExampleGeneration();
     });
+    if (wmsExamplePrompt) {
+      wmsExamplePrompt.addEventListener("input", function () {
+        validateWmsExamplePrompt();
+        if (wmsExampleError && !wmsExamplePrompt.validationMessage) {
+          wmsExampleError.textContent = "";
+          wmsExampleError.classList.add("d-none");
+        }
+      });
+    }
     renderGeneratedExampleFields([]);
-    setGeneratorState(wmsExampleEmpty, wmsExampleLoading, wmsExampleError, true, false, "");
+    validateWmsExamplePrompt();
+    setGeneratorState(null, wmsExampleLoading, wmsExampleError, false, false, "");
   }
 
   if (workshopMarkdownForm) {
