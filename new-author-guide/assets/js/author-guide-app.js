@@ -225,24 +225,7 @@
     searchQuery: "",
     guideSection: guideSections.length ? guideSections[0].id : ""
   };
-  var quickstartStepDetails = [
-    {
-      output: "approved request",
-      time: "5 to 10 minutes",
-      leads: "repository work"
-    },
-    {
-      output: "workshop draft",
-      time: "depends on authoring path",
-      leads: "content authoring"
-    },
-    {
-      output: "reviewed release",
-      time: "10 to 15 minutes",
-      leads: "production"
-    }
-  ];
-  var wmsStatusGraphViewBox = { x: 0, y: 0, width: 1320, height: 660 };
+  var wmsStatusGraphViewBox = { x: 0, y: 0, width: 1540, height: 660 };
   var wmsStatusNodeHalfWidth = 82;
   var wmsStatusNodeHalfHeight = 31;
   var wmsStatusGraphZoomLevels = [25, 50, 75, 100, 125, 150, 200];
@@ -354,16 +337,32 @@
       label: "Completed",
       group: "Done",
       responsible: "LiveLabs owner / workshop owner",
-      meaning: "The workshop is complete and available for normal use, publication, or maintenance depending on your internal workflow.",
-      nextStep: "No immediate action is required. Later, the workshop may enter Quarterly QA or return to In Development if updates are required.",
+      meaning: "The workshop is complete and ready for the author to create a publish request.",
+      nextStep: "Create a Publish Request. The LiveLabs team reviews it and approves it or asks for changes before publication.",
       checks: [
         "Workshop is complete.",
         "Ownership is clear for future maintenance.",
-        "Future QA or update cycle can be scheduled."
+        "Publish request can be created and reviewed."
       ],
       x: 1180,
       y: 300,
       color: "#f0fdf4"
+    },
+    {
+      id: "publish-request",
+      label: "Publish Request",
+      group: "Publishing",
+      responsible: "Workshop author / LiveLabs publishing team",
+      meaning: "After the WMS request reaches Completed, the author creates a publish request for the LiveLabs team to review.",
+      nextStep: "The LiveLabs team reviews the publish request and approves it or asks for changes before publication.",
+      checks: [
+        "WMS status is Completed.",
+        "Preview, ownership, and production details are ready.",
+        "Publish request evidence is attached to the WMS record."
+      ],
+      x: 1410,
+      y: 300,
+      color: "#fff7ed"
     },
     {
       id: "quarterly-qa",
@@ -409,6 +408,7 @@
     { from: "self-qa", to: "in-development", type: "alt", label: "fix issues", labelX: 615, labelY: 374 },
     { from: "self-qa", to: "self-qa-complete", type: "normal", label: "QA passes", labelX: 835, labelY: 236 },
     { from: "self-qa-complete", to: "completed", type: "normal", label: "complete", labelX: 1065, labelY: 236 },
+    { from: "completed", to: "publish-request", type: "publish", label: "request publish", labelX: 1295, labelY: 236 },
     { from: "completed", to: "quarterly-qa", type: "normal", label: "scheduled review", labelX: 1088, labelY: 386 },
     { from: "quarterly-qa", to: "in-development", type: "alt", label: "updates needed", labelX: 720, labelY: 414 },
     { from: "quarterly-qa", to: "quarterly-qa-complete", type: "normal", label: "QA passes", labelX: 1065, labelY: 416 },
@@ -445,19 +445,11 @@
   var searchMode = document.getElementById("searchMode");
   var rabbitFlow = document.getElementById("rabbitFlow");
   var stepSections = Array.from(document.querySelectorAll(".rabbit-step"));
-  var progressButtons = Array.from(document.querySelectorAll(".progress-button"));
   var progressShell = document.getElementById("progressShell");
-  var progressCaption = document.getElementById("progressCaption");
   var authoringRouteTabs = Array.from(document.querySelectorAll("[data-authoring-route]"));
   var authoringRoutePanels = Array.from(document.querySelectorAll("[data-authoring-panel]"));
   var fastTrackToggle = document.getElementById("fastTrackToggle");
   var fastTrackStatus = document.getElementById("fastTrackStatus");
-  var quickstartProcessTitle = document.getElementById("quickstartProcessTitle");
-  var quickstartProcessIndex = document.getElementById("quickstartProcessIndex");
-  var quickstartProcessTotal = document.getElementById("quickstartProcessTotal");
-  var quickstartProcessOutput = document.getElementById("quickstartProcessOutput");
-  var quickstartProcessTime = document.getElementById("quickstartProcessTime");
-  var quickstartProcessLeads = document.getElementById("quickstartProcessLeads");
   var liveRegion = document.getElementById("liveRegion");
   var bubbleGrid = document.getElementById("bubbleGrid");
   var emptyState = document.getElementById("emptyState");
@@ -1495,6 +1487,21 @@
     });
   }
 
+  function releaseObserverAtTop() {
+    var deadline = Date.now() + 1600;
+
+    function checkPosition() {
+      if (window.pageYOffset <= 1 || Date.now() >= deadline) {
+        suppressObserver = false;
+        return;
+      }
+
+      window.requestAnimationFrame(checkPosition);
+    }
+
+    window.requestAnimationFrame(checkPosition);
+  }
+
   function updateAuthoringRouteQuery(options) {
     var config = Object.assign({ replace: false }, options || {});
     var url;
@@ -1547,82 +1554,18 @@
     }
   }
 
-  function updateProgressCaption() {
-    if (!progressCaption) {
-      return;
-    }
-
-    if (!stepMeta[state.currentStep]) {
-      progressCaption.textContent = "Step 1 of 3 is active.";
-      return;
-    }
-
-    if (state.mode !== "beginner") {
-      progressCaption.textContent = "Step 1 of 3 is active.";
-      return;
-    }
-
-    progressCaption.textContent = "Step " + (state.currentStep + 1) + " of 3: " +
-      stepMeta[state.currentStep].title + " (" + (state.fastTrack === "minimal" ? "Fast Track" : "Guided") + ").";
-  }
-
   function updateBeginnerUI() {
     rabbitFlow.classList.toggle("track-minimal", state.fastTrack === "minimal");
     fastTrackToggle.checked = state.fastTrack === "minimal";
     fastTrackStatus.textContent = state.fastTrack === "minimal"
       ? "Fast Track hides the longer notes and common mistakes."
       : "Guided mode keeps notes, common mistakes, and extra context visible.";
-    var activeStepMeta = stepMeta[state.currentStep] || stepMeta[0] || {};
-    var activeStepDetails = quickstartStepDetails[state.currentStep] || quickstartStepDetails[0];
-
-    if (quickstartProcessTitle) {
-      quickstartProcessTitle.textContent = activeStepMeta.title || "Submit Workshop Request";
-    }
-
-    if (quickstartProcessIndex) {
-      quickstartProcessIndex.textContent = String(state.currentStep + 1);
-    }
-
-    if (quickstartProcessTotal) {
-      quickstartProcessTotal.textContent = String(stepSections.length || 3);
-    }
-
-    if (quickstartProcessOutput && activeStepDetails) {
-      quickstartProcessOutput.textContent = activeStepDetails.output;
-    }
-
-    if (quickstartProcessTime && activeStepDetails) {
-      quickstartProcessTime.textContent = activeStepDetails.time;
-    }
-
-    if (quickstartProcessLeads && activeStepDetails) {
-      quickstartProcessLeads.textContent = activeStepDetails.leads;
-    }
-
-    progressButtons.forEach(function (button, index) {
-      var isActive = index === state.currentStep;
-      var isComplete = index < state.currentStep;
-      var mark = button.querySelector(".progress-mark");
-
-      button.classList.toggle("is-active", isActive);
-      button.classList.toggle("is-complete", isComplete);
-      button.classList.remove("is-locked");
-      button.setAttribute("aria-current", isActive ? "step" : "false");
-      button.setAttribute("aria-selected", isActive ? "true" : "false");
-      button.setAttribute("tabindex", isActive ? "0" : "-1");
-      if (mark) {
-        mark.innerHTML = isComplete ? "&#10003;" : String(index + 1);
-      }
-    });
-
     stepSections.forEach(function (section, index) {
       section.classList.toggle("is-active", index === state.currentStep);
       section.classList.toggle("is-complete", index < state.currentStep);
       section.classList.remove("is-locked");
     });
 
-    updateProgressCaption();
-    updateBreadcrumb();
   }
 
   function getTagFacets() {
@@ -2497,7 +2440,7 @@
     setWmsStatusGraphViewBox(svg);
     defineWmsStatusMarkers(svg, graphId);
     svg.appendChild(createWmsStatusSvgElement("title", { id: graphId + "-title" })).textContent = "LiveLabs workshop status workflow graph";
-    svg.appendChild(createWmsStatusSvgElement("desc", { id: graphId + "-desc" })).textContent = "A clickable graph showing submitted, approval, development, self QA, completed, and quarterly QA statuses.";
+    svg.appendChild(createWmsStatusSvgElement("desc", { id: graphId + "-desc" })).textContent = "A clickable graph showing submitted, approval, development, self QA, completed, publish request, and quarterly QA statuses.";
     svg.setAttribute("role", "group");
     svg.setAttribute("aria-labelledby", graphId + "-title " + graphId + "-desc");
 
@@ -2505,7 +2448,7 @@
       var from = wmsStatusGraphNodeMap[transition.from];
       var to = wmsStatusGraphNodeMap[transition.to];
       var path = createWmsStatusSvgElement("path", {
-        class: "wms-status-edge" + (transition.type === "alt" ? " is-return-path" : ""),
+        class: "wms-status-edge" + (transition.type === "alt" ? " is-return-path" : transition.type === "publish" ? " is-publish-request" : ""),
         d: wmsStatusEdgePath(from, to, transition.type),
         "data-from": transition.from,
         "data-to": transition.to,
@@ -4529,7 +4472,6 @@
   document.addEventListener("click", function (event) {
     var modeButton = event.target.closest("[data-mode-target]");
     var authoringRouteTab = event.target.closest("[data-authoring-route]");
-    var progressButton = event.target.closest("[data-step-target]");
     var actionButton = event.target.closest("[data-action]");
     var guideButton = event.target.closest("[data-guide-target]");
     var guideSectionButton = event.target.closest("[data-guide-section]");
@@ -4624,11 +4566,6 @@
 
     if (event.target.closest("figure[data-expandable=\"true\"]")) {
       openImageLightbox(event.target.closest("figure[data-expandable=\"true\"]"));
-      return;
-    }
-
-    if (progressButton) {
-      goToStep(Number(progressButton.getAttribute("data-step-target")));
       return;
     }
 
@@ -4911,6 +4848,16 @@
 
   if (backToTopButton) {
     backToTopButton.addEventListener("click", function () {
+      if (state.mode === "beginner") {
+        suppressObserver = true;
+        goToStep(0, {
+          scroll: false,
+          hash: true,
+          replaceHistory: true,
+          announce: false
+        });
+        releaseObserverAtTop();
+      }
       window.scrollTo({ top: 0, behavior: smoothBehavior() });
       setLiveMessage("Returned to the top of the page.");
     });

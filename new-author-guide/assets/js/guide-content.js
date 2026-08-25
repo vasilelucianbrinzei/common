@@ -54,7 +54,7 @@ window.authorGuideContent = (function () {
     stepMeta: [
       {
         id: "step-1",
-        title: "WMS Platform",
+        title: "Submit Workshop Request",
         guideTarget: "1-labs-wms",
         summary: "Start in WMS, fill the reviewer-facing request fields with real detail, and understand the approval to Quality Assurance status flow before development begins.",
         keywords: ["wms", "workshop request", "stakeholder", "council", "tags", "approved", "self Quality Assurance", "quarterly Quality Assurance"]
@@ -68,7 +68,7 @@ window.authorGuideContent = (function () {
       },
       {
         id: "step-3",
-        title: "Review & Publish",
+        title: "Review and Publish",
         guideTarget: "5-labs-qa-checks",
         summary: "Complete Self Quality Assurance in the right order, fix pull request check failures by class, create the pull request with the WMS ID, and request publishing with production URLs.",
         keywords: ["self Quality Assurance", "quarterly Quality Assurance", "validator", "pull request", "publish", "production", "wms id"]
