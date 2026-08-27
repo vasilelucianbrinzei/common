@@ -57,7 +57,7 @@
     });
   var guideSections = [];
   var guideSectionMap = {};
-  var guideManifestHref = "./workshops/author-guide/manifest.json";
+  var guideManifestHref = "../workshops/author-guide/manifest.json";
   var fullGuideHref = "https://oracle-livelabs.github.io/common/sample-livelabs-templates/create-labs/labs/workshops/livelabs/";
   var workshopExampleHref = window.authorGuideWorkshopExampleHref || "https://oracle-livelabs.github.io/developer/dev-ai-app-dev-finance/workshops/sandbox/";
   var guideCatalogPromise = null;
@@ -497,7 +497,7 @@
   var workshopMarkdownError = document.getElementById("workshopMarkdownError");
   var copyGeneratedMarkdown = document.getElementById("copyGeneratedMarkdown");
   var bubbleModalElement = document.getElementById("bubbleModal");
-  var bubbleModal = bootstrap.Modal.getOrCreateInstance(bubbleModalElement);
+  var bubbleModal = bubbleModalElement ? bootstrap.Modal.getOrCreateInstance(bubbleModalElement) : null;
   var imageLightbox = document.getElementById("imageLightbox");
   var imageLightboxImage = document.getElementById("imageLightboxImage");
   var imageLightboxCaption = document.getElementById("imageLightboxCaption");
@@ -512,14 +512,16 @@
   var wmsExamplePromptMinLength = 24;
   var wmsExamplePromptMaxLength = 320;
 
-  bubbleModalElement.addEventListener("hidden.bs.modal", function () {
-    closeImageLightbox({ announce: false, restoreFocus: false });
-    document.body.classList.remove("modal-open");
-    document.body.style.removeProperty("padding-right");
-    document.querySelectorAll(".modal-backdrop").forEach(function (backdrop) {
-      backdrop.remove();
+  if (bubbleModalElement) {
+    bubbleModalElement.addEventListener("hidden.bs.modal", function () {
+      closeImageLightbox({ announce: false, restoreFocus: false });
+      document.body.classList.remove("modal-open");
+      document.body.style.removeProperty("padding-right");
+      document.querySelectorAll(".modal-backdrop").forEach(function (backdrop) {
+        backdrop.remove();
+      });
     });
-  });
+  }
 
   function escapeHtml(value) {
     return String(value)
@@ -657,7 +659,7 @@
     var cleanPath = path.replace(/\/+$/, "");
     var lastSegment = cleanPath.split("/").pop().toLowerCase();
 
-    if (["home", "quickstart", "cheatsheet", "nodoc", "index.html"].indexOf(lastSegment) !== -1) {
+    if (["home", "home.html", "quickstart", "quickstart.html", "cheatsheet", "cheatsheet.html", "nodoc", "nodoc.html", "index.html"].indexOf(lastSegment) !== -1) {
       cleanPath = cleanPath.slice(0, cleanPath.length - lastSegment.length);
     } else if (!path.endsWith("/")) {
       cleanPath = path.slice(0, path.lastIndexOf("/") + 1);
@@ -667,22 +669,23 @@
   }
 
   var appBasePath = resolveAppBasePath();
+  var routeBasePath = appBasePath.replace(/pages\/$/i, "") || "/";
 
   function routeTokenFromLocation() {
     var routeParam = new URLSearchParams(window.location.search).get("route");
     var pathSegment = (window.location.pathname || "").replace(/\/+$/, "").split("/").pop().toLowerCase();
     var cleanRoute = String(routeParam || pathSegment || "").toLowerCase();
 
-    if (cleanRoute === "home") {
+    if (cleanRoute === "home" || cleanRoute === "home.html" || cleanRoute === "index.html") {
       return "#home";
     }
-    if (cleanRoute === "quickstart") {
+    if (cleanRoute === "quickstart" || cleanRoute === "quickstart.html") {
       return "#quickstart";
     }
-    if (cleanRoute === "cheatsheet" || cleanRoute === "quick-reference") {
+    if (cleanRoute === "cheatsheet" || cleanRoute === "cheatsheet.html" || cleanRoute === "quick-reference") {
       return "#quick-reference";
     }
-    if (cleanRoute === "nodoc" || cleanRoute === "no-doc") {
+    if (cleanRoute === "nodoc" || cleanRoute === "nodoc.html" || cleanRoute === "no-doc") {
       return "#nodoc";
     }
 
@@ -691,24 +694,31 @@
 
   function routeUrl(hash) {
     var cleaned = String(hash || "").replace(/^#/, "").toLowerCase();
+    var pageFile = function (cleanName) {
+      return routeBasePath + cleanName;
+    };
 
     if (!cleaned || cleaned === "home" || cleaned === "hub") {
-      return appBasePath + "home";
+      return pageFile("home");
     }
     if (cleaned === "guided" || cleaned === "quickstart" || cleaned.indexOf("step-") === 0) {
-      return appBasePath + "quickstart";
+      return pageFile("quickstart");
     }
     if (cleaned === "toolkit" || cleaned === "quick-reference" || cleaned === "cheatsheet" || cleaned === "explorer") {
-      return appBasePath + "cheatsheet";
+      return pageFile("cheatsheet");
     }
     if (cleaned === "nodoc" || cleaned === "no-doc") {
-      return appBasePath + "nodoc";
+      return pageFile("nodoc");
     }
 
-    return appBasePath + "index.html" + (hash || "");
+    return routeBasePath + "home" + (hash || "");
   }
 
   function setLiveMessage(message) {
+    if (!liveRegion) {
+      return;
+    }
+
     liveRegion.textContent = "";
     window.setTimeout(function () {
       liveRegion.textContent = message;
@@ -1437,7 +1447,9 @@
   }
 
   function updateNav() {
-    modeNav.classList.remove("d-none");
+    if (modeNav) {
+      modeNav.classList.remove("d-none");
+    }
     document.body.classList.toggle("home-no-scroll", state.mode === "hub");
     syncAuthorNavToggle();
 
@@ -1555,6 +1567,10 @@
   }
 
   function updateBeginnerUI() {
+    if (!rabbitFlow || !fastTrackToggle || !fastTrackStatus) {
+      return;
+    }
+
     rabbitFlow.classList.toggle("track-minimal", state.fastTrack === "minimal");
     fastTrackToggle.checked = state.fastTrack === "minimal";
     fastTrackStatus.textContent = state.fastTrack === "minimal"
@@ -1749,7 +1765,9 @@
     var queryText = state.toolkitQuery.trim();
     var activeTags = normalizeTagSelection(state.activeTags);
 
-    resultCount.textContent = "Showing " + count + " cheatsheet card" + (count === 1 ? "" : "s");
+    if (resultCount) {
+      resultCount.textContent = "Showing " + count + " cheatsheet card" + (count === 1 ? "" : "s");
+    }
 
     if (!filterSummary) {
       return;
@@ -1810,6 +1828,10 @@
   }
 
   function renderExplorer() {
+    if (!bubbleGrid || !emptyState) {
+      return;
+    }
+
     var query = state.toolkitQuery.trim();
     var selectedTags = normalizeTagSelection(state.activeTags);
     var visibleEntries = explorerItems.map(function (item) {
@@ -2802,8 +2824,8 @@
     }
 
     return window.RedwoodVideoPlayer.createMountMarkup(Object.assign({
-      src: "./assets/media/guide/author-guide-template.mp4",
-      captions: "./assets/media/guide/author-guide-template.vtt",
+      src: "../assets/media/guide/author-guide-template.mp4",
+      captions: "../assets/media/guide/author-guide-template.vtt",
       status: "preview",
       sourceNote: "Preview asset only. Use the written steps and transcript until the approved walkthrough is supplied.",
       autoplay: true,
@@ -2897,7 +2919,9 @@
     }
 
     hydrateVideoCards(bubbleModalElement);
-    bubbleModal.show();
+    if (bubbleModal) {
+      bubbleModal.show();
+    }
     setLiveMessage(item.title + " opened.");
   }
 
@@ -4094,7 +4118,7 @@
     setModeRegionVisibility(generatorMode, mode === "generator");
     setModeRegionVisibility(searchMode, mode === "search");
 
-    if (mode !== "explorer") {
+    if (mode !== "explorer" && bubbleModal) {
       bubbleModal.hide();
     }
 
@@ -4314,7 +4338,9 @@
 
   function handleShortcutBubble(id) {
     state.toolkitQuery = "";
-    bubbleSearch.value = "";
+    if (bubbleSearch) {
+      bubbleSearch.value = "";
+    }
     setActiveTag("all");
     switchMode("explorer", { openBubble: id });
   }
@@ -4490,6 +4516,10 @@
     var wmsStatusAction = event.target.closest("[data-wms-status-action]");
     var installCard = event.target.closest("[data-install-card]");
     var isPrimaryNav = modeButton && !!modeButton.closest(".nav-group-all");
+
+    if (modeButton && modeButton.tagName === "A") {
+      return;
+    }
 
     if (installCard && !copyTextButton) {
       var isComplete = !installCard.classList.contains("is-complete");
@@ -4682,23 +4712,33 @@
     }
   }, true);
 
-  fastTrackToggle.addEventListener("change", function (event) {
-    state.fastTrack = event.target.checked ? "minimal" : "guided";
-    updateBeginnerUI();
-    setLiveMessage(state.fastTrack === "minimal" ? "Fast Track enabled." : "Guided mode enabled.");
-  });
+  if (fastTrackToggle) {
+    fastTrackToggle.addEventListener("change", function (event) {
+      state.fastTrack = event.target.checked ? "minimal" : "guided";
+      updateBeginnerUI();
+      setLiveMessage(state.fastTrack === "minimal" ? "Fast Track enabled." : "Guided mode enabled.");
+    });
+  }
 
-  bubbleSearch.addEventListener("input", function (event) {
-    state.toolkitQuery = event.target.value;
-    renderExplorer();
-  });
+  if (bubbleSearch) {
+    bubbleSearch.addEventListener("input", function (event) {
+      state.toolkitQuery = event.target.value;
+      renderExplorer();
+    });
+  }
 
-  clearSearch.addEventListener("click", function () {
-    state.toolkitQuery = "";
-    bubbleSearch.value = "";
-    renderExplorer();
-    bubbleSearch.focus();
-  });
+  if (clearSearch) {
+    clearSearch.addEventListener("click", function () {
+      state.toolkitQuery = "";
+      if (bubbleSearch) {
+        bubbleSearch.value = "";
+      }
+      renderExplorer();
+      if (bubbleSearch) {
+        bubbleSearch.focus();
+      }
+    });
+  }
 
   if (toolkitSort) {
     toolkitSort.addEventListener("change", function (event) {
