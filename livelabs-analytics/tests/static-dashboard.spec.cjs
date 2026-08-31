@@ -96,7 +96,7 @@ test("Portfolio Stats uses themed collapsible glance and example-first fallback 
   await expect(glance).toBeVisible();
   await expect(glance).not.toHaveAttribute("open", "");
   await expect(glance.locator("summary h3")).toHaveText("Portfolio at a glance");
-  await expect(glance.locator("summary span")).toHaveCount(0);
+  await expect(glance.locator("summary span")).toHaveText("885 active items");
   await expect(glance.locator(".portfolio-glance-grid")).toBeHidden();
   const disclosureArrows = await page.locator("main details.toggle-panel > summary.panel-head").evaluateAll((summaries) =>
     summaries.map((summary) => getComputedStyle(summary, "::after").content)
@@ -105,6 +105,7 @@ test("Portfolio Stats uses themed collapsible glance and example-first fallback 
   expect(disclosureArrows.every((content) => content !== "none")).toBe(true);
   await glance.locator("summary").click();
   await expect(glance).toHaveAttribute("open", "");
+  await expect(glance.getByText("A quick read of the 885 active portfolio items: 585 workshops and 300 sprints.", { exact: true })).toBeVisible();
   await expect(portfolio.locator('[data-portfolio-glance="true"] strong')).toHaveText([
     "885",
     "285",

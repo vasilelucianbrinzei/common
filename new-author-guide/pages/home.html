@@ -9,7 +9,6 @@
   <script src="../assets/js/author-guide-config.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/author-guide.css">
-  <link rel="stylesheet" href="../assets/css/redwood-video-player.css">
   <link rel="stylesheet" href="../assets/css/author-guide-improvements.css?v=20260805-nodoc-hero-lab-video">
 </head>
 <body data-author-guide-page="hub">
@@ -119,7 +118,7 @@
                 class="home-search-input"
                 type="search"
                 placeholder="WMS, Quality Assurance, GitHub, validator"
-                aria-label="Search across Quickstart and Cheatsheet"
+                aria-label="Search across the full author guide, including Quickstart, Cheatsheet, and NoDoc"
               >
               <button class="home-search-button" type="submit" aria-label="Search the author guide">
                 <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
@@ -154,6 +153,36 @@
               </a>
             </div>
           </div>
+        </div>
+      </section>
+      <section class="mode-screen d-none" id="searchMode" aria-labelledby="searchHeading">
+        <div class="container py-5">
+          <div class="search-mode-hero">
+            <p class="eyebrow">Author guide search</p>
+            <h2 id="searchHeading">Find the right authoring guidance</h2>
+            <p>Search across Quickstart, Cheatsheet, the NoDoc workshop, and a real workshop example when relevant.</p>
+            <form class="search-page-form" id="searchPageForm" role="search">
+              <label class="visually-hidden" for="searchPageInput">Search the author guide</label>
+              <div class="search-page-input-wrap">
+                <input class="search-page-input" id="searchPageInput" type="text" inputmode="search" role="searchbox" placeholder="WMS, Quality Assurance, GitHub, validator" autocomplete="off">
+                <button class="search-page-input-clear" id="searchPageClear" type="button" aria-label="Clear search" title="Clear search" hidden>
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"></path></svg>
+                </button>
+              </div>
+              <button class="search-page-button" type="submit" aria-label="Search">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"></circle><path d="m16 16 4 4"></path></svg>
+              </button>
+            </form>
+            <div class="d-flex flex-wrap gap-2 mt-3">
+              <span class="badge text-bg-light" id="searchQueryChip">No query yet</span>
+              <span class="badge text-bg-light" id="searchCountChip">0 results</span>
+            </div>
+            <p class="mt-3 mb-0" id="searchSummary"></p>
+          </div>
+          <section class="search-results-shell">
+            <div class="search-results-grid" id="searchResults"></div>
+            <div class="search-empty-state" id="searchEmptyState"></div>
+          </section>
         </div>
       </section>
       <button type="button" class="back-to-top" id="backToTopButton" aria-label="Back to top" title="Back to top">
@@ -259,7 +288,6 @@
   <script src="../assets/js/workshop-generator.js?v=20260708-skill-generator-livestack"></script>
   <script src="../assets/js/shared-side-nav.js?v=20260529-shared-nav-v2"></script>
   <script src="../assets/js/nodoc-workshop.js?v=20260817-task-media-progress-navigation"></script>
-  <script src="../assets/js/redwood-video-player.js"></script>
   <script src="../assets/js/author-guide-app.js?v=20260804-separate-pages"></script>
   <script src="../assets/js/shared-footer.js?v=20260516-followup"></script>
 </body>

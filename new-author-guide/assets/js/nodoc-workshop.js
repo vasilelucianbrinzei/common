@@ -475,7 +475,13 @@
       });
     }
 
-    activate(0, 0, { scroll: false });
+    // Global search uses this compact deep link so its result can open the exact
+    // workshop lab or task after the externally maintained fragment has loaded.
+    var deepLinkMatch = window.location.hash.match(/^#nodoc:(\d+)(?::(\d+))?$/i);
+    var deepLinkPanel = deepLinkMatch ? Number(deepLinkMatch[1]) : 0;
+    var deepLinkTask = deepLinkMatch && deepLinkMatch[2] ? Number(deepLinkMatch[2]) : 0;
+
+    activate(deepLinkPanel, deepLinkTask, { scroll: !!deepLinkMatch });
   }
 
   if (document.readyState === "loading") {

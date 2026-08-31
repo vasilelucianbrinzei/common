@@ -3036,9 +3036,9 @@
       glance.dataset.portfolioGlance = "true";
       glance.setAttribute("aria-label", "Portfolio at a glance");
       glance.innerHTML = `
-        <summary class="panel-head"><h3>Portfolio at a glance</h3></summary>
+        <summary class="panel-head"><h3>Portfolio at a glance</h3><span>885 active items</span></summary>
         <div class="toggle-body portfolio-glance-body">
-          <p class="note">A quick read of the current active portfolio.</p>
+          <p class="note">A quick read of the 885 active portfolio items: 585 workshops and 300 sprints.</p>
           <div class="portfolio-glance-grid">
         <article class="portfolio-glance-card"><span>Active portfolio</span><strong>885</strong><small>585 workshops · 300 sprints</small></article>
         <article class="portfolio-glance-card"><span>Updated in last 12 months</span><strong>285</strong><small>215 workshops · 70 sprints</small></article>

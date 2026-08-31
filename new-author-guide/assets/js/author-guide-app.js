@@ -60,6 +60,8 @@
   var guideManifestHref = "../workshops/author-guide/manifest.json";
   var fullGuideHref = "https://oracle-livelabs.github.io/common/sample-livelabs-templates/create-labs/labs/workshops/livelabs/";
   var workshopExampleHref = window.authorGuideWorkshopExampleHref || "https://oracle-livelabs.github.io/developer/dev-ai-app-dev-finance/workshops/sandbox/";
+  var nodocSearchEntries = [];
+  var nodocSearchLoadPromise = null;
   var guideCatalogPromise = null;
   var guideCatalogLoaded = false;
   var guideSectionSurfaceCache = {};
@@ -676,6 +678,10 @@
     var pathSegment = (window.location.pathname || "").replace(/\/+$/, "").split("/").pop().toLowerCase();
     var cleanRoute = String(routeParam || pathSegment || "").toLowerCase();
 
+    if (window.location.hash) {
+      return window.location.hash;
+    }
+
     if (cleanRoute === "home" || cleanRoute === "home.html" || cleanRoute === "index.html") {
       return "#home";
     }
@@ -701,14 +707,23 @@
     if (!cleaned || cleaned === "home" || cleaned === "hub") {
       return pageFile("home");
     }
-    if (cleaned === "guided" || cleaned === "quickstart" || cleaned.indexOf("step-") === 0) {
+    if (cleaned === "guided" || cleaned === "quickstart") {
       return pageFile("quickstart");
+    }
+    if (cleaned.indexOf("step-") === 0) {
+      return pageFile("quickstart") + hash;
     }
     if (cleaned === "toolkit" || cleaned === "quick-reference" || cleaned === "cheatsheet" || cleaned === "explorer") {
       return pageFile("cheatsheet");
     }
+    if (cleaned.indexOf("cheatsheet:") === 0) {
+      return pageFile("cheatsheet") + hash;
+    }
     if (cleaned === "nodoc" || cleaned === "no-doc") {
       return pageFile("nodoc");
+    }
+    if (cleaned.indexOf("nodoc:") === 0) {
+      return pageFile("nodoc") + hash;
     }
 
     return routeBasePath + "home" + (hash || "");
@@ -791,18 +806,20 @@
   }
 
   function updateHashFromState(options) {
+    var currentHash = window.location.hash || "";
+
     if (state.mode === "beginner") {
       setHash(state.currentStep === 0 ? "#quickstart" : "#step-" + (state.currentStep + 1), options);
       return;
     }
 
     if (state.mode === "explorer") {
-      setHash("#quick-reference", options);
+      setHash(currentHash.indexOf("#cheatsheet:") === 0 ? currentHash : "#quick-reference", options);
       return;
     }
 
     if (state.mode === "nodoc") {
-      setHash("#nodoc", options);
+      setHash(currentHash.indexOf("#nodoc:") === 0 ? currentHash : "#nodoc", options);
       return;
     }
 
@@ -1444,6 +1461,10 @@
     if (searchPageInput) {
       searchPageInput.value = state.searchQuery;
     }
+
+    if (searchPageClear) {
+      searchPageClear.hidden = !(searchPageInput && searchPageInput.value);
+    }
   }
 
   function updateNav() {
@@ -1643,7 +1664,7 @@
   }
 
   function buildExplorerSearchEntry(item) {
-    return makeSearchEntry({
+    return createSearchEntry({
       id: item.id,
       typeLabel: "Cheatsheet",
       title: item.title,
@@ -2981,6 +3002,9 @@
       path: pathText,
       sourceHref: config.sourceHref || "",
       sourceLabel: config.sourceLabel || "",
+      resultHref: config.resultHref || "",
+      resultLabel: config.resultLabel || "Open Result",
+      resultExternal: !!config.resultExternal,
       open: config.open,
       titleNorm: titleNorm,
       summaryNorm: summaryNorm,
@@ -3055,6 +3079,13 @@
   }
 
   function renderSearchResultCard(result) {
+    var resultAction = result.resultHref
+      ? '<a class="btn btn-primary rounded-pill px-4" href="' + escapeHtml(result.resultHref) + '"' + (result.resultExternal ? ' target="_blank" rel="noreferrer"' : "") + '>' + escapeHtml(result.resultLabel) + "</a>"
+      : '<button type="button" class="btn btn-primary rounded-pill px-4" data-search-open="' + escapeHtml(result.id) + '">' + escapeHtml(result.resultLabel) + "</button>";
+    var sourceAction = result.sourceHref
+      ? '<a class="btn btn-outline-secondary rounded-pill px-4" href="' + escapeHtml(result.sourceHref) + '" target="_blank" rel="noreferrer">' + escapeHtml(result.sourceLabel || "Open Step by Step Guide") + "</a>"
+      : "";
+
     return [
       '<article class="search-result-card">',
       '  <div class="search-result-top">',
@@ -3064,8 +3095,8 @@
       '  <h3 class="search-result-title">', escapeHtml(result.title), "</h3>",
       '  <p class="search-result-summary">', escapeHtml(result.summary), "</p>",
       '  <div class="search-result-actions">',
-      '    <button type="button" class="btn btn-primary rounded-pill px-4" data-search-open="', result.id, '">Open Result</button>',
-      result.sourceHref ? '<a class="btn btn-outline-secondary rounded-pill px-4" href="' + escapeHtml(result.sourceHref) + '" target="_blank" rel="noreferrer">Open Step by Step Guide</a>' : "",
+      "    ", resultAction,
+      sourceAction,
       "  </div>",
       "</article>"
     ].join("");
@@ -3084,7 +3115,7 @@
     }
 
     if (!query) {
-      searchSummary.textContent = "Enter keywords or a short question in the search field above. Results link back into the exact Quickstart step or Cheatsheet card that best matches the query.";
+      searchSummary.textContent = "";
       searchCountChip.textContent = "0 results";
       searchResultsMount.innerHTML = "";
       searchEmptyState.innerHTML = "Use the search field above to search by keywords such as <strong>WMS</strong>, <strong>Self Quality Assurance</strong>, <strong>GitHub Pages</strong>, <strong>validator</strong>, or a short question such as <strong>how do I publish</strong>.";
@@ -3097,11 +3128,11 @@
       .map(function (entry) {
         return {
           entry: entry,
-          score: scoreSearchEntry(entry, query)
+          score: scoreSearchEntry(entry, query) + (entry.id === "workshop-example" && isWorkshopExampleIntent(query) ? 30 : 0)
         };
       })
       .filter(function (item) {
-        return item.score >= 14;
+        return item.score >= 14 && (item.entry.id !== "workshop-example" || isWorkshopExampleIntent(query));
       })
       .sort(function (left, right) {
         return right.score - left.score;
@@ -3115,7 +3146,7 @@
     searchCountChip.textContent = results.length + " result" + (results.length === 1 ? "" : "s");
 
     if (results.length) {
-      searchSummary.textContent = "Results are ranked by title match, keyword overlap, path relevance, and deeper body matches across Quickstart and Cheatsheet.";
+      searchSummary.textContent = "Results are ranked by title match, keyword overlap, path relevance, and deeper body matches across Quickstart, Cheatsheet, and NoDoc.";
       searchEmptyState.classList.add("d-none");
     } else {
       searchSummary.textContent = "The guide did not find a strong match for that query yet.";
@@ -3999,6 +4030,7 @@
         path: "Quickstart / Step " + (index + 1),
         body: stepSections[index] ? stepSections[index].textContent : "",
         keywords: meta.keywords || [],
+        resultHref: routeBasePath + "quickstart#step-" + (index + 1),
         open: {
           kind: "guided",
           step: index
@@ -4026,6 +4058,7 @@
         tags: item.tags,
         sourceHref: item.sourceHref,
         sourceLabel: item.sourceLabel,
+        resultHref: routeBasePath + "cheatsheet#cheatsheet:" + encodeURIComponent(item.id),
         open: {
           kind: "toolkit",
           itemId: item.id
@@ -4036,7 +4069,108 @@
       searchEntryMap[entry.id] = entry;
     });
 
-    // Keep search scoped to visible redesigned surfaces. The original Step by Step Guide remains available through explicit links only.
+    nodocSearchEntries.forEach(function (entry) {
+      searchIndex.push(entry);
+      searchEntryMap[entry.id] = entry;
+    });
+
+    var workshopExampleEntry = createSearchEntry({
+      id: "workshop-example",
+      typeLabel: "Workshop example",
+      title: "LiveLabs Workshop Example",
+      summary: "Open the working Finance AI Developer Hub workshop to study a real LiveLabs structure, labs, tasks, and learner flow.",
+      path: "Workshop Example / Finance AI Developer Hub",
+      keywords: ["workshop example", "sample", "reference", "template", "demo", "inspiration", "finance", "ai developer hub"],
+      resultHref: workshopExampleHref,
+      resultLabel: "Open Workshop Example",
+      resultExternal: true,
+      open: {
+        kind: "workshop-example"
+      }
+    });
+
+    searchIndex.push(workshopExampleEntry);
+    searchEntryMap[workshopExampleEntry.id] = workshopExampleEntry;
+  }
+
+  function createNoDocSearchEntries(markup) {
+    var documentFragment = new DOMParser().parseFromString(markup, "text/html");
+
+    return Array.from(documentFragment.querySelectorAll("details.nodoc-tree-group")).reduce(function (entries, panel, panelIndex) {
+      var panelSummary = panel.querySelector(":scope > summary");
+      var panelTitleNode = panelSummary && panelSummary.querySelector("span");
+      var panelTitle = panelTitleNode ? panelTitleNode.textContent.trim() : (panelSummary ? panelSummary.textContent.trim() : "NoDoc workshop section");
+      var panelText = panel.textContent.trim();
+      var panelEntry = createSearchEntry({
+        id: "nodoc-panel-" + panelIndex,
+        typeLabel: "NoDoc workshop",
+        title: panelTitle,
+        summary: "Open this NoDoc workshop section and its authoring tasks.",
+        path: "NoDoc / " + panelTitle,
+        body: panelText,
+        resultHref: routeBasePath + "nodoc#nodoc:" + panelIndex,
+        open: {
+          kind: "nodoc",
+          panel: panelIndex,
+          task: 0
+        }
+      });
+
+      entries.push(panelEntry);
+      Array.from(panel.querySelectorAll("details.nodoc-task")).forEach(function (task, taskIndex) {
+        var taskSummary = task.querySelector(":scope > summary");
+        var taskTitle = taskSummary ? taskSummary.textContent.trim() : "Task " + (taskIndex + 1);
+        var taskEntry = createSearchEntry({
+          id: "nodoc-panel-" + panelIndex + "-task-" + (taskIndex + 1),
+          typeLabel: "NoDoc workshop",
+          title: taskTitle,
+          summary: "Open this task in " + panelTitle + ".",
+          path: "NoDoc / " + panelTitle + " / " + taskTitle,
+          body: task.textContent.trim(),
+          resultHref: routeBasePath + "nodoc#nodoc:" + panelIndex + ":" + (taskIndex + 1),
+          open: {
+            kind: "nodoc",
+            panel: panelIndex,
+            task: taskIndex + 1
+          }
+        });
+
+        entries.push(taskEntry);
+      });
+
+      return entries;
+    }, []);
+  }
+
+  function loadNoDocSearchEntries() {
+    if (nodocSearchLoadPromise) {
+      return nodocSearchLoadPromise;
+    }
+
+    nodocSearchLoadPromise = fetch(new URL("../content/nodoc/nodoc-workshop.html", window.location.href).href, {
+      cache: "no-cache"
+    }).then(function (response) {
+      if (!response.ok) {
+        throw new Error("NoDoc workshop content returned HTTP " + response.status);
+      }
+      return response.text();
+    }).then(function (markup) {
+      nodocSearchEntries = createNoDocSearchEntries(markup);
+      buildSearchIndex();
+      if (state.mode === "search") {
+        renderSearchResults();
+      }
+      return nodocSearchEntries;
+    }).catch(function (error) {
+      console.warn("NoDoc content was not added to global search.", error);
+      return [];
+    });
+
+    return nodocSearchLoadPromise;
+  }
+
+  function isWorkshopExampleIntent(query) {
+    return /\b(example|sample|reference|template|demo|inspiration|finance)\b|ai developer hub/i.test(String(query || ""));
   }
 
   function runGlobalSearch(rawQuery) {
@@ -4367,7 +4501,23 @@
       return;
     }
 
+    if (cleaned.indexOf("cheatsheet:") === 0) {
+      switchMode("explorer", {
+        scroll: true,
+        forceTop: true,
+        hash: false,
+        announce: false,
+        openBubble: decodeURIComponent(cleaned.slice("cheatsheet:".length))
+      });
+      return;
+    }
+
     if (cleaned === "nodoc" || cleaned === "no-doc") {
+      switchMode("nodoc", { scroll: true, forceTop: true, hash: false, announce: false });
+      return;
+    }
+
+    if (cleaned.indexOf("nodoc:") === 0) {
       switchMode("nodoc", { scroll: true, forceTop: true, hash: false, announce: false });
       return;
     }
@@ -4496,6 +4646,7 @@
   });
 
   document.addEventListener("click", function (event) {
+    var scrollTargetLink = event.target.closest("[data-scroll-target]");
     var modeButton = event.target.closest("[data-mode-target]");
     var authoringRouteTab = event.target.closest("[data-authoring-route]");
     var actionButton = event.target.closest("[data-action]");
@@ -4516,6 +4667,16 @@
     var wmsStatusAction = event.target.closest("[data-wms-status-action]");
     var installCard = event.target.closest("[data-install-card]");
     var isPrimaryNav = modeButton && !!modeButton.closest(".nav-group-all");
+
+    if (scrollTargetLink) {
+      var scrollTarget = document.getElementById(scrollTargetLink.getAttribute("data-scroll-target"));
+
+      if (scrollTarget) {
+        event.preventDefault();
+        scrollToTarget(scrollTarget);
+        return;
+      }
+    }
 
     if (modeButton && modeButton.tagName === "A") {
       return;
@@ -4721,9 +4882,17 @@
   }
 
   if (bubbleSearch) {
-    bubbleSearch.addEventListener("input", function (event) {
+    bubbleSearch.oninput = function (event) {
       state.toolkitQuery = event.target.value;
       renderExplorer();
+    };
+  }
+
+  if (searchPageInput) {
+    searchPageInput.addEventListener("input", function () {
+      if (searchPageClear) {
+        searchPageClear.hidden = !searchPageInput.value;
+      }
     });
   }
 
@@ -4748,26 +4917,18 @@
     });
   }
 
-  if (navSearchForm && navSearchInput) {
-    navSearchForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-      runGlobalSearch(navSearchInput.value);
-    });
-  }
+  document.addEventListener("submit", function (event) {
+    var form = event.target;
+    var input;
 
-  if (homeSearchForm && homeSearchInput) {
-    homeSearchForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-      runGlobalSearch(homeSearchInput.value);
-    });
-  }
+    if (!form || ["navSearchForm", "homeSearchForm", "searchPageForm"].indexOf(form.id) === -1) {
+      return;
+    }
 
-  if (searchPageForm && searchPageInput) {
-    searchPageForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-      runGlobalSearch(searchPageInput.value);
-    });
-  }
+    input = form.querySelector('input[type="search"], input[type="text"]');
+    event.preventDefault();
+    runGlobalSearch(input ? input.value : "");
+  });
 
   if (navSearchClear) {
     navSearchClear.addEventListener("click", function () {
@@ -4941,6 +5102,7 @@
   renderTagPills();
   renderExplorer();
   renderGuideNav();
+  loadNoDocSearchEntries();
   loadGuideCatalog().finally(function () {
     applyHash(routeTokenFromLocation());
     updateHashFromState({ replace: true });

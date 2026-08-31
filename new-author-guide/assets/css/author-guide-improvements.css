@@ -4206,10 +4206,10 @@ body.author-nav-closed #app[data-redwood-creator-pass="2026-05-25"] .author-glob
 }
 
 #app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-input {
-  flex: 1 1 auto;
+  width: 100%;
   min-width: 0;
   height: 52px;
-  padding: 0 16px;
+  padding: 0 62px 0 16px;
   border: 0;
   color: var(--redwood-text);
   font: 600 15px/1.2 "Oracle Sans", "Segoe UI", Arial, sans-serif;
@@ -4225,6 +4225,12 @@ body.author-nav-closed #app[data-redwood-creator-pass="2026-05-25"] .author-glob
   outline: 0;
 }
 
+#app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-input-wrap {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 #app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-form:focus-within {
   border-color: rgba(199, 70, 52, 0.62);
   box-shadow:
@@ -4232,8 +4238,7 @@ body.author-nav-closed #app[data-redwood-creator-pass="2026-05-25"] .author-glob
     0 12px 28px rgba(49, 45, 42, 0.08);
 }
 
-#app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-button,
-#app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-clear {
+#app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-button {
   display: inline-flex;
   flex: 0 0 54px;
   align-items: center;
@@ -4255,13 +4260,31 @@ body.author-nav-closed #app[data-redwood-creator-pass="2026-05-25"] .author-glob
   background: var(--oracle-bark);
 }
 
-#app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-clear:hover,
-#app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-clear:focus-visible {
+#app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-input-clear {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(84, 78, 73, 0.45);
+  border-radius: 4px;
+  transform: translateY(-50%);
+  background: #fff;
+  color: var(--redwood-text);
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-input-clear:hover,
+#app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-input-clear:focus-visible {
+  border-color: rgba(199, 70, 52, 0.7);
   background: rgba(199, 70, 52, 0.08);
 }
 
 #app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-button svg,
-#app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-clear svg {
+#app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-input-clear svg {
   width: 21px;
   height: 21px;
   fill: none;
@@ -4276,10 +4299,15 @@ body.author-nav-closed #app[data-redwood-creator-pass="2026-05-25"] .author-glob
     width: 100%;
   }
 
-  #app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-button,
-  #app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-clear {
+  #app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-button {
     flex-basis: 46px;
     min-width: 46px;
+  }
+
+  #app[data-redwood-creator-pass="2026-05-25"] #searchMode .search-page-input-clear {
+    right: 5px;
+    width: 36px;
+    height: 36px;
   }
 }
 
@@ -4289,6 +4317,87 @@ body.author-nav-closed #app[data-redwood-creator-pass="2026-05-25"] .mode-nav {
 
 body.author-nav-closed #app[data-redwood-creator-pass="2026-05-25"] .app-shell {
   padding-left: 0 !important;
+}
+
+/* Release focus: keep documentation images compact and readable while recordings are pending. */
+#app[data-redwood-creator-pass="2026-05-25"] .action-list > li > .inline-evidence-card {
+  width: min(100%, 44rem);
+  margin: 0.8rem 0 1.35rem;
+  padding: 0.45rem;
+  overflow: hidden;
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] .action-list > li > .inline-evidence-card img {
+  width: 100%;
+  max-width: 100%;
+  max-height: min(20rem, 44vh);
+  height: auto;
+  aspect-ratio: auto;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Keep the paired WMS request screenshots together without repeating a full-width card. */
+#app[data-redwood-creator-pass="2026-05-25"] .action-list > li > .wms-request-evidence {
+  display: flex;
+  gap: 0.75rem;
+  width: min(100%, 44rem);
+  margin: 0.8rem 0 1.35rem;
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] .action-list > li > .wms-request-evidence .inline-evidence-card {
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+  margin: 0;
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] .prompt-examples-link {
+  display: inline-block;
+  padding: 0.08rem 0.42rem;
+  border: 1px solid rgba(199, 70, 52, 0.45);
+  border-radius: 4px;
+  background: #fff4f1;
+  color: #9b2719;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] .prompt-examples-link:hover,
+#app[data-redwood-creator-pass="2026-05-25"] .prompt-examples-link:focus-visible {
+  background: #fbe0d9;
+  color: #721b11;
+  text-decoration: underline;
+}
+
+/* Suppress the browser-provided search cancel icon; the bordered in-field control is the only clear action. */
+#app[data-redwood-creator-pass="2026-05-25"] .search-page-input::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] .search-page-input::-ms-clear {
+  display: none;
+}
+
+/* Recording components stay in the source for the next release, but are not shown in this functionality-and-content release. */
+#app[data-redwood-creator-pass="2026-05-25"] [data-video-card],
+#app[data-redwood-creator-pass="2026-05-25"] .media-player-card,
+#app[data-redwood-creator-pass="2026-05-25"] .nodoc-task-media,
+#app[data-redwood-creator-pass="2026-05-25"] video {
+  display: none !important;
+}
+
+@media (max-width: 640px) {
+  #app[data-redwood-creator-pass="2026-05-25"] .action-list > li > .inline-evidence-card {
+    width: 100%;
+    margin: 0.7rem 0 1.1rem;
+  }
+
+  #app[data-redwood-creator-pass="2026-05-25"] .action-list > li > .inline-evidence-card img {
+    max-height: 15rem;
+  }
 }
 
 /* Responsive density and overflow safeguards shared across every guide view. */

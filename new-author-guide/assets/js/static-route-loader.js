@@ -22,6 +22,15 @@
       return response.text();
     })
     .then(function (source) {
+      // The wrapper fetch completes after its own DOMContentLoaded event. The
+      // loaded page scripts register DOMContentLoaded handlers, so signal the
+      // new document once those scripts have been parsed.
+      source = source.replace(/<\/body>/i, [
+        '<script>',
+        'document.dispatchEvent(new Event("DOMContentLoaded", { bubbles: true }));',
+        '<\/script>',
+        '</body>'
+      ].join(""));
       document.open();
       document.write(source);
       document.close();
