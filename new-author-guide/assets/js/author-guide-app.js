@@ -2879,7 +2879,7 @@
 
     mediaCard = document.getElementById("bubbleModalMediaCard");
     if (item.image) {
-      document.getElementById("bubbleModalImage").setAttribute("src", item.image.src);
+      document.getElementById("bubbleModalImage").setAttribute("src", window.AuthorGuideAssets.resolve(item.image.src));
       document.getElementById("bubbleModalImage").setAttribute("alt", item.image.alt || item.title);
       document.getElementById("bubbleModalImageCaption").textContent = item.image.caption || "";
       mediaCard.classList.remove("d-none");

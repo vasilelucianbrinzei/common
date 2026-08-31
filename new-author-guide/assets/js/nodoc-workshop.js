@@ -3,6 +3,12 @@
 
   var nodocManifestHref = "../workshops/nodoc/manifest.json";
 
+  function hydrateNoDocAssets(root, contentUrl) {
+    root.querySelectorAll("[data-nodoc-asset]").forEach(function (image) {
+      image.setAttribute("src", new URL(image.getAttribute("data-nodoc-asset"), contentUrl).toString());
+    });
+  }
+
   function cleanLabel(value) {
     return String(value || "").replace(/\u00c2/g, "").replace(/\s+/g, " ").trim();
   }
@@ -59,6 +65,7 @@
   function loadNoDocWorkshop() {
     var source = document.querySelector("#nodocMode .nodoc-full-tree");
     var manifestUrl;
+    var contentUrl;
 
     if (!source) {
       return;
@@ -78,7 +85,8 @@
         if (!manifest || !manifest.content) {
           throw new Error("NoDoc manifest does not define a content file");
         }
-        return fetch(new URL(manifest.content, manifestUrl).toString(), { cache: "no-store" });
+        contentUrl = new URL(manifest.content, manifestUrl);
+        return fetch(contentUrl.toString(), { cache: "no-store" });
       })
       .then(function (response) {
         if (!response.ok) {
@@ -88,6 +96,7 @@
       })
       .then(function (markup) {
         source.innerHTML = markup;
+        hydrateNoDocAssets(source, contentUrl);
         source.removeAttribute("aria-busy");
         setupNoDocWorkshop();
       })
