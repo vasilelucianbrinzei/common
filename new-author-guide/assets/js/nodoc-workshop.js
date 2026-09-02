@@ -1,7 +1,15 @@
 (function () {
   "use strict";
 
-  var nodocManifestHref = "../workshops/nodoc/manifest.json";
+  var nodocManifestHref = "workshops/nodoc/manifest.json";
+
+  function resolveGuideRuntimePath(path) {
+    if (window.AuthorGuidePaths && typeof window.AuthorGuidePaths.resolve === "function") {
+      return window.AuthorGuidePaths.resolve(path);
+    }
+
+    return new URL(path.replace(/^\/+/, ""), window.location.href).toString();
+  }
 
   function hydrateNoDocAssets(root, contentUrl) {
     root.querySelectorAll("[data-nodoc-asset]").forEach(function (image) {
@@ -28,7 +36,7 @@
 
   function hydrateNoDocVideoContracts(root) {
     var contracts = {
-      "Lab 1 walkthrough": ["nodoc-lab-1", "Preview: NoDoc Lab 1 walkthrough", "Capture slot for access, role check, Focus Area, and No Doc Repo navigation.", "Access and navigation|Role check|NoDoc Repo", "00:00::Open the approved environment and confirm the assigned role.||00:12::Select the practice Focus Area and open No Doc Repo.||00:24::Use Open All and Close All to inspect the table of contents.||00:36::Return to the authoring path with the required permissions confirmed."],
+      "Lab 1 walkthrough": ["nodoc-lab-1", "Preview: NoDoc Lab 1 walkthrough", "Capture slot for access, role check, LiveLabs Focus Area, and LiveLabs repo navigation.", "Access and navigation|Role check|LiveLabs repo", "00:00::Open the approved environment and confirm the assigned role.||00:12::Select the LiveLabs Focus Area and open the LiveLabs repo.||00:24::Use Open All and Close All to inspect the table of contents.||00:36::Return to the authoring path with the required permissions confirmed."],
       "Lab 2 walkthrough": ["nodoc-lab-2", "Preview: NoDoc Lab 2 walkthrough", "Capture slot for article creation, page structure, and metadata.", "Article shell|Page structure|Metadata", "00:00::Create the article shell and version in the selected Focus Area.||00:12::Add the Prepare, Author, and Review pages in order.||00:24::Apply the required metadata and structured content.||00:36::Save the page and confirm the table of contents remains aligned."],
       "Lab 3 walkthrough": ["nodoc-lab-3", "Preview: NoDoc Lab 3 walkthrough", "Capture slot for comments, drafts, difference review, and owner approval.", "Comments|Drafts|Review decisions", "00:00::Add a specific anchored comment to the practice page.||00:12::Create a draft and improve the selected content.||00:24::Open the difference view and inspect each change.||00:36::Approve only the changes that the content owner accepts."],
       "Lab 4 walkthrough": ["nodoc-lab-4", "Preview: NoDoc Lab 4 walkthrough", "Capture slot for AI correction, human difference review, and information maps.", "AI correction|Difference review|Information maps", "00:00::Open the Author page and choose a supported correction action.||00:12::Inspect the generated difference and reject unsupported changes.||00:24::Keep only human-reviewed improvements that preserve technical meaning.||00:36::Generate the information map after all pages are saved."],
@@ -62,6 +70,347 @@
     }
   }
 
+  function normalizeWorkshopIdea(value) {
+    return String(value || "")
+      .replace(/\r\n?/g, "\n")
+      .replace(/[ \t]+\n/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+
+  function normalizePromptTemplate(value) {
+    var lines = String(value || "").replace(/\r\n?/g, "\n").split("\n");
+    var sharedIndent = null;
+
+    lines.forEach(function (line) {
+      var indentation;
+
+      if (!line.trim()) {
+        return;
+      }
+
+      indentation = line.match(/^[ \t]*/)[0].length;
+      sharedIndent = sharedIndent === null ? indentation : Math.min(sharedIndent, indentation);
+    });
+
+    if (sharedIndent) {
+      lines = lines.map(function (line) {
+        return line.slice(sharedIndent);
+      });
+    }
+
+    return lines.join("\n").trim();
+  }
+
+  function formatRequestedScope(value) {
+    var scope = normalizeWorkshopIdea(value);
+
+    return scope || "[VERIFY: target duration, lab count, requested pages, authoring mode, and required variants or loaders were not supplied. Do not assume them.]";
+  }
+
+  function formatSafetyAndReviewConstraints(value) {
+    var constraints = normalizeWorkshopIdea(value);
+
+    return constraints || "[VERIFY: no domain-specific safety, privacy, security, compliance, or SME-review constraints were supplied. Do not invent policy or approval.]";
+  }
+
+  function formatApprovedSourceUrls(value) {
+    var sourceUrls = String(value || "").replace(/\r\n?/g, "\n").split("\n");
+    var uniqueUrls = [];
+    var seenUrls = {};
+    var index;
+    var sourceUrl;
+    var parsedUrl;
+
+    for (index = 0; index < sourceUrls.length; index += 1) {
+      sourceUrl = sourceUrls[index].trim();
+
+      if (!sourceUrl) {
+        continue;
+      }
+
+      try {
+        parsedUrl = new URL(sourceUrl);
+      } catch (error) {
+        return { error: "Use one complete HTTPS source URL per line." };
+      }
+
+      if (parsedUrl.protocol !== "https:") {
+        return { error: "Approved source URLs must use HTTPS." };
+      }
+
+      if (parsedUrl.username || parsedUrl.password) {
+        return { error: "Do not include credentials or access tokens in source URLs." };
+      }
+
+      if (!seenUrls[sourceUrl]) {
+        seenUrls[sourceUrl] = true;
+        uniqueUrls.push(sourceUrl);
+      }
+    }
+
+    return {
+      value: uniqueUrls.length
+        ? uniqueUrls.map(function (url) { return "- " + url; }).join("\n")
+        : "- [VERIFY: approved source URL not supplied. Do not invent or substitute a URL.]"
+    };
+  }
+
+  function buildSelectedSkillPlan(root) {
+    var skillInputs = root.querySelectorAll("[data-nodoc-codex-skill]");
+    var selectedSkills = [];
+    var missingResources = [];
+
+    skillInputs.forEach(function (skillInput) {
+      var skillKey;
+      var resourceInput;
+      var resource;
+      var resourceRequirement;
+      var resourceDefault;
+
+      if (!skillInput.checked) {
+        return;
+      }
+
+      skillKey = skillInput.getAttribute("data-nodoc-codex-skill");
+      resourceInput = root.querySelector('[data-nodoc-codex-skill-resource="' + skillKey + '"]');
+      resource = resourceInput ? normalizeWorkshopIdea(resourceInput.value) : "";
+      resourceRequirement = skillInput.getAttribute("data-nodoc-codex-skill-resource-requirement") || "the author-supplied inputs";
+      resourceDefault = skillInput.getAttribute("data-nodoc-codex-skill-default-resource");
+
+      if (!resource && !resourceDefault) {
+        missingResources.push({
+          name: skillInput.getAttribute("data-nodoc-codex-skill-name") || skillKey,
+          input: resourceInput
+        });
+      }
+
+      selectedSkills.push([
+        "- `" + (skillInput.getAttribute("data-nodoc-codex-skill-name") || skillKey) + "`" + (skillInput.disabled ? " (required)" : ""),
+        "  Purpose: " + (skillInput.getAttribute("data-nodoc-codex-skill-description") || "Use only for its verified purpose."),
+        "  Resources: " + (resource
+          ? resource.replace(/\n/g, "\n  ")
+          : resourceDefault || "[VERIFY: provide " + resourceRequirement + " before using this skill.]")
+      ].join("\n"));
+    });
+
+    return {
+      value: selectedSkills.join("\n\n"),
+      missingResources: missingResources
+    };
+  }
+
+  function renderNoDocCodexPrompt(templateText, values) {
+    return templateText.replace(/\{\{(WORKSHOP_IDEA|WORKSHOP_SCOPE|APPROVED_SOURCE_URLS|SKILL_PLAN|SAFETY_REVIEW_CONSTRAINTS)\}\}/g, function (match, key) {
+      return values[key];
+    });
+  }
+
+  function setupNoDocCodexPromptBuilder(root) {
+    // The editable prompt stays in the fetched workshop fragment. This helper
+    // only assembles author-provided inputs locally; it does not call an AI/API.
+    var builder = root.querySelector("[data-nodoc-codex-prompt-builder]");
+    var template = root.querySelector("#nodoc-codex-workshop-template");
+    var ideaInput;
+    var scopeInput;
+    var sourceUrlsInput;
+    var constraintsInput;
+    var count;
+    var status;
+    var outputWrap;
+    var output;
+    var templateText;
+    var skillInputs;
+    var skillResourceInputs;
+    var renderedSignature = "";
+    var maxLength = 4000;
+    var requiredTokens = ["{{WORKSHOP_IDEA}}", "{{WORKSHOP_SCOPE}}", "{{APPROVED_SOURCE_URLS}}", "{{SKILL_PLAN}}", "{{SAFETY_REVIEW_CONSTRAINTS}}"];
+
+    if (!builder || !template || builder.dataset.nodocCodexPromptReady === "true") {
+      return;
+    }
+
+    ideaInput = builder.querySelector("#nodoc-codex-workshop-idea");
+    scopeInput = builder.querySelector("#nodoc-codex-workshop-scope");
+    sourceUrlsInput = builder.querySelector("#nodoc-codex-approved-source-urls");
+    constraintsInput = builder.querySelector("#nodoc-codex-safety-review-constraints");
+    count = builder.querySelector("#nodoc-codex-workshop-idea-count");
+    status = builder.querySelector("[data-nodoc-codex-prompt-status]");
+    outputWrap = builder.querySelector("[data-nodoc-codex-prompt-output]");
+    output = builder.querySelector("#nodoc-codex-workshop-prompt");
+    skillInputs = builder.querySelectorAll("[data-nodoc-codex-skill]");
+    skillResourceInputs = builder.querySelectorAll("[data-nodoc-codex-skill-resource]");
+    templateText = normalizePromptTemplate(template.content ? template.content.textContent : template.textContent);
+
+    if (!ideaInput || !scopeInput || !sourceUrlsInput || !constraintsInput || !count || !status || !outputWrap || !output || !templateText) {
+      return;
+    }
+
+    builder.dataset.nodocCodexPromptReady = "true";
+
+    function updateCount() {
+      count.textContent = ideaInput.value.length + " / " + maxLength;
+    }
+
+    function currentInputSignature() {
+      var skillSignature = [];
+
+      skillInputs.forEach(function (skillInput) {
+        var skillKey = skillInput.getAttribute("data-nodoc-codex-skill");
+        var resourceInput = builder.querySelector('[data-nodoc-codex-skill-resource="' + skillKey + '"]');
+
+        skillSignature.push([
+          skillKey,
+          skillInput.checked ? "selected" : "unselected",
+          resourceInput ? normalizeWorkshopIdea(resourceInput.value) : ""
+        ].join("\u0000"));
+      });
+
+      return [
+        normalizeWorkshopIdea(ideaInput.value),
+        normalizeWorkshopIdea(scopeInput.value),
+        String(sourceUrlsInput.value || "").replace(/\r\n?/g, "\n").trim(),
+        normalizeWorkshopIdea(constraintsInput.value),
+        skillSignature.join("\u0001")
+      ].join("\u0002");
+    }
+
+    function updateSkillResourceVisibility() {
+      skillInputs.forEach(function (skillInput) {
+        var skillKey = skillInput.getAttribute("data-nodoc-codex-skill");
+        var resourcePanel = builder.querySelector('[data-nodoc-codex-skill-resource-panel="' + skillKey + '"]');
+        var resourceInput = builder.querySelector('[data-nodoc-codex-skill-resource="' + skillKey + '"]');
+
+        if (!resourcePanel) {
+          return;
+        }
+
+        resourcePanel.hidden = !skillInput.checked;
+        if (resourceInput) {
+          resourceInput.disabled = !skillInput.checked;
+        }
+      });
+    }
+
+    function clearRenderedPrompt(message) {
+      if (!renderedSignature) {
+        return;
+      }
+      renderedSignature = "";
+      output.textContent = "";
+      outputWrap.hidden = true;
+      status.textContent = message || "";
+    }
+
+    function resetRenderedPrompt() {
+      renderedSignature = "";
+      output.textContent = "";
+      outputWrap.hidden = true;
+    }
+
+    function markChanged(message) {
+      if (currentInputSignature() !== renderedSignature) {
+        clearRenderedPrompt(message);
+      }
+    }
+
+    updateCount();
+    updateSkillResourceVisibility();
+
+    ideaInput.addEventListener("input", function () {
+      updateCount();
+      markChanged("Workshop details changed. Build a new prompt before copying.");
+    });
+
+    [scopeInput, sourceUrlsInput, constraintsInput].forEach(function (input) {
+      input.addEventListener("input", function () {
+        markChanged("Workshop details changed. Build a new prompt before copying.");
+      });
+    });
+
+    skillInputs.forEach(function (skillInput) {
+      skillInput.addEventListener("change", function () {
+        updateSkillResourceVisibility();
+        markChanged("Skill plan changed. Build a new prompt before copying.");
+      });
+    });
+
+    skillResourceInputs.forEach(function (input) {
+      input.addEventListener("input", function () {
+        markChanged("Skill resources changed. Build a new prompt before copying.");
+      });
+    });
+
+    builder.addEventListener("submit", function (event) {
+      var workshopIdea;
+      var approvedSourceUrls;
+      var selectedSkillPlan;
+      var generatedPrompt;
+      var tokenIndex;
+      var promptValues;
+
+      event.preventDefault();
+      workshopIdea = normalizeWorkshopIdea(ideaInput.value);
+
+      if (!workshopIdea) {
+        resetRenderedPrompt();
+        status.textContent = "Enter a workshop idea before building the Codex prompt.";
+        ideaInput.focus();
+        return;
+      }
+
+      if (workshopIdea.length > maxLength) {
+        resetRenderedPrompt();
+        status.textContent = "Keep the workshop idea to " + maxLength + " characters or fewer.";
+        ideaInput.focus();
+        return;
+      }
+
+      approvedSourceUrls = formatApprovedSourceUrls(sourceUrlsInput.value);
+      if (approvedSourceUrls.error) {
+        resetRenderedPrompt();
+        status.textContent = approvedSourceUrls.error;
+        sourceUrlsInput.focus();
+        return;
+      }
+
+      selectedSkillPlan = buildSelectedSkillPlan(builder);
+      if (selectedSkillPlan.missingResources.length) {
+        resetRenderedPrompt();
+        status.textContent = "Provide the required resources for " + selectedSkillPlan.missingResources.map(function (skill) {
+          return "`" + skill.name + "`";
+        }).join(", ") + " before building the prompt, or deselect that optional skill.";
+        if (selectedSkillPlan.missingResources[0].input) {
+          selectedSkillPlan.missingResources[0].input.focus();
+        }
+        return;
+      }
+
+      for (tokenIndex = 0; tokenIndex < requiredTokens.length; tokenIndex += 1) {
+        if (templateText.indexOf(requiredTokens[tokenIndex]) === -1) {
+          resetRenderedPrompt();
+          status.textContent = "The workshop template needs its " + requiredTokens[tokenIndex] + " placeholder restored before a prompt can be built.";
+          return;
+        }
+      }
+
+      promptValues = {
+        WORKSHOP_IDEA: workshopIdea,
+        WORKSHOP_SCOPE: formatRequestedScope(scopeInput.value),
+        APPROVED_SOURCE_URLS: approvedSourceUrls.value,
+        SKILL_PLAN: selectedSkillPlan.value,
+        SAFETY_REVIEW_CONSTRAINTS: formatSafetyAndReviewConstraints(constraintsInput.value)
+      };
+
+      // A single replacement pass preserves literal {{...}} and $-style text in author inputs.
+      generatedPrompt = renderNoDocCodexPrompt(templateText, promptValues).trim();
+      output.textContent = generatedPrompt;
+      outputWrap.hidden = false;
+      renderedSignature = currentInputSignature();
+      status.textContent = "Prompt ready. Copy it, then paste it into NoDoc Codex.";
+    });
+  }
+
   function loadNoDocWorkshop() {
     var source = document.querySelector("#nodocMode .nodoc-full-tree");
     var manifestUrl;
@@ -71,7 +420,7 @@
       return;
     }
 
-    manifestUrl = new URL(nodocManifestHref, window.location.href);
+    manifestUrl = new URL(resolveGuideRuntimePath(nodocManifestHref));
     source.setAttribute("aria-busy", "true");
 
     fetch(manifestUrl.toString(), { cache: "no-store" })
@@ -129,6 +478,7 @@
     }
 
     hydrateNoDocVideoContracts(source);
+    setupNoDocCodexPromptBuilder(source);
 
     // Convert each top-level <details> block into an article so only one lab is
     // rendered at a time while its task content remains easy to search and scan.
@@ -213,6 +563,54 @@
 
       return article;
     });
+
+    function syncNavigationLabels() {
+      // The source fragment is the editable record of Lab and task titles.
+      // Keep the shell menu synchronized so content edits do not leave stale
+      // labels in the left rail after a local or static-host refresh.
+      panels.forEach(function (panel, panelIndex) {
+        var group;
+        var titleButton;
+        var taskList;
+        var heading;
+        var taskSections;
+
+        if (panelIndex === 0) {
+          return;
+        }
+
+        group = nav.querySelector('[data-nodoc-group="' + panelIndex + '"]');
+        if (!group) {
+          return;
+        }
+
+        titleButton = group.querySelector(":scope > .nodoc-nav-title");
+        heading = panel.querySelector(".nodoc-lab-heading");
+        if (titleButton && heading) {
+          titleButton.textContent = cleanLabel(heading.textContent);
+        }
+
+        taskList = group.querySelector(":scope > .nodoc-nav-tasks");
+        if (!taskList) {
+          return;
+        }
+
+        taskSections = Array.from(panel.querySelectorAll(":scope > .nodoc-tree-content > .nodoc-task-section"));
+        taskList.textContent = "";
+        taskSections.forEach(function (taskSection, taskIndex) {
+          var taskButton = document.createElement("button");
+          var taskHeading = taskSection.querySelector(":scope > summary");
+
+          taskButton.type = "button";
+          taskButton.dataset.nodocNav = String(panelIndex);
+          taskButton.dataset.nodocTask = String(taskIndex + 1);
+          taskButton.textContent = cleanLabel(taskHeading ? taskHeading.textContent : "Task " + (taskIndex + 1));
+          taskList.appendChild(taskButton);
+        });
+      });
+    }
+
+    syncNavigationLabels();
 
     function syncTaskToggle(panel) {
       var taskSections = Array.from(panel.querySelectorAll(":scope > .nodoc-tree-content > .nodoc-task-section"));

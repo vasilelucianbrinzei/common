@@ -161,8 +161,8 @@
     function filterLabelFor(control) {
       return control.closest(".filter-field")?.querySelector("span")?.textContent || "";
     }
-    function enhanceCategoryFilters() {
-      document.querySelectorAll('[data-table-filter]').forEach((control) => {
+    function enhanceCategoryFilters(root = document) {
+      root.querySelectorAll?.('[data-table-filter]').forEach((control) => {
         if (control.tagName.toLowerCase() === "select") return;
         if (normalizeFilterText(filterLabelFor(control)) !== "category") return;
         const tableId = control.dataset.tableFilter;
@@ -920,21 +920,119 @@
       searchRecordByKey = merged;
       return Array.from(merged.values());
     }
+    function loadFilePortfolioPayload() {
+      const existing = globalThis.__livelabsPortfolioInventoryPayload;
+      if (existing) return Promise.resolve(existing);
+      return new Promise((resolve, reject) => {
+        const script = document.createElement("script");
+        script.async = true;
+        script.src = new URL("./inventory/data/portfolio_inventory.file.js", document.baseURI).href;
+        script.onload = () => globalThis.__livelabsPortfolioInventoryPayload
+          ? resolve(globalThis.__livelabsPortfolioInventoryPayload)
+          : reject(new Error("The file-safe Inventory payload did not register."));
+        script.onerror = () => reject(new Error("The file-safe Inventory payload could not be loaded."));
+        document.head.append(script);
+      });
+    }
+    const lazySectionLoads = new Map();
+    function lazySectionPlaceholder(sectionId) {
+      return document.querySelector(`[data-lazy-section="${sectionId}"]`);
+    }
+    function lazySectionError(section, message) {
+      section.dataset.lazyError = "true";
+      section.setAttribute("aria-busy", "false");
+      const panel = section.querySelector(".lazy-section-panel");
+      if (panel) panel.innerHTML = `<p>${escapeHtml(message)}</p><button class="lazy-section-button" type="button" data-load-lazy-section="${escapeHtml(section.dataset.lazySection || "")}">Try again</button>`;
+    }
+    async function loadLazySection(sectionId) {
+      const placeholder = lazySectionPlaceholder(sectionId);
+      if (!placeholder) return document.getElementById(sectionId);
+      if (location.protocol === "file:") {
+        lazySectionError(placeholder, "This review queue needs an HTTP(S) server or the OCI tenancy URL. Inventory remains available from this local file.");
+        return placeholder;
+      }
+      if (lazySectionLoads.has(sectionId)) return lazySectionLoads.get(sectionId);
+      placeholder.setAttribute("aria-busy", "true");
+      const panel = placeholder.querySelector(".lazy-section-panel");
+      if (panel) panel.innerHTML = "<p>Loading review queue…</p>";
+      const request = fetch(placeholder.dataset.lazySrc, { credentials: "same-origin" })
+        .then((response) => {
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          return response.text();
+        })
+        .then((markup) => {
+          const template = document.createElement("template");
+          template.innerHTML = markup.trim();
+          const section = template.content.firstElementChild;
+          if (!(section instanceof HTMLElement) || section.tagName !== "SECTION" || section.id !== sectionId) {
+            throw new Error("fragment has an invalid section root");
+          }
+          placeholder.replaceWith(section);
+          applyRankedTableDisclosures();
+          applyQaExceptionPrototype();
+          applyAdminRowOverrides();
+          applyNoAuthorGovernanceFlags();
+          applyDemandProtectedGovernanceFlags();
+          decorateDashboardCopyTargets(section);
+          applySectionVisibilitySettings();
+          enhanceCategoryFilters(section);
+          initializeTablesIn(section);
+          tableSearchRecordsCache = null;
+          refreshDashboardSearch();
+          return section;
+        })
+        .catch((error) => {
+          lazySectionLoads.delete(sectionId);
+          const current = lazySectionPlaceholder(sectionId);
+          if (current) lazySectionError(current, `Could not load this review queue (${error.message}).`);
+          return current;
+        });
+      lazySectionLoads.set(sectionId, request);
+      return request;
+    }
+    function configureLazySections() {
+      document.addEventListener("click", (event) => {
+        const loadButton = event.target.closest("[data-load-lazy-section]");
+        if (loadButton) {
+          event.preventDefault();
+          const sectionId = loadButton.dataset.loadLazySection;
+          loadLazySection(sectionId).then((section) => section?.scrollIntoView({ block: "start", behavior: "smooth" }));
+          return;
+        }
+        const anchor = event.target.closest('a[href^="#"]');
+        const sectionId = anchor?.getAttribute("href")?.slice(1);
+        if (!sectionId || !lazySectionPlaceholder(sectionId)) return;
+        event.preventDefault();
+        loadLazySection(sectionId).then((section) => {
+          history.replaceState(null, "", `#${sectionId}`);
+          section?.scrollIntoView({ block: "start", behavior: "smooth" });
+        });
+      });
+      const initialSectionId = location.hash.slice(1);
+      if (initialSectionId && lazySectionPlaceholder(initialSectionId)) {
+        loadLazySection(initialSectionId).then((section) => section?.scrollIntoView({ block: "start" }));
+      }
+    }
+    function normalizePortfolioPayload(payload) {
+      portfolioInventoryMetadata = payload?.metadata || null;
+      return {
+        metadata: portfolioInventoryMetadata,
+        records: Array.isArray(payload?.records) ? payload.records : []
+      };
+    }
     function loadCanonicalPortfolioPayload() {
       if (portfolioPayloadPromise) return portfolioPayloadPromise;
       if (typeof fetch !== "function") {
         portfolioPayloadPromise = Promise.resolve({ metadata: null, records: [] });
         return portfolioPayloadPromise;
       }
-      portfolioPayloadPromise = fetch("./data/portfolio_inventory.json", { cache: "no-cache" })
+      if (location.protocol === "file:") {
+        portfolioPayloadPromise = loadFilePortfolioPayload().then(normalizePortfolioPayload);
+        return portfolioPayloadPromise;
+      }
+      portfolioPayloadPromise = fetch("./inventory/data/portfolio_inventory.json", { cache: "no-cache" })
         .then((response) => response.ok ? response.json() : Promise.reject(new Error(`HTTP ${response.status}`)))
-        .then((payload) => {
-          portfolioInventoryMetadata = payload?.metadata || null;
-          return {
-            metadata: portfolioInventoryMetadata,
-            records: Array.isArray(payload?.records) ? payload.records : []
-          };
-        });
+        .then(normalizePortfolioPayload);
       return portfolioPayloadPromise;
     }
     function loadFullSearchRecords() {
@@ -2249,8 +2347,9 @@
       if (route === "dashboard") {
         const normalizedPath = url.pathname.replace(/\/+$/, "").toLowerCase();
         if (normalizedPath.endsWith("/inventory") || normalizedPath.endsWith("/inventory/index.html")) {
-          url.pathname = new URL("../", url).pathname;
+          url.pathname = new URL("../index.html", url).pathname;
         }
+        url.searchParams.delete("view");
       }
       if (query) url.searchParams.set("q", query);
       else url.searchParams.delete("q");
@@ -2417,7 +2516,7 @@
       const navListForInventory = document.querySelector(".nav-list");
       if (navListForInventory && !navListForInventory.querySelector("[data-inventory-link]")) {
         const inventoryItem = document.createElement("a");
-        inventoryItem.href = "./inventory/";
+        inventoryItem.href = "./inventory/index.html";
         inventoryItem.dataset.inventoryLink = "true";
         inventoryItem.innerHTML = `<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"></path><path d="M5 9h14"></path><path d="M5 14h14"></path><path d="M10 4v16"></path></svg><span>Portfolio Inventory</span>`;
         const topPerformers = navListForInventory.querySelector('a[href="#top-performers"]');
@@ -2434,7 +2533,7 @@
         }
         if (!navList.querySelector('[data-inventory-link]')) {
           const inventoryItem = document.createElement("a");
-          inventoryItem.href = "./inventory/";
+          inventoryItem.href = "./inventory/index.html";
           inventoryItem.dataset.inventoryLink = "true";
           inventoryItem.innerHTML = `<svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5z"></path><path d="M5 9h14"></path><path d="M5 14h14"></path><path d="M10 4v16"></path></svg><span>Portfolio Inventory</span>`;
           const topPerformers = navList.querySelector('a[href="#top-performers"]');
@@ -2885,11 +2984,17 @@
     }
     function ensurePortfolioInventoryLoaded({ render = true } = {}) {
       if (loadedFullSearchRecords.length) {
-        if (render) renderAllDataTable();
+        if (render) {
+          if (window.__portfolioInventoryError) setInventoryLoadingState(window.__portfolioInventoryError);
+          else renderAllDataTable();
+        }
         return Promise.resolve(loadedFullSearchRecords);
       }
       if (portfolioInventoryLoadComplete) {
-        if (render) renderAllDataTable();
+        if (render) {
+          if (window.__portfolioInventoryError) setInventoryLoadingState(window.__portfolioInventoryError);
+          else renderAllDataTable();
+        }
         return Promise.resolve(loadedFullSearchRecords);
       }
       setInventoryLoadingState("Loading inventory");
@@ -2923,7 +3028,10 @@
         applyNoAuthorGovernanceFlags();
         applyDemandProtectedGovernanceFlags();
         refreshInitializedTableStates();
-        if (render) renderAllDataTable();
+        if (render) {
+          if (window.__portfolioInventoryError) setInventoryLoadingState(window.__portfolioInventoryError);
+          else renderAllDataTable();
+        }
         return loadedFullSearchRecords;
       });
     }
@@ -3036,9 +3144,9 @@
       glance.dataset.portfolioGlance = "true";
       glance.setAttribute("aria-label", "Portfolio at a glance");
       glance.innerHTML = `
-        <summary class="panel-head"><h3>Portfolio at a glance</h3><span>885 active items</span></summary>
+        <summary class="panel-head"><h3>Portfolio at a glance</h3><span>4 portfolio metrics</span></summary>
         <div class="toggle-body portfolio-glance-body">
-          <p class="note">A quick read of the 885 active portfolio items: 585 workshops and 300 sprints.</p>
+          <p class="note">A quick read across four portfolio metrics. The active portfolio contains 885 items: 585 workshops and 300 sprints.</p>
           <div class="portfolio-glance-grid">
         <article class="portfolio-glance-card"><span>Active portfolio</span><strong>885</strong><small>585 workshops · 300 sprints</small></article>
         <article class="portfolio-glance-card"><span>Updated in last 12 months</span><strong>285</strong><small>215 workshops · 70 sprints</small></article>
@@ -3144,11 +3252,17 @@
           || normalizedPath.endsWith("/inventory")
           || normalizedPath.endsWith("/inventory/index.html");
       };
+      const dashboardEntryUrl = () => {
+        const normalizedPath = location.pathname.replace(/\/+$/, "").toLowerCase();
+        return normalizedPath.endsWith("/inventory") || normalizedPath.endsWith("/inventory/index.html")
+          ? new URL("../index.html", location.href)
+          : new URL("./index.html", location.href);
+      };
       const replaceDashboardUrl = (targetHash) => {
         if (!targetHash) return;
         const normalizedPath = location.pathname.replace(/\/+$/, "").toLowerCase();
         if (normalizedPath.endsWith("/inventory") || normalizedPath.endsWith("/inventory/index.html")) {
-          const target = new URL("../", location.href);
+          const target = dashboardEntryUrl();
           target.search = "";
           target.hash = targetHash;
           history.replaceState(null, "", `${target.pathname}${target.search}${target.hash}`);
@@ -3159,7 +3273,7 @@
       const setDashboardMode = (mode = "overview", targetHash = "") => {
         showDashboardView({ clearUrl: false });
         const normalizedMode = ["overview", "tops", "inventory"].includes(mode) ? mode : "overview";
-        if (normalizedMode !== "inventory") writeSearchUrl();
+        if (normalizedMode !== "inventory") writeSearchUrl({ route: "dashboard" });
         document.body.classList.toggle("dashboard-inventory-active", normalizedMode === "inventory");
         document.body.classList.toggle("dashboard-tops-active", normalizedMode === "tops");
         setNavCurrent(normalizedMode, targetHash);
@@ -3180,7 +3294,7 @@
         link.addEventListener("click", (event) => {
           if (inventoryRouteRequested()) {
             event.preventDefault();
-            const target = new URL("../", location.href);
+            const target = dashboardEntryUrl();
             target.search = "";
             target.hash = link.getAttribute("href") || "#overview";
             window.location.assign(`${target.pathname}${target.search}${target.hash}`);
@@ -3205,7 +3319,7 @@
         link.addEventListener("click", (event) => {
           event.preventDefault();
           if (inventoryRouteRequested()) {
-            const target = new URL("../", location.href);
+            const target = dashboardEntryUrl();
             target.search = "";
             target.hash = "#overview";
             window.location.assign(`${target.pathname}${target.search}${target.hash}`);
@@ -3217,10 +3331,9 @@
       const normalizedPath = location.pathname.replace(/\/+$/, "").toLowerCase();
       const onInventoryPage = normalizedPath.endsWith("/inventory") || normalizedPath.endsWith("/inventory/index.html");
       const initialParams = new URLSearchParams(location.search);
-      const legacyInventoryRequested = !onInventoryPage && (location.hash === "#all-data-browser" || initialParams.get("view") === "inventory");
+      const legacyInventoryRequested = !onInventoryPage && location.hash === "#all-data-browser";
       if (legacyInventoryRequested) {
-        const target = new URL("./inventory/", location.href);
-        initialParams.delete("view");
+        const target = new URL("./inventory/index.html", location.href);
         target.search = initialParams.toString();
         target.hash = "";
         window.location.replace(`${target.pathname}${target.search}`);
@@ -3373,6 +3486,31 @@
         });
       });
       document.addEventListener("click", (event) => {
+        const sortButton = event.target.closest("[data-sort-table]");
+        if (sortButton) {
+          const tableId = sortButton.dataset.sortTable;
+          const wrapper = document.querySelector(`[data-filter-table="${tableId}"]`);
+          if (!wrapper) return;
+          const columnIndex = sortButton.dataset.columnIndex;
+          const defaultDirection = sortButton.dataset.defaultDirection || "asc";
+          const currentDirection = wrapper.dataset.sortColumnIndex === columnIndex ? (wrapper.dataset.sortDirection || "none") : "none";
+          wrapper.dataset.sortColumnIndex = columnIndex;
+          wrapper.dataset.sortDirection = currentDirection === "asc" ? "desc" : defaultDirection;
+          preserveViewportDuringTableUpdate(tableId, () => applyTableState(tableId, { resetPage: true }));
+          return;
+        }
+        const clearButton = event.target.closest("[data-clear-filters-for]");
+        if (clearButton) {
+          const tableId = clearButton.dataset.clearFiltersFor;
+          preserveViewportDuringTableUpdate(tableId, () => {
+            document.querySelectorAll(`[data-table-filter="${tableId}"]`).forEach((control) => {
+              if (control.type === "checkbox") control.checked = false;
+              else control.value = "";
+            });
+            applyTableState(tableId, { resetPage: true });
+          });
+          return;
+        }
         const copyButton = event.target.closest("button[data-copy-value]");
         if (copyButton) {
           event.preventDefault();
@@ -3399,50 +3537,24 @@
         toggleRowExpanded(row);
       });
       enhanceCategoryFilters();
-      document.querySelectorAll("[data-table-filter]").forEach((control) => {
-        const eventName = control.tagName.toLowerCase() === "select" || control.type === "checkbox" ? "change" : "input";
-        control.addEventListener(eventName, () => {
-          preserveViewportDuringTableUpdate(control.dataset.tableFilter, () => {
-            applyTableState(control.dataset.tableFilter, { resetPage: true });
-          });
+      const updateTableForFilter = (event) => {
+        const control = event.target.closest?.("[data-table-filter]");
+        if (!control) return;
+        const usesChange = control.tagName.toLowerCase() === "select" || control.type === "checkbox";
+        if ((event.type === "change") !== usesChange) return;
+        preserveViewportDuringTableUpdate(control.dataset.tableFilter, () => {
+          applyTableState(control.dataset.tableFilter, { resetPage: true });
         });
-      });
-      document.querySelectorAll("[data-sort-table]").forEach((button) => {
-        button.addEventListener("click", () => {
-          const tableId = button.dataset.sortTable;
-          const wrapper = document.querySelector(`[data-filter-table="${tableId}"]`);
-          if (!wrapper) return;
-          const columnIndex = button.dataset.columnIndex;
-          const defaultDirection = button.dataset.defaultDirection || "asc";
-          const currentDirection = wrapper.dataset.sortColumnIndex === columnIndex ? (wrapper.dataset.sortDirection || "none") : "none";
-          let nextDirection = defaultDirection;
-          if (currentDirection === "asc") nextDirection = "desc";
-          else if (currentDirection === "desc") nextDirection = "asc";
-          wrapper.dataset.sortColumnIndex = columnIndex;
-          wrapper.dataset.sortDirection = nextDirection;
-          preserveViewportDuringTableUpdate(tableId, () => {
-            applyTableState(tableId, { resetPage: true });
-          });
-        });
-      });
-      document.querySelectorAll("[data-clear-filters-for]").forEach((button) => {
-        button.addEventListener("click", () => {
-          const tableId = button.dataset.clearFiltersFor;
-          preserveViewportDuringTableUpdate(tableId, () => {
-            document.querySelectorAll(`[data-table-filter="${tableId}"]`).forEach((control) => {
-              if (control.type === "checkbox") control.checked = false;
-              else control.value = "";
-            });
-            applyTableState(tableId, { resetPage: true });
-          });
-        });
-      });
+      };
+      document.addEventListener("input", updateTableForFilter);
+      document.addEventListener("change", updateTableForFilter);
       document.addEventListener("toggle", (event) => {
         const disclosure = event.target;
         if (disclosure instanceof HTMLDetailsElement && disclosure.open) {
           initializeTablesIn(disclosure, { force: true });
         }
       }, true);
+      configureLazySections();
       scheduleInitialTableSetup();
       window.addEventListener("storage", (event) => {
         if (event.key === adminStorageKey) reloadDashboardAdminState();

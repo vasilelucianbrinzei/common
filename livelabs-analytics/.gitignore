@@ -72,6 +72,10 @@ test-results/
 playwright-report/
 /.ci-release/
 /.ci-preflight.json
+/dev/.ci-release/
+/dev/.ci-preflight.json
+/dev/releases/
+/dev/migration-audit/
 
 # Local QA planning and source datasets
 QA_TEST_PLAN.md

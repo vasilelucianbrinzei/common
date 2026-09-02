@@ -280,33 +280,20 @@
   min-width: 0;
 }
 
+#app .modal-media-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+  gap: 1rem;
+}
+
+#app .modal-media-gallery .modal-media-figure {
+  margin: 0;
+}
+
 #app .snippet-description {
   margin: 0;
   color: var(--ink-soft);
   line-height: 1.58;
-}
-
-#app .preview-url-section {
-  display: grid;
-  gap: 1rem;
-  overflow: visible;
-}
-
-#app .preview-url-section .step-block-header {
-  margin-bottom: 0;
-}
-
-#app .preview-url-card {
-  width: 100%;
-  max-width: 100%;
-  margin: 0;
-}
-
-#app .preview-url-card pre {
-  max-width: 100%;
-  overflow-x: auto;
-  white-space: pre;
-  word-break: normal;
 }
 
 #app .result-line {
@@ -2742,6 +2729,13 @@ body.home-no-scroll #app .app-footer .container {
   min-width: 0;
 }
 
+#app[data-redwood-creator-pass="2026-05-25"] .filter-help {
+  margin: 0 0 0.55rem;
+  color: var(--ink-soft);
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+
 #app[data-redwood-creator-pass="2026-05-25"] .cheatsheet-search-control {
   grid-column: 1;
   grid-row: 1;
@@ -3382,19 +3376,30 @@ body.author-nav-closed #app[data-redwood-creator-pass="2026-05-25"] .author-glob
   box-shadow: 0 8px 18px rgba(32, 30, 28, 0.16);
 }
 
-#app[data-redwood-creator-pass="2026-05-25"] .preview-checkpoint-layout {
+#app[data-redwood-creator-pass="2026-05-25"] .quickstart-split-content {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(18rem, 0.95fr);
-  gap: 1rem;
-  align-items: start;
+  grid-template-columns: minmax(0, 1.5fr) minmax(18rem, 1fr);
+  gap: clamp(1.25rem, 3vw, 2.25rem);
+  align-items: center;
 }
 
-#app[data-redwood-creator-pass="2026-05-25"] .preview-checkpoint-layout .action-list {
+#app[data-redwood-creator-pass="2026-05-25"] .quickstart-split-card {
+  padding: clamp(1.15rem, 2vw, 1.5rem);
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] .quickstart-split-copy .action-list {
   margin-bottom: 0;
 }
 
-#app[data-redwood-creator-pass="2026-05-25"] .preview-checkpoint-image {
+#app[data-redwood-creator-pass="2026-05-25"] .quickstart-split-evidence {
   margin: 0;
+  align-self: center;
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] .quickstart-split-evidence img {
+  width: 100%;
+  max-width: none;
+  margin-inline: auto;
 }
 
 #app[data-redwood-creator-pass="2026-05-25"] figure[data-expandable="true"] {
@@ -4110,7 +4115,7 @@ body.author-nav-closed #app[data-redwood-creator-pass="2026-05-25"] .author-glob
     border-bottom: 1px solid rgba(212, 207, 202, 0.82);
   }
 
-  #app[data-redwood-creator-pass="2026-05-25"] .preview-checkpoint-layout {
+  #app[data-redwood-creator-pass="2026-05-25"] .quickstart-split-content {
     grid-template-columns: 1fr;
   }
 }
@@ -4405,7 +4410,7 @@ body.author-nav-closed #app[data-redwood-creator-pass="2026-05-25"] .app-shell {
   overflow-x: clip;
 }
 
-#app[data-redwood-creator-pass="2026-05-25"] :is(.guide-layout, .guide-stage, .guide-section-card, .step-block, .detail-resource-card, .detail-resource-main, .detail-resource-main > span, .generator-layout, .generator-workbench, .generator-output-panel, .preview-checkpoint-layout, .wms-status-graph-layout) {
+#app[data-redwood-creator-pass="2026-05-25"] :is(.guide-layout, .guide-stage, .guide-section-card, .step-block, .detail-resource-card, .detail-resource-main, .detail-resource-main > span, .generator-layout, .generator-workbench, .generator-output-panel, .quickstart-split-content, .wms-status-graph-layout) {
   min-width: 0;
 }
 
@@ -4444,7 +4449,7 @@ body.author-nav-closed #app[data-redwood-creator-pass="2026-05-25"] .app-shell {
   #app[data-redwood-creator-pass="2026-05-25"] .detail-field-grid,
   #app[data-redwood-creator-pass="2026-05-25"] .detail-resource-grid,
   #app[data-redwood-creator-pass="2026-05-25"] .detail-milestone-grid,
-  #app[data-redwood-creator-pass="2026-05-25"] .preview-checkpoint-layout,
+  #app[data-redwood-creator-pass="2026-05-25"] .quickstart-split-content,
   #app[data-redwood-creator-pass="2026-05-25"] .generator-layout,
   #app[data-redwood-creator-pass="2026-05-25"] .example-generator-input-row,
   #app[data-redwood-creator-pass="2026-05-25"] .qa-order-content {
@@ -4490,6 +4495,125 @@ body.home-no-scroll #app .hub-hero {
 @media (max-height: 820px) {
   body.home-no-scroll #app #hub.hub-screen {
     align-items: flex-start;
+  }
+}
+
+/* Responsive hardening: preserve the desktop sidebar while keeping each route
+   within narrow phone viewports. These selectors deliberately override older
+   home-shell rules with larger intrinsic grid minimums. */
+@media (max-width: 940px) {
+  body.home-no-scroll #app[data-redwood-creator-pass="2026-05-25"] .app-shell,
+  body.home-no-scroll #app[data-redwood-creator-pass="2026-05-25"] #hub.hub-screen,
+  body.home-no-scroll #app[data-redwood-creator-pass="2026-05-25"] #hub > .container,
+  body.home-no-scroll #app[data-redwood-creator-pass="2026-05-25"] #hub .hub-hero,
+  body.home-no-scroll #app[data-redwood-creator-pass="2026-05-25"] #hub .home-action-panel,
+  body.home-no-scroll #app[data-redwood-creator-pass="2026-05-25"] #hub .home-search-form,
+  body.home-no-scroll #app[data-redwood-creator-pass="2026-05-25"] #hub .home-mini-flow,
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav,
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav > .container,
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav .nav-shell,
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav .container-fluid,
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav .nav-main-grid,
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav .nav-group-all {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  body.home-no-scroll #app[data-redwood-creator-pass="2026-05-25"] .app-shell,
+  body.home-no-scroll #app[data-redwood-creator-pass="2026-05-25"] #hub.hub-screen,
+  body.home-no-scroll #app[data-redwood-creator-pass="2026-05-25"] #hub > .container,
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav,
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav > .container,
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav .nav-shell,
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav .container-fluid,
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav .nav-main-grid,
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav .nav-group-all {
+    width: 100%;
+  }
+
+  body.home-no-scroll #app[data-redwood-creator-pass="2026-05-25"] #hub.hub-screen {
+    display: block;
+    overflow-x: clip;
+    padding: 0 16px 36px;
+  }
+
+  body.home-no-scroll #app[data-redwood-creator-pass="2026-05-25"] #hub > .container {
+    display: block;
+  }
+
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav {
+    overflow-x: clip;
+  }
+
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav .container-fluid {
+    flex-wrap: wrap;
+  }
+
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav .brand-token {
+    flex: 0 1 auto;
+    max-width: 100%;
+  }
+
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav .nav-main-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    margin-left: 0;
+  }
+
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav .nav-group-all {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  #app[data-redwood-creator-pass="2026-05-25"] .mode-nav .nav-control {
+    min-width: 0;
+    white-space: normal;
+  }
+
+  body.author-nav-closed #app[data-redwood-creator-pass="2026-05-25"] #beginnerMode,
+  body.author-nav-closed #app[data-redwood-creator-pass="2026-05-25"] #explorerMode,
+  body.author-nav-closed #app[data-redwood-creator-pass="2026-05-25"] #nodocMode {
+    padding-top: 1.25rem !important;
+  }
+}
+
+@media (max-width: 700px) {
+  #app[data-redwood-creator-pass="2026-05-25"] .qa-order-content {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #app[data-redwood-creator-pass="2026-05-25"] .qa-order-content .step-figure,
+  #app[data-redwood-creator-pass="2026-05-25"] .qa-order-content .step-figure img {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  #app[data-redwood-creator-pass="2026-05-25"] .authoring-route-tabs {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(5.25rem, 0.62fr);
+    gap: 0.35rem;
+    overflow-x: visible;
+    padding: 0.6rem 0.75rem 0;
+  }
+
+  #app[data-redwood-creator-pass="2026-05-25"] .authoring-route-tab {
+    width: 100%;
+    min-width: 0;
+    padding: 0.55rem 0.45rem;
+    gap: 0.35rem;
+    flex: initial;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+  }
+
+  #app[data-redwood-creator-pass="2026-05-25"] .authoring-route-badge {
+    min-height: 1.5rem;
+    padding: 0.2rem 0.48rem;
+    font-size: 0.68rem;
   }
 }
 
@@ -4637,15 +4761,32 @@ body.home-no-scroll #app .hub-hero {
   margin: 0;
 }
 
-#app[data-redwood-creator-pass="2026-05-25"] .nodoc-quickstart-list {
-  display: grid;
-  gap: 0.7rem;
-  padding-left: 1.2rem;
+#app[data-redwood-creator-pass="2026-05-25"] .nodoc-route-evidence {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  margin: 0;
+  padding: 0.65rem;
+  border: 1px solid rgba(49, 45, 42, 0.14);
+  border-radius: 0.85rem;
+  background: rgba(255, 255, 255, 0.88);
 }
 
-#app[data-redwood-creator-pass="2026-05-25"] .nodoc-quickstart-list li {
-  padding-left: 0.15rem;
-  line-height: 1.48;
+#app[data-redwood-creator-pass="2026-05-25"] .nodoc-route-evidence img {
+  display: block;
+  width: 100%;
+  max-height: 18rem;
+  object-fit: contain;
+  border: 1px solid rgba(49, 45, 42, 0.12);
+  border-radius: 0.55rem;
+  background: #fff;
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] .nodoc-route-copy .nodoc-route-evidence {
+  width: min(100%, 42rem);
+  margin: 1rem 0;
 }
 
 #app[data-redwood-creator-pass="2026-05-25"] [data-authoring-only][hidden] {
@@ -5020,6 +5161,342 @@ body.home-no-scroll #app .hub-hero {
   line-height: 1.55;
 }
 
+/* Lab 2 authoring choices stay in the editable NoDoc fragment; this layer only
+   gives its Bootstrap tabs the compact reader treatment used elsewhere here. */
+#nodocMode .nodoc-creation-tabs {
+  margin: .9rem 0 .25rem;
+  padding: .9rem 0 0;
+  border-top: 1px solid rgba(36, 59, 83, .14);
+}
+
+#nodocMode .nodoc-creation-tabs-intro {
+  margin: 0 0 .75rem;
+  color: #486581;
+  font-size: .92rem;
+}
+
+#nodocMode .nodoc-creation-tablist {
+  gap: .25rem;
+  margin: 0 0 .8rem;
+  border-bottom: 0;
+}
+
+#nodocMode .nodoc-creation-tab {
+  min-width: 0;
+  margin-bottom: 0;
+  padding: .45rem .65rem;
+  border: 0 !important;
+  border-radius: 7px !important;
+  background: transparent;
+  color: #243b53;
+  font-size: .88rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: left;
+}
+
+#nodocMode .nodoc-creation-tab:hover,
+#nodocMode .nodoc-creation-tab:focus-visible {
+  background: rgba(199, 70, 52, .08);
+  color: #a82e1b;
+}
+
+#nodocMode .nodoc-creation-tab.active {
+  background: #fff1ed;
+  color: #a82e1b;
+}
+
+#nodocMode .nodoc-creation-tab:focus-visible {
+  outline: 2px solid rgba(199, 70, 52, .4);
+  outline-offset: 1px;
+}
+
+#nodocMode .nodoc-creation-panel {
+  padding: .85rem 1rem;
+  border-left: 3px solid rgba(199, 70, 52, .45);
+  border-radius: 8px;
+  background: rgba(246, 248, 250, .8);
+}
+
+#nodocMode .nodoc-creation-panel h5 {
+  margin: 0 0 .3rem;
+  color: #172b4d;
+  font-size: 1rem;
+}
+
+#nodocMode .nodoc-creation-panel p {
+  margin: 0;
+}
+
+#nodocMode .nodoc-creation-panel ol {
+  margin: .65rem 0 0;
+  padding: 0 0 0 1.3rem;
+}
+
+#nodocMode .nodoc-creation-panel ol > li:last-child {
+  margin-bottom: 0;
+}
+
+#nodocMode .nodoc-codex-prompt-builder {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: .75rem;
+  margin: 1rem 0 0;
+  min-width: 0;
+  max-width: 100%;
+}
+
+#nodocMode .nodoc-codex-prompt-builder > *,
+#nodocMode .nodoc-codex-skill-resource > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+#nodocMode .nodoc-task-section,
+#nodocMode .nodoc-task-section ol,
+#nodocMode .nodoc-task-section li,
+#nodocMode .nodoc-full-tree,
+#nodocMode .nodoc-lab-panel,
+#nodocMode .nodoc-tree-content,
+#nodocMode .nodoc-creation-tabs,
+#nodocMode .nodoc-creation-tab-content,
+#nodocMode .nodoc-creation-panel,
+#nodocMode .nodoc-codex-skill-plan,
+#nodocMode .nodoc-codex-skill-option,
+#nodocMode .nodoc-codex-skill-copy {
+  min-width: 0;
+  max-width: 100%;
+}
+
+#nodocMode .nodoc-full-tree {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+#nodocMode .nodoc-codex-prompt-builder > label,
+#nodocMode .nodoc-codex-skill-resource > label,
+#nodocMode .nodoc-codex-prompt-output-heading h6 {
+  color: #172b4d;
+  font-size: .92rem;
+  font-weight: 700;
+}
+
+#nodocMode .nodoc-codex-prompt-builder > label > span {
+  color: #486581;
+  font-weight: 400;
+}
+
+#nodocMode .nodoc-codex-skill-plan {
+  display: grid;
+  gap: .75rem;
+  margin: 0;
+  padding: .9rem;
+  border: 1px solid rgba(36, 59, 83, .16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, .72);
+}
+
+#nodocMode .nodoc-codex-skill-plan-title {
+  margin: 0;
+  padding: 0;
+  color: #172b4d;
+  font-size: .92rem;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+#nodocMode .nodoc-codex-skill-plan > p {
+  margin: 0;
+  color: #486581;
+  font-size: .88rem;
+  line-height: 1.45;
+}
+
+#nodocMode .nodoc-codex-skill-list {
+  display: grid;
+  gap: .55rem;
+}
+
+#nodocMode .nodoc-codex-skill-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: .65rem;
+  align-items: start;
+  padding: .7rem;
+  border: 1px solid rgba(36, 59, 83, .14);
+  border-radius: 7px;
+  background: #fff;
+  color: #243b53;
+  cursor: pointer;
+}
+
+#nodocMode .nodoc-codex-skill-option input {
+  width: 1rem;
+  height: 1rem;
+  margin: .14rem 0 0;
+  accent-color: #c74634;
+}
+
+#nodocMode .nodoc-codex-skill-option input:disabled {
+  opacity: 1;
+}
+
+#nodocMode .nodoc-codex-skill-copy {
+  display: grid;
+  gap: .14rem;
+}
+
+#nodocMode .nodoc-codex-skill-copy strong {
+  color: #172b4d;
+  font-size: .9rem;
+}
+
+#nodocMode .nodoc-codex-skill-option input:checked + .nodoc-codex-skill-copy strong {
+  color: #a82e1b;
+}
+
+#nodocMode .nodoc-codex-skill-copy small {
+  color: #486581;
+  font-size: .82rem;
+  line-height: 1.4;
+}
+
+#nodocMode .nodoc-codex-skill-resource {
+  display: grid;
+  gap: .45rem;
+  padding: .75rem .85rem;
+  border-left: 3px solid rgba(199, 70, 52, .3);
+  border-radius: 7px;
+  background: rgba(255, 249, 247, .72);
+}
+
+#nodocMode .nodoc-codex-prompt-idea,
+#nodocMode .nodoc-codex-prompt-scope,
+#nodocMode .nodoc-codex-prompt-sources,
+#nodocMode .nodoc-codex-prompt-constraints,
+#nodocMode .nodoc-codex-skill-resource-input {
+  width: auto;
+  max-width: 100%;
+  min-width: 0;
+  justify-self: stretch;
+  box-sizing: border-box;
+  resize: vertical;
+  border-color: rgba(36, 59, 83, .22);
+  color: #243b53;
+}
+
+#nodocMode .nodoc-codex-prompt-idea {
+  min-height: 8.75rem;
+}
+
+#nodocMode .nodoc-codex-prompt-scope,
+#nodocMode .nodoc-codex-prompt-sources,
+#nodocMode .nodoc-codex-prompt-constraints,
+#nodocMode .nodoc-codex-skill-resource-input {
+  min-height: 5.75rem;
+}
+
+#nodocMode .nodoc-codex-prompt-idea:focus,
+#nodocMode .nodoc-codex-prompt-scope:focus,
+#nodocMode .nodoc-codex-prompt-sources:focus,
+#nodocMode .nodoc-codex-prompt-constraints:focus,
+#nodocMode .nodoc-codex-skill-resource-input:focus {
+  border-color: #c74634;
+  box-shadow: 0 0 0 .18rem rgba(199, 70, 52, .14);
+}
+
+#nodocMode .nodoc-codex-prompt-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: .75rem;
+  color: #486581;
+  font-size: .82rem;
+  line-height: 1.4;
+}
+
+#nodocMode .nodoc-codex-prompt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+#nodocMode .nodoc-codex-prompt-build {
+  border-color: #c74634;
+  background: #c74634;
+  color: #fff;
+  font-weight: 700;
+}
+
+#nodocMode .nodoc-codex-prompt-build:hover,
+#nodocMode .nodoc-codex-prompt-build:focus-visible {
+  border-color: #a82e1b;
+  background: #a82e1b;
+  color: #fff;
+}
+
+#nodocMode .nodoc-codex-prompt-status {
+  min-height: 1.3rem;
+  margin: 0;
+  color: #486581;
+  font-size: .88rem;
+}
+
+#nodocMode .nodoc-codex-prompt-output {
+  margin-top: .25rem;
+  padding: .9rem;
+  border-left: 3px solid rgba(199, 70, 52, .45);
+  border-radius: 8px;
+  background: rgba(246, 248, 250, .8);
+}
+
+#nodocMode .nodoc-codex-prompt-output-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+}
+
+#nodocMode .nodoc-codex-prompt-output-heading h6 {
+  margin: 0;
+}
+
+#nodocMode .nodoc-codex-prompt-copy {
+  border: 1px solid rgba(199, 70, 52, .45);
+  background: #fff1ed;
+  color: #a82e1b;
+  font-weight: 700;
+}
+
+#nodocMode .nodoc-codex-prompt-copy:hover,
+#nodocMode .nodoc-codex-prompt-copy:focus-visible {
+  border-color: #a82e1b;
+  background: #c74634;
+  color: #fff;
+}
+
+#nodocMode .nodoc-codex-prompt-output pre {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  max-height: 30rem;
+  margin: .75rem 0 0;
+  overflow: auto;
+  padding: .9rem;
+  border: 1px solid rgba(36, 59, 83, .16);
+  border-radius: 7px;
+  background: #fff;
+  color: #243b53;
+  font-size: .82rem;
+  line-height: 1.48;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+#nodocMode .nodoc-codex-prompt-output pre:focus-visible {
+  outline: 2px solid rgba(199, 70, 52, .4);
+  outline-offset: 2px;
+}
+
 #nodocMode .nodoc-launch-task-section ol {
   display: grid;
   gap: .85rem;
@@ -5066,6 +5543,26 @@ body.home-no-scroll #app .hub-hero {
 
   #nodocMode .nodoc-page-nav-button {
     max-width: none;
+    width: 100%;
+  }
+
+  #nodocMode .nodoc-creation-tablist {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  #nodocMode .nodoc-creation-tab {
+    width: 100%;
+    padding: .5rem .55rem;
+  }
+
+  #nodocMode .nodoc-codex-prompt-meta,
+  #nodocMode .nodoc-codex-prompt-output-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  #nodocMode .nodoc-codex-prompt-copy {
     width: 100%;
   }
 }
@@ -5384,5 +5881,45 @@ body.home-no-scroll #app .hub-hero {
     max-width: none;
     margin: .35rem 0 0 1.65rem;
     text-align: left;
+  }
+}
+
+/* Responsive overrides must remain after the component rules above. */
+@media (max-width: 700px) {
+  #app[data-redwood-creator-pass="2026-05-25"] .qa-order-content {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #app[data-redwood-creator-pass="2026-05-25"] .qa-order-content .step-figure,
+  #app[data-redwood-creator-pass="2026-05-25"] .qa-order-content .step-figure img {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 420px) {
+  #app[data-redwood-creator-pass="2026-05-25"] .authoring-route-tabs {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(5.25rem, 0.62fr);
+    gap: 0.35rem;
+    overflow-x: visible;
+    padding: 0.6rem 0.75rem 0;
+  }
+
+  #app[data-redwood-creator-pass="2026-05-25"] .authoring-route-tab {
+    width: 100%;
+    min-width: 0;
+    padding: 0.55rem 0.45rem;
+    gap: 0.35rem;
+    flex: initial;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+  }
+
+  #app[data-redwood-creator-pass="2026-05-25"] .authoring-route-badge {
+    min-height: 1.5rem;
+    padding: 0.2rem 0.48rem;
+    font-size: 0.68rem;
   }
 }

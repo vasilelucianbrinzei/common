@@ -5,6 +5,12 @@
       var fullGuideHref = "https://" + "oracle-livelabs" + ".github.io/common/sample-livelabs-templates/create-labs/labs/workshops/livelabs/";
       var workshopExampleHref = "https://oracle-livelabs.github.io/developer/dev-ai-app-dev-finance/workshops/sandbox/";
       var wmsHref = "https://apex.oraclecorp.com/pls/apex/f?p=LIVELABS";
+      var guideRoutes = {
+        hub: "home",
+        beginner: "quickstart",
+        explorer: "cheatsheet",
+        nodoc: "nodoc"
+      };
       var markdownLabMap = {
         "start-here": "introduction",
         "core-workflow": "1-labs-wms",
@@ -22,14 +28,24 @@
         var segments = current.pathname.split("/").filter(Boolean);
         var routeNames = ["home", "quickstart", "cheatsheet", "nodoc"];
         var lastSegment = segments[segments.length - 1] || "";
+        var previousSegment = segments[segments.length - 2] || "";
 
-        if (routeNames.indexOf(lastSegment) !== -1) {
+        if (lastSegment.toLowerCase() === "index.html" && routeNames.indexOf(previousSegment) !== -1) {
+          segments.splice(-2, 2);
+        } else if (lastSegment.toLowerCase() === "index.html") {
+          segments.pop();
+        } else if (routeNames.indexOf(lastSegment) !== -1) {
           segments.pop();
         } else if (segments.length > 1 && segments[segments.length - 2] === "pages") {
           segments.splice(-2, 2);
         }
 
-        return new URL("/" + (segments.length ? segments.join("/") + "/" : ""), current.origin);
+        // Preserve the current protocol and host. This also keeps a guide
+        // deployed below an Object Storage path prefix self-contained.
+        current.pathname = "/" + (segments.length ? segments.join("/") + "/" : "");
+        current.search = "";
+        current.hash = "";
+        return current;
       }
 
       function assetUrl(path, baseUrl) {
@@ -41,6 +57,18 @@
 
         logicalPath = path.replace(/^(?:\.\.\/)+/, "");
         return new URL(logicalPath, baseUrl || guideRootUrl()).toString();
+      }
+
+      function hydrateRouteLinks(root) {
+        (root || document).querySelectorAll("[data-mode-target][href]").forEach(function (link) {
+          var route = guideRoutes[link.getAttribute("data-mode-target")];
+
+          if (route) {
+            // Explicit objects work on static Object Storage endpoints without
+            // requiring directory-index or clean-URL rewrite behavior.
+            link.href = new URL(route + "/index.html", guideRootUrl()).toString();
+          }
+        });
       }
 
       function hydrateAssets(root) {
@@ -60,8 +88,13 @@
         resolve: assetUrl,
         hydrate: hydrateAssets
       };
+      window.AuthorGuidePaths = {
+        root: guideRootUrl,
+        resolve: assetUrl
+      };
       document.addEventListener("DOMContentLoaded", function () {
         hydrateAssets();
+        hydrateRouteLinks();
         document.querySelectorAll("[data-full-guide-link]").forEach(function (link) {
           link.href = fullGuideHref;
         });

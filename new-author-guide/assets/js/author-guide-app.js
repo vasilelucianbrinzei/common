@@ -57,7 +57,7 @@
     });
   var guideSections = [];
   var guideSectionMap = {};
-  var guideManifestHref = "../workshops/author-guide/manifest.json";
+  var guideCatalogHref = "";
   var fullGuideHref = "https://oracle-livelabs.github.io/common/sample-livelabs-templates/create-labs/labs/workshops/livelabs/";
   var workshopExampleHref = window.authorGuideWorkshopExampleHref || "https://oracle-livelabs.github.io/developer/dev-ai-app-dev-finance/workshops/sandbox/";
   var nodocSearchEntries = [];
@@ -117,7 +117,7 @@
     ["validator", "markdown validation", "pr checks", "lintchecker", "checks", "validation"],
     ["images", "image", "screenshot", "screenshots", "optishot", "media"],
     ["markdown", "manifest", "copy tags", "task header", "acknowledgements"],
-    ["sql", "plsql", "free sql", "freesql", "sql developer"],
+    ["sql", "plsql", "sql developer"],
     ["help", "support", "faq", "message the team", "slack", "mailbox"],
     ["sla", "timeline", "timelines", "review window", "publishing window"],
     ["secure desktop", "secure desktops", "restricted laptop", "restricted corporate laptop", "novnc", "chrome", "popups"],
@@ -137,7 +137,6 @@
     "publishing",
     "media",
     "interactive",
-    "freesql",
     "marketplace",
     "livestack",
     "assets",
@@ -164,9 +163,6 @@
     "fixomat",
     "reuse-variables",
     "quiz-blocks",
-    "freesql-embed",
-    "freesql-button-integration",
-    "freesql-tutorial-publishing",
     "livelabs-sprints",
     "graphical-remote-desktop",
     "secure-desktop-when",
@@ -515,6 +511,13 @@
   var wmsExamplePromptMaxLength = 320;
 
   if (bubbleModalElement) {
+    bubbleModalElement.addEventListener("shown.bs.modal", function () {
+      var closeControl = bubbleModalElement.querySelector(".modal-header [data-bs-dismiss='modal']");
+      if (closeControl && typeof closeControl.focus === "function") {
+        closeControl.focus();
+      }
+    });
+
     bubbleModalElement.addEventListener("hidden.bs.modal", function () {
       closeImageLightbox({ announce: false, restoreFocus: false });
       document.body.classList.remove("modal-open");
@@ -659,23 +662,53 @@
   function resolveAppBasePath() {
     var path = window.location.pathname || "/";
     var cleanPath = path.replace(/\/+$/, "");
-    var lastSegment = cleanPath.split("/").pop().toLowerCase();
+    var segments = cleanPath.split("/").filter(Boolean);
+    var routeNames = ["home", "quickstart", "cheatsheet", "nodoc"];
+    var lastSegment = (segments[segments.length - 1] || "").toLowerCase();
+    var previousSegment = (segments[segments.length - 2] || "").toLowerCase();
 
-    if (["home", "home.html", "quickstart", "quickstart.html", "cheatsheet", "cheatsheet.html", "nodoc", "nodoc.html", "index.html"].indexOf(lastSegment) !== -1) {
-      cleanPath = cleanPath.slice(0, cleanPath.length - lastSegment.length);
+    // Public routes are real static objects such as quickstart/index.html.
+    // Remove both route segments when finding the guide root; otherwise a
+    // page would generate nested URLs such as quickstart/quickstart.
+    if (lastSegment === "index.html" && routeNames.indexOf(previousSegment) !== -1) {
+      segments.splice(-2, 2);
+    } else if (lastSegment === "index.html") {
+      segments.pop();
+    } else if (routeNames.indexOf(lastSegment) !== -1 || routeNames.indexOf(lastSegment.replace(/\.html$/, "")) !== -1) {
+      segments.pop();
     } else if (!path.endsWith("/")) {
-      cleanPath = path.slice(0, path.lastIndexOf("/") + 1);
+      segments.pop();
     }
 
-    return (cleanPath || "/").replace(/\/+$/, "/");
+    if ((segments[segments.length - 1] || "").toLowerCase() === "pages") {
+      segments.pop();
+    }
+
+    return "/" + (segments.length ? segments.join("/") + "/" : "");
   }
 
   var appBasePath = resolveAppBasePath();
   var routeBasePath = appBasePath.replace(/pages\/$/i, "") || "/";
 
+  function resolveGuideRuntimePath(path) {
+    if (window.AuthorGuidePaths && typeof window.AuthorGuidePaths.resolve === "function") {
+      return window.AuthorGuidePaths.resolve(path);
+    }
+
+    return new URL(routeBasePath + path.replace(/^\/+/, ""), window.location.href).toString();
+  }
+
+  guideCatalogHref = resolveGuideRuntimePath("assets/data/author-guide-catalog.json");
+
   function routeTokenFromLocation() {
     var routeParam = new URLSearchParams(window.location.search).get("route");
-    var pathSegment = (window.location.pathname || "").replace(/\/+$/, "").split("/").pop().toLowerCase();
+    var pathSegments = (window.location.pathname || "").replace(/\/+$/, "").split("/").filter(Boolean);
+    var pathSegment = (pathSegments[pathSegments.length - 1] || "").toLowerCase();
+
+    if (pathSegment === "index.html" && pathSegments.length > 1) {
+      pathSegment = pathSegments[pathSegments.length - 2].toLowerCase();
+    }
+
     var cleanRoute = String(routeParam || pathSegment || "").toLowerCase();
 
     if (window.location.hash) {
@@ -701,32 +734,54 @@
   function routeUrl(hash) {
     var cleaned = String(hash || "").replace(/^#/, "").toLowerCase();
     var pageFile = function (cleanName) {
-      return routeBasePath + cleanName;
+      return cleanName === "home"
+        ? routeBasePath + "index.html"
+        : routeBasePath + cleanName + "/index.html";
+    };
+    var pageUrl = function (cleanName, pageHash) {
+      var authoring = "";
+
+      // The Quickstart authoring choice is intentionally shareable. Keep it
+      // when the step hash changes so Next, Back, reload, and browser history
+      // do not silently switch a GitHub author back to the NoDoc route.
+      if (cleanName === "quickstart") {
+        try {
+          authoring = new URLSearchParams(window.location.search).get("authoring") || "";
+        } catch (error) {
+          authoring = "";
+        }
+
+        if (authoring !== "source" && authoring !== "no-doc") {
+          authoring = "";
+        }
+      }
+
+      return pageFile(cleanName) + (authoring ? "?authoring=" + authoring : "") + (pageHash || "");
     };
 
     if (!cleaned || cleaned === "home" || cleaned === "hub") {
-      return pageFile("home");
+      return pageUrl("home");
     }
     if (cleaned === "guided" || cleaned === "quickstart") {
-      return pageFile("quickstart");
+      return pageUrl("quickstart");
     }
     if (cleaned.indexOf("step-") === 0) {
-      return pageFile("quickstart") + hash;
+      return pageUrl("quickstart", hash);
     }
     if (cleaned === "toolkit" || cleaned === "quick-reference" || cleaned === "cheatsheet" || cleaned === "explorer") {
-      return pageFile("cheatsheet");
+      return pageUrl("cheatsheet");
     }
     if (cleaned.indexOf("cheatsheet:") === 0) {
-      return pageFile("cheatsheet") + hash;
+      return pageUrl("cheatsheet", hash);
     }
     if (cleaned === "nodoc" || cleaned === "no-doc") {
-      return pageFile("nodoc");
+      return pageUrl("nodoc");
     }
     if (cleaned.indexOf("nodoc:") === 0) {
-      return pageFile("nodoc") + hash;
+      return pageUrl("nodoc", hash);
     }
 
-    return routeBasePath + "home" + (hash || "");
+    return pageUrl("home", hash);
   }
 
   function setLiveMessage(message) {
@@ -1108,9 +1163,12 @@
   function normalizeTagSelection(tags) {
     var list = Array.isArray(tags) ? tags : [tags];
 
+    // The Cheatsheet presents one topic filter at a time. Older browser
+    // history can still contain an array from the previous multi-select UI,
+    // so retain only the first valid value when that state is restored.
     return uniqueList(list.map(normalizeTagValue).filter(function (tag) {
       return tag && tag !== "all";
-    }));
+    })).slice(0, 1);
   }
 
   explorerItems.forEach(function (item, index) {
@@ -1253,18 +1311,6 @@
     return "Loading task sections";
   }
 
-  function analyzeGuideSourceMarkdown(markdown) {
-    var headings = String(markdown || "").match(/^##\s+.+$/gm) || [];
-    var taskCount = headings.filter(function (line) {
-      return /^\s*##\s+(?:\([^)]+\)\s*)?Task\b/i.test(line);
-    }).length;
-
-    return {
-      taskCount: taskCount,
-      panelCount: headings.length
-    };
-  }
-
   function applyGuideSourceMeta(section, meta) {
     if (!section || !meta) {
       return;
@@ -1276,7 +1322,9 @@
   }
 
   function loadGuideSourceMeta(section) {
-    if (!section || !section.id || !section.sourcePath) {
+    var meta;
+
+    if (!section || !section.id) {
       return Promise.resolve(null);
     }
 
@@ -1284,43 +1332,12 @@
       return guideSectionMetaCache[section.id];
     }
 
-    guideSectionMetaCache[section.id] = fetch(section.sourcePath, { cache: "no-store" })
-      .then(function (response) {
-        if (!response.ok) {
-          throw new Error("Guide source markdown request failed with status " + response.status + ".");
-        }
-
-        return response.text();
-      })
-      .then(function (markdown) {
-        var meta = analyzeGuideSourceMarkdown(markdown);
-
-        applyGuideSourceMeta(section, meta);
-
-        if (guideSectionNav) {
-          renderGuideNav();
-        }
-
-        if (state.mode === "guide" && currentGuideSection() && currentGuideSection().id === section.id) {
-          renderGuideSection();
-        }
-
-        return meta;
-      })
-      .catch(function () {
-        var fallbackMeta = {
-          taskCount: 0,
-          panelCount: 0
-        };
-
-        applyGuideSourceMeta(section, fallbackMeta);
-
-        if (guideSectionNav) {
-          renderGuideNav();
-        }
-
-        return fallbackMeta;
-      });
+    meta = {
+      taskCount: Math.max(0, Number(section.taskCount) || 0),
+      panelCount: Math.max(0, Number(section.panelCount) || 0)
+    };
+    applyGuideSourceMeta(section, meta);
+    guideSectionMetaCache[section.id] = Promise.resolve(meta);
 
     return guideSectionMetaCache[section.id];
   }
@@ -1330,7 +1347,11 @@
     var title = String((tutorial && tutorial.title) || "Guide Page");
     var summary = String((tutorial && tutorial.description) || "").trim();
     var basename = filename.split("/").pop() || "";
-    var id = basename.replace(/\.md$/i, "");
+    var id = String((tutorial && tutorial.id) || basename.replace(/\.md$/i, ""));
+    var sourceMeta = {
+      taskCount: Math.max(0, Number(tutorial && tutorial.taskCount) || 0),
+      panelCount: Math.max(0, Number(tutorial && tutorial.panelCount) || 0)
+    };
 
     return {
       id: id,
@@ -1340,28 +1361,14 @@
       purpose: "Original author-guide content indexed for search with direct access to the original guide.",
       accent: guideAccentForEntry(title, summary),
       highlights: guideHighlightsForEntry(id, title, summary),
-      navState: "Loading sections",
+      navState: guideNavStateLabel(sourceMeta.taskCount, sourceMeta.panelCount),
+      taskCount: sourceMeta.taskCount,
+      panelCount: sourceMeta.panelCount,
       labs: [],
-      sourcePath: resolveGuideSourcePath(filename),
       sectionHref: fullGuideLabHref(id),
       sectionLabel: "Open Step by Step Guide",
       embedHref: fullGuideLabHref(id, { embed: "1" })
     };
-  }
-
-  function resolveGuideSourcePath(filename) {
-    var manifestUrl;
-
-    if (!filename) {
-      return "";
-    }
-
-    try {
-      manifestUrl = new URL(guideManifestHref, window.location.href);
-      return new URL(filename, manifestUrl).toString();
-    } catch (error) {
-      return filename;
-    }
   }
 
   function loadGuideCatalog() {
@@ -1369,16 +1376,16 @@
       return guideCatalogPromise;
     }
 
-    guideCatalogPromise = fetch(guideManifestHref, { cache: "no-store" })
+    guideCatalogPromise = fetch(guideCatalogHref, { cache: "no-store" })
       .then(function (response) {
         if (!response.ok) {
-          throw new Error("Guide manifest request failed with status " + response.status + ".");
+          throw new Error("Guide catalog request failed with status " + response.status + ".");
         }
 
         return response.json();
       })
-      .then(function (manifest) {
-        guideSections = (manifest.tutorials || []).map(buildGuideEntry).filter(function (entry) {
+      .then(function (catalog) {
+        guideSections = (catalog.tutorials || []).map(buildGuideEntry).filter(function (entry) {
           return entry.id;
         });
         guideSectionMap = guideSections.reduce(function (accumulator, entry) {
@@ -1774,7 +1781,7 @@
     var sortLabels = {
       alphabetical: "Alphabetical",
       latest: "Latest",
-      relevance: "Most relevant",
+      relevance: state.toolkitQuery.trim() ? "Best match" : "Recommended",
       topic: "Topic"
     };
 
@@ -1787,23 +1794,26 @@
     var activeTags = normalizeTagSelection(state.activeTags);
 
     if (resultCount) {
-      resultCount.textContent = "Showing " + count + " cheatsheet card" + (count === 1 ? "" : "s");
+      resultCount.textContent = "Showing " + count + " of " + explorerItems.length + " cheatsheet card" + (count === 1 ? "" : "s");
     }
 
     if (!filterSummary) {
       return;
     }
 
-    tagText = activeTags.length ? "Tags: " + activeTags.map(titleCaseTag).join(", ") : "All tags";
+    tagText = activeTags.length ? "Filter: " + titleCaseTag(activeTags[0]) : "All topics";
     filterSummary.textContent = currentSortLabel() + " sort. " + tagText + (queryText ? '. Query: "' + queryText + '"' : ".");
   }
 
   function renderExplorerCard(entry) {
     var item = entry.item;
+    var itemTags = item.__tags || getItemTags(item);
+    var tagLabel = itemTags.map(titleCaseTag).join(", ");
+
     return [
       '<div class="col bubble-item" data-bubble-id="', item.id, '">',
       '  <button type="button" class="bubble-button" data-open-bubble="', item.id, '" data-accent="red" aria-label="Open ', escapeHtml(item.title), ' details">',
-      '    <span class="bubble-badge">', escapeHtml(titleCaseTag(explorerTopic(entry))), "</span>",
+      '    <span class="bubble-badge" aria-label="Tags: ', escapeAttribute(tagLabel), '">', escapeHtml(tagLabel), "</span>",
       '    <span class="bubble-title">', escapeHtml(item.title), "</span>",
       '    <span class="bubble-text">', escapeHtml(item.short), "</span>",
       renderExplorerMeta(entry),
@@ -1855,21 +1865,26 @@
 
     var query = state.toolkitQuery.trim();
     var selectedTags = normalizeTagSelection(state.activeTags);
-    var visibleEntries = explorerItems.map(function (item) {
-      var score = query ? scoreSearchEntry(buildExplorerSearchEntry(item), query) : 0;
+    var selectedTag = selectedTags[0] || "";
+    var scoredEntries = explorerItems.map(function (item) {
+      var searchEntry = buildExplorerSearchEntry(item);
       var itemTags = item.__tags || getItemTags(item);
-      var matchesQuery = !query || score > 0;
-      var matchesTag = !selectedTags.length || selectedTags.some(function (tag) {
-        return itemTags.indexOf(tag) !== -1;
-      });
 
       return {
         item: item,
-        score: score,
+        directScore: query ? scoreSearchEntry(searchEntry, query, false) : 0,
+        expandedScore: query ? scoreSearchEntry(searchEntry, query, true) : 0,
         updatedTime: itemUpdatedTime(item),
-        matchesQuery: matchesQuery,
-        matchesTag: matchesTag
+        matchesTag: !selectedTag || itemTags.indexOf(selectedTag) !== -1
       };
+    });
+    var hasDirectMatch = !!query && scoredEntries.some(function (entry) {
+      return entry.directScore >= 14;
+    });
+    var visibleEntries = scoredEntries.map(function (entry) {
+      entry.score = hasDirectMatch ? entry.directScore : entry.expandedScore;
+      entry.matchesQuery = !query || entry.score >= 14;
+      return entry;
     }).filter(function (entry) {
       return entry.matchesQuery && entry.matchesTag;
     });
@@ -1887,21 +1902,19 @@
 
   function setActiveTag(tag) {
     var normalized = normalizeTagValue(tag);
-    var current = normalizeTagSelection(state.activeTags);
 
     if (normalized === "all") {
       state.activeTags = [];
-    } else if (current.indexOf(normalized) === -1) {
-      state.activeTags = current.concat(normalized);
     } else {
-      state.activeTags = current.filter(function (item) {
-        return item !== normalized;
-      });
+      state.activeTags = [normalized];
     }
 
     state.activeTag = state.activeTags[0] || "all";
     updateTagPillState();
     renderExplorer();
+    setLiveMessage(normalized === "all"
+      ? "Showing all Cheatsheet cards."
+      : "Filtering Cheatsheet cards by " + titleCaseTag(normalized) + ".");
   }
 
   function fillList(id, items) {
@@ -2609,7 +2622,7 @@
       return;
     }
 
-    root.querySelectorAll(".step-figure, .guide-figure, .modal-media-figure, .evidence-figure, .inline-evidence-card, .guide-source-panel-prose figure, .guide-source-prose figure").forEach(function (figure) {
+    root.querySelectorAll(".step-figure, .guide-figure, .modal-media-figure, .evidence-figure, .inline-evidence-card, .nodoc-route-evidence, .guide-source-panel-prose figure, .guide-source-prose figure").forEach(function (figure) {
       var image = figure.querySelector("img");
       var caption = figure.querySelector("figcaption");
       var captionText;
@@ -2700,7 +2713,7 @@
 
     imageLightbox.setAttribute("hidden", "");
     imageLightbox.setAttribute("aria-hidden", "true");
-    imageLightboxImage.setAttribute("src", "");
+    imageLightboxImage.removeAttribute("src");
     imageLightboxImage.setAttribute("alt", "");
     imageLightboxCaption.textContent = "";
     document.body.classList.remove("image-lightbox-open");
@@ -2822,6 +2835,64 @@
     ].join(""), kicker || "Resources");
   }
 
+  function buildInstallCommandsHtml(title, intro, commands) {
+    if (!commands || !commands.length) {
+      return "";
+    }
+
+    return buildSupportBlockHtml(title || "Install and launch", intro || "Run the matching installer command, then launch the application from the location it creates.", [
+      '<div class="command-card-grid">',
+      commands.map(function (command) {
+        return [
+          '<article class="card command-card">',
+          '  <div class="card-body">',
+          '    <div>',
+          '      <div class="panel-kicker">', escapeHtml(command.platform || "Installer"), '</div>',
+          '      <h4 class="h5 mb-1">', escapeHtml(command.title || "Install"), '</h4>',
+          command.note ? '      <p class="snippet-description">' + escapeHtml(command.note) + '</p>' : '',
+          '    </div>',
+          '    <pre><code>', escapeHtml(command.command || ""), '</code></pre>',
+          '    <button class="copy-snippet" type="button" data-copy-text="', escapeAttribute(command.command || ""), '">Copy command</button>',
+          '  </div>',
+          '</article>'
+        ].join("");
+      }).join(""),
+      '</div>'
+    ].join(""), "Install");
+  }
+
+  function renderModalMedia(cardId, galleryId, images, title) {
+    var card = document.getElementById(cardId);
+    var gallery = document.getElementById(galleryId);
+
+    if (!card || !gallery) {
+      return;
+    }
+
+    gallery.innerHTML = "";
+    if (!images || !images.length) {
+      card.classList.add("d-none");
+      return;
+    }
+
+    images.forEach(function (image) {
+      var figure = document.createElement("figure");
+      var caption = document.createElement("figcaption");
+      var img = document.createElement("img");
+
+      figure.className = "modal-media-figure";
+      caption.textContent = image.caption || "";
+      img.src = window.AuthorGuideAssets.resolve(image.src);
+      img.alt = image.alt || title || "Reference image";
+      figure.appendChild(caption);
+      figure.appendChild(img);
+      gallery.appendChild(figure);
+    });
+
+    card.classList.remove("d-none");
+    decorateExpandableMedia(card);
+  }
+
   function setSupportMount(id, html) {
     var mount = document.getElementById(id);
 
@@ -2858,7 +2929,6 @@
     var item = explorerItems.find(function (candidate) {
       return candidate.id === id;
     });
-    var mediaCard;
     var sourceLink;
     var guideButton;
     var snippetCard;
@@ -2877,16 +2947,26 @@
     fillList("bubbleModalCheckpoints", item.checkpoints);
     fillList("bubbleModalWatchFor", item.watchFor);
 
-    mediaCard = document.getElementById("bubbleModalMediaCard");
-    if (item.image) {
-      document.getElementById("bubbleModalImage").setAttribute("src", window.AuthorGuideAssets.resolve(item.image.src));
-      document.getElementById("bubbleModalImage").setAttribute("alt", item.image.alt || item.title);
-      document.getElementById("bubbleModalImageCaption").textContent = item.image.caption || "";
-      mediaCard.classList.remove("d-none");
-      decorateExpandableMedia(mediaCard);
-    } else {
-      mediaCard.classList.add("d-none");
-    }
+    setSupportMount(
+      "bubbleModalInstallMount",
+      buildInstallCommandsHtml(item.installTitle, item.installIntro, item.installCommands)
+    );
+    setSupportMount(
+      "bubbleModalPreImageResourcesMount",
+      buildResourceLinksHtml(item.preImageResourcesTitle, item.preImageResourcesIntro, item.preImageResourceLinks, "Skills")
+    );
+    renderModalMedia(
+      "bubbleModalMediaCard",
+      "bubbleModalMediaGallery",
+      item.interfaceImages || (item.image ? [item.image] : []),
+      item.title
+    );
+    renderModalMedia(
+      "bubbleModalOutcomeMediaCard",
+      "bubbleModalOutcomeMediaGallery",
+      item.outcomeImages,
+      item.title
+    );
 
     setSupportMount(
       "bubbleModalMilestonesMount",
@@ -2989,10 +3069,13 @@
       flattenList(config.tags),
       flattenList(config.keywords)
     ].join(" ");
-    var titleNorm = expandSearchText(titleText);
-    var summaryNorm = expandSearchText(summaryText);
-    var pathNorm = expandSearchText(pathText);
-    var bodyNorm = expandSearchText(bodyText);
+    // Keep index fields literal. Query expansion still supports useful
+    // synonyms, but expanding both index and query turns a precise term such
+    // as "stakeholder" into a match on nearly every WMS-related card.
+    var titleNorm = normalizeText(titleText);
+    var summaryNorm = normalizeText(summaryText);
+    var pathNorm = normalizeText(pathText);
+    var bodyNorm = normalizeText(bodyText);
 
     return {
       id: config.id,
@@ -3018,9 +3101,9 @@
     };
   }
 
-  function scoreSearchEntry(entry, query) {
+  function scoreSearchEntry(entry, query, allowSynonyms) {
     var normalizedQuery = normalizeText(query);
-    var queryTokens = Array.from(new Set(tokenize(expandSearchText(query))));
+    var queryTokens = Array.from(new Set(tokenize(allowSynonyms ? expandSearchText(query) : normalizedQuery)));
     var matchedTokens = 0;
     var score = 0;
 
@@ -3124,12 +3207,23 @@
       return;
     }
 
-    results = searchIndex
+    var scoredResults = searchIndex
       .map(function (entry) {
+        var intentBoost = entry.id === "workshop-example" && isWorkshopExampleIntent(query) ? 30 : 0;
         return {
           entry: entry,
-          score: scoreSearchEntry(entry, query) + (entry.id === "workshop-example" && isWorkshopExampleIntent(query) ? 30 : 0)
+          directScore: scoreSearchEntry(entry, query, false) + intentBoost,
+          expandedScore: scoreSearchEntry(entry, query, true) + intentBoost
         };
+      });
+    var hasDirectMatch = scoredResults.some(function (item) {
+      return item.directScore >= 14 && (item.entry.id !== "workshop-example" || isWorkshopExampleIntent(query));
+    });
+
+    results = scoredResults
+      .map(function (item) {
+        item.score = hasDirectMatch ? item.directScore : item.expandedScore;
+        return item;
       })
       .filter(function (item) {
         return item.score >= 14 && (item.entry.id !== "workshop-example" || isWorkshopExampleIntent(query));
@@ -4030,7 +4124,7 @@
         path: "Quickstart / Step " + (index + 1),
         body: stepSections[index] ? stepSections[index].textContent : "",
         keywords: meta.keywords || [],
-        resultHref: routeBasePath + "quickstart#step-" + (index + 1),
+        resultHref: routeUrl("#step-" + (index + 1)),
         open: {
           kind: "guided",
           step: index
@@ -4058,7 +4152,7 @@
         tags: item.tags,
         sourceHref: item.sourceHref,
         sourceLabel: item.sourceLabel,
-        resultHref: routeBasePath + "cheatsheet#cheatsheet:" + encodeURIComponent(item.id),
+        resultHref: routeUrl("#cheatsheet:" + encodeURIComponent(item.id)),
         open: {
           kind: "toolkit",
           itemId: item.id
@@ -4108,7 +4202,7 @@
         summary: "Open this NoDoc workshop section and its authoring tasks.",
         path: "NoDoc / " + panelTitle,
         body: panelText,
-        resultHref: routeBasePath + "nodoc#nodoc:" + panelIndex,
+        resultHref: routeUrl("#nodoc:" + panelIndex),
         open: {
           kind: "nodoc",
           panel: panelIndex,
@@ -4127,7 +4221,7 @@
           summary: "Open this task in " + panelTitle + ".",
           path: "NoDoc / " + panelTitle + " / " + taskTitle,
           body: task.textContent.trim(),
-          resultHref: routeBasePath + "nodoc#nodoc:" + panelIndex + ":" + (taskIndex + 1),
+          resultHref: routeUrl("#nodoc:" + panelIndex + ":" + (taskIndex + 1)),
           open: {
             kind: "nodoc",
             panel: panelIndex,
@@ -4147,7 +4241,7 @@
       return nodocSearchLoadPromise;
     }
 
-    nodocSearchLoadPromise = fetch(new URL("../content/nodoc/nodoc-workshop.html", window.location.href).href, {
+    nodocSearchLoadPromise = fetch(resolveGuideRuntimePath("content/nodoc/nodoc-workshop.html"), {
       cache: "no-cache"
     }).then(function (response) {
       if (!response.ok) {
@@ -4405,13 +4499,11 @@
     }
   }
 
-  function copyWithFallback(text) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      return navigator.clipboard.writeText(text);
-    }
-
+  function copyWithSelectionFallback(text) {
     return new Promise(function (resolve, reject) {
       var helper = document.createElement("textarea");
+      var copied;
+
       helper.value = text;
       helper.setAttribute("readonly", "");
       helper.style.position = "absolute";
@@ -4419,14 +4511,28 @@
       document.body.appendChild(helper);
       helper.select();
       try {
-        document.execCommand("copy");
-        resolve();
+        copied = document.execCommand("copy");
+        if (copied) {
+          resolve();
+        } else {
+          reject(new Error("The browser did not copy the requested text."));
+        }
       } catch (error) {
         reject(error);
       } finally {
         document.body.removeChild(helper);
       }
     });
+  }
+
+  function copyWithFallback(text) {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text).catch(function () {
+        return copyWithSelectionFallback(text);
+      });
+    }
+
+    return copyWithSelectionFallback(text);
   }
 
   function copyTarget(targetId, button) {
@@ -4858,6 +4964,12 @@
       event.preventDefault();
       event.stopPropagation();
       closeImageLightbox();
+      return;
+    }
+
+    if (event.key === "Escape" && bubbleModalElement && bubbleModal && bubbleModalElement.classList.contains("show")) {
+      event.preventDefault();
+      bubbleModal.hide();
       return;
     }
 

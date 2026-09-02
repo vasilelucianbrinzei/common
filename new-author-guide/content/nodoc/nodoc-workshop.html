@@ -29,7 +29,7 @@
   <div class="nodoc-tree-content">
     <div data-video-card data-video-title="Lab 1 walkthrough"
       data-video-summary="Temporary test clip. Replace this source with the Lab 1 recording when it is ready."
-      data-video-features="Access and navigation|Role check|NoDoc Repo"></div>
+      data-video-features="Access and navigation|Role check|LiveLabs repo"></div>
     <p>Connect to NoDoc, sign in, and open the LiveLabs Focus Area used throughout the workshop.</p>
     <h4>Objectives</h4>
     <ul>
@@ -57,35 +57,229 @@
       <ol>
         <li>Open the dropdown menu.</li>
         <li>Select <strong>LiveLabs Focus Area</strong>.</li>
-        <img data-nodoc-asset="images/3_open_hamburger_menu.png" alt="Pick NoDoc Repo" class="img-fluid rounded">
-        <li>After selecting it, confirm that the LiveLabs Focus Area opens and its content is visible.</li>
-        
+        <img data-nodoc-asset="images/3_open_hamburger_menu.png" alt="Select the LiveLabs Focus Area" class="img-fluid rounded">
+        <li>In the LiveLabs Focus Area, open the <strong>LiveLabs repo</strong> and confirm that its content is visible.</li>
+        <img data-nodoc-asset="images/4_livelabs_focus_area.png" alt="LiveLabs Focus Area and LiveLabs repo content" class="img-fluid rounded">
       </ol>
     </details>
   </div>
 </details>
 <details class="nodoc-tree-group">
-  <summary><span>Lab 2 · Authoring And Structure</span><small>20 minutes</small></summary>
+  <summary><span>Lab 2 · Authoring</span></summary>
   <div class="nodoc-tree-content">
     <div data-video-card data-video-title="Lab 2 walkthrough"
       data-video-summary="Temporary test clip. Replace this source with the Lab 2 recording when it is ready."
       data-video-features="Article shell|Page structure|Metadata"></div>
-    <p>Create a versioned article and page set, then add metadata and structured content that can be reviewed, ingested,
-      and published later.</p>
+    <p>Create an article and page, create workshop content using the various writing tools at hand</p>
     <h4>Objectives</h4>
     <ul>
-      <li>Create an article from scratch.</li>
-      <li>Add pages at the correct TOC location.</li>
-      <li>Use metadata, links, code blocks, notes, and supported editor features.</li>
+      <li>Create an article and pages.</li>
+      <li>Add workshop content using the available writing tools.</li>
     </ul>
     <details class="nodoc-task">
-      <summary>Task 1 · Create The Article Shell</summary>
+      <summary>Task 1 · Create Article</summary>
       <ol>
-        <li>In No Doc Repo, click the <strong>+</strong> icon beside the selected Focus Area.</li>
+        <li>In the <strong>LiveLabs repo</strong>, click the <strong>+</strong> icon beside the selected Focus Area.</li>
         <li>Choose <strong>Article</strong>.</li>
-        <li>Enter a name such as <code>No Doc Workshop Practice</code> and a version such as <code>2026.08</code>.</li>
-        <li>Choose <strong>Create From Scratch</strong>, then create the article.</li>
-        <li>Leave the article's first page reserved for metadata and the later information map.</li>
+        <img data-nodoc-asset="images/5_add_article.png" alt="Add Article" class="img-fluid rounded">
+        <li>
+          You can choose between <strong>Create From Scratch</strong>, <strong>Codex</strong>, <strong>Import LiveLabs URL</strong> and <strong>Reuse Article</strong>.
+          <img data-nodoc-asset="images/create_article_options.png" alt="Add Article Options" class="img-fluid rounded">
+          <div class="nodoc-creation-tabs">
+            <p class="nodoc-creation-tabs-intro">Select the option that matches your starting point.</p>
+            <div class="nav nav-tabs nodoc-creation-tablist" id="nodoc-creation-options" role="tablist" aria-label="Article creation options">
+              <button class="nav-link active nodoc-creation-tab" id="nodoc-creation-scratch-tab" data-bs-toggle="tab" data-bs-target="#nodoc-creation-scratch-panel" type="button" role="tab" aria-controls="nodoc-creation-scratch-panel" aria-selected="true">Create From Scratch</button>
+              <button class="nav-link nodoc-creation-tab" id="nodoc-creation-codex-tab" data-bs-toggle="tab" data-bs-target="#nodoc-creation-codex-panel" type="button" role="tab" aria-controls="nodoc-creation-codex-panel" aria-selected="false">Codex</button>
+              <button class="nav-link nodoc-creation-tab" id="nodoc-creation-import-tab" data-bs-toggle="tab" data-bs-target="#nodoc-creation-import-panel" type="button" role="tab" aria-controls="nodoc-creation-import-panel" aria-selected="false">Import LiveLabs URL</button>
+              <button class="nav-link nodoc-creation-tab" id="nodoc-creation-reuse-tab" data-bs-toggle="tab" data-bs-target="#nodoc-creation-reuse-panel" type="button" role="tab" aria-controls="nodoc-creation-reuse-panel" aria-selected="false">Reuse Article</button>
+            </div>
+            <div class="tab-content nodoc-creation-tab-content">
+              <section class="tab-pane fade show active nodoc-creation-panel" id="nodoc-creation-scratch-panel" role="tabpanel" aria-labelledby="nodoc-creation-scratch-tab" tabindex="0">
+                <p>Use this option when you want to build the workshop article from the beginning.</p>
+                <ol>
+                  <li>Select <strong>Create From Scratch</strong>.</li>
+                  <li>Click <strong>Create</strong> to create the blank article.</li>
+                  <img data-nodoc-asset="images/create_article_options_1_create_from_scratch.png" alt="Add Blank Article" class="img-fluid rounded">
+                </ol>
+              </section>
+              <section class="tab-pane fade nodoc-creation-panel" id="nodoc-creation-codex-panel" role="tabpanel" aria-labelledby="nodoc-creation-codex-tab" tabindex="0">
+                <p>Use this option when a tailored first-draft prompt will help you begin the article.</p>
+                <ol>
+                  <li>Select <strong>Codex</strong>.</li>
+                  <li>Plan the skills first. <code>livelabs-workshop-author</code> is required to build the workshop; select optional skills only when you can provide their listed resources.</li>
+                  <li>Use the Workshop Prompt Builder below: enter the workshop idea, scope, approved source URLs, and any relevant skill resources, then select <strong>Build Codex prompt</strong>.</li>
+                  <li>Copy the generated prompt, paste it into NoDoc Codex, and review the draft plus every <code>[VERIFY: ...]</code> item before continuing.</li>
+                </ol>
+                <form class="nodoc-codex-prompt-builder" data-nodoc-codex-prompt-builder novalidate>
+                  <section class="nodoc-codex-skill-plan" role="group" aria-labelledby="nodoc-codex-skill-plan-title">
+                    <h5 class="nodoc-codex-skill-plan-title" id="nodoc-codex-skill-plan-title">1. Plan the skills that Codex needs</h5>
+                    <p>Select the skills for this draft before building the prompt. The required authoring skill stays selected; each optional skill reveals the resources that should accompany it. A selected optional skill needs its resources before the builder will create a prompt.</p>
+                    <div class="nodoc-codex-skill-list">
+                      <label class="nodoc-codex-skill-option">
+                        <input type="checkbox" id="nodoc-codex-skill-livelabs-workshop-author" checked disabled data-nodoc-codex-skill="livelabs-workshop-author" data-nodoc-codex-skill-name="livelabs-workshop-author" data-nodoc-codex-skill-description="Create the LiveLabs workshop structure, Markdown, loader and manifest when requested, then validate against LiveLabs authoring rules." data-nodoc-codex-skill-resource-requirement="the workshop brief, scope, approved sources, and review markers" data-nodoc-codex-skill-default-resource="Use the workshop brief, requested scope, approved source URLs, and review markers below. Resolve missing inputs before scaffolding.">
+                        <span class="nodoc-codex-skill-copy"><strong>LiveLabs Workshop Author</strong><small>Required. Creates the workshop structure and learner-facing LiveLabs content, then validates it.</small></span>
+                      </label>
+                      <label class="nodoc-codex-skill-option">
+                        <input type="checkbox" id="nodoc-codex-skill-feature-doc-assembler" data-nodoc-codex-skill="feature-doc-assembler" data-nodoc-codex-skill-name="feature-doc-assembler" data-nodoc-codex-skill-description="Turn approved feature requirements and source material into a structured feature brief for the draft." data-nodoc-codex-skill-resource-requirement="approved feature requirements, acceptance criteria, and source material">
+                        <span class="nodoc-codex-skill-copy"><strong>Feature Doc Assembler</strong><small>Optional. Organizes approved feature requirements, acceptance criteria, and source material.</small></span>
+                      </label>
+                      <label class="nodoc-codex-skill-option">
+                        <input type="checkbox" id="nodoc-codex-skill-freesql" data-nodoc-codex-skill="freesql" data-nodoc-codex-skill-name="freesql" data-nodoc-codex-skill-description="Run or share verified SQL, PL/SQL, Quick SQL, or JavaScript through the FreeSQL browser workflow when runnable database practice is needed." data-nodoc-codex-skill-resource-requirement="the SQL or PL/SQL learning goal, expected result, and a FreeSQL share URL if an embed or share is requested">
+                        <span class="nodoc-codex-skill-copy"><strong>FreeSQL</strong><small>Optional. Runs and shares verified SQL or PL/SQL; use it only for genuine runnable database work.</small></span>
+                      </label>
+                      <label class="nodoc-codex-skill-option">
+                        <input type="checkbox" id="nodoc-codex-skill-oracle-db" data-nodoc-codex-skill="oracle-db-skill" data-nodoc-codex-skill-name="oracle-db-skill" data-nodoc-codex-skill-description="Validate Oracle Database-specific SQL, PL/SQL, JSON, Vector Search, ORDS, security, and version-sensitive implementation details." data-nodoc-codex-skill-resource-requirement="the target database release, Oracle capabilities to verify, and approved technical sources">
+                        <span class="nodoc-codex-skill-copy"><strong>Oracle DB Skill</strong><small>Optional. Checks database-specific syntax, feature behavior, security, and version-sensitive assumptions.</small></span>
+                      </label>
+                      <label class="nodoc-codex-skill-option">
+                        <input type="checkbox" id="nodoc-codex-skill-screenshot" data-nodoc-codex-skill="webpage-screenshot-pipeline" data-nodoc-codex-skill-name="webpage-screenshot-pipeline" data-nodoc-codex-skill-description="Capture reproducible evidence for verified browser states and layouts; never invent product screenshots." data-nodoc-codex-skill-resource-requirement="the exact states to capture, expected visual evidence, and target URLs or local routes">
+                        <span class="nodoc-codex-skill-copy"><strong>Webpage Screenshot Pipeline</strong><small>Optional. Captures verified browser evidence for the states the workshop needs to show.</small></span>
+                      </label>
+                    </div>
+                  </section>
+
+                  <div class="nodoc-codex-skill-resource" data-nodoc-codex-skill-resource-panel="feature-doc-assembler" hidden>
+                    <label for="nodoc-codex-feature-doc-resources">Feature Doc Assembler resources</label>
+                    <textarea id="nodoc-codex-feature-doc-resources" class="form-control nodoc-codex-skill-resource-input" rows="3" maxlength="4000" data-nodoc-codex-skill-resource="feature-doc-assembler" disabled placeholder="Paste approved feature requirements, acceptance criteria, product decisions, or source notes."></textarea>
+                  </div>
+                  <div class="nodoc-codex-skill-resource" data-nodoc-codex-skill-resource-panel="freesql" hidden>
+                    <label for="nodoc-codex-freesql-resources">FreeSQL resources</label>
+                    <textarea id="nodoc-codex-freesql-resources" class="form-control nodoc-codex-skill-resource-input" rows="3" maxlength="4000" data-nodoc-codex-skill-resource="freesql" disabled placeholder="State the SQL or PL/SQL learning goal, expected result, and a FreeSQL share URL only when one is already approved."></textarea>
+                  </div>
+                  <div class="nodoc-codex-skill-resource" data-nodoc-codex-skill-resource-panel="oracle-db-skill" hidden>
+                    <label for="nodoc-codex-oracle-db-resources">Oracle DB Skill resources</label>
+                    <textarea id="nodoc-codex-oracle-db-resources" class="form-control nodoc-codex-skill-resource-input" rows="3" maxlength="4000" data-nodoc-codex-skill-resource="oracle-db-skill" disabled placeholder="State the target database release, Oracle capabilities to verify, and approved technical resources."></textarea>
+                  </div>
+                  <div class="nodoc-codex-skill-resource" data-nodoc-codex-skill-resource-panel="webpage-screenshot-pipeline" hidden>
+                    <label for="nodoc-codex-screenshot-resources">Webpage Screenshot Pipeline resources</label>
+                    <textarea id="nodoc-codex-screenshot-resources" class="form-control nodoc-codex-skill-resource-input" rows="3" maxlength="4000" data-nodoc-codex-skill-resource="webpage-screenshot-pipeline" disabled placeholder="List the exact verified states to capture, expected visual evidence, and target URLs or local routes."></textarea>
+                  </div>
+
+                  <label for="nodoc-codex-workshop-idea">2. Workshop idea</label>
+                  <textarea id="nodoc-codex-workshop-idea" class="form-control generator-textarea nodoc-codex-prompt-idea" rows="6" maxlength="4000" aria-describedby="nodoc-codex-workshop-idea-help nodoc-codex-workshop-idea-count" placeholder="Describe the learner, the problem they will solve, the Oracle products or services involved, and the expected outcome."></textarea>
+                  <div class="nodoc-codex-prompt-meta">
+                    <span id="nodoc-codex-workshop-idea-help">The builder works locally in this guide. It does not send your idea to NoDoc or another service.</span>
+                    <span id="nodoc-codex-workshop-idea-count" aria-live="polite">0 / 4000</span>
+                  </div>
+                  <label for="nodoc-codex-workshop-scope">3. Workshop scope and delivery details <span>(recommended)</span></label>
+                  <textarea id="nodoc-codex-workshop-scope" class="form-control nodoc-codex-prompt-scope" rows="3" maxlength="4000" aria-describedby="nodoc-codex-workshop-scope-help" placeholder="Example: Draft mode; approximately 180 minutes; Introduction and Labs 1-5 only; desktop loader at workshops/desktop/index.html; no content outside that scope."></textarea>
+                  <div class="nodoc-codex-prompt-meta">
+                    <span id="nodoc-codex-workshop-scope-help">Include duration, lab count, pages or variants, output paths, and exclusions when they are already decided.</span>
+                  </div>
+                  <label for="nodoc-codex-approved-source-urls">4. Approved source URLs <span>(optional)</span></label>
+                  <textarea id="nodoc-codex-approved-source-urls" class="form-control nodoc-codex-prompt-sources" rows="4" maxlength="4000" aria-describedby="nodoc-codex-approved-source-urls-help" placeholder="Paste one approved HTTPS URL per line. Do not include credentials, tokens, or signed URLs."></textarea>
+                  <div class="nodoc-codex-prompt-meta">
+                    <span id="nodoc-codex-approved-source-urls-help">The builder copies these URLs into the prompt. It does not open, validate, approve, or replace them.</span>
+                  </div>
+                  <label for="nodoc-codex-safety-review-constraints">5. Safety and review constraints <span>(optional)</span></label>
+                  <textarea id="nodoc-codex-safety-review-constraints" class="form-control nodoc-codex-prompt-constraints" rows="4" maxlength="4000" aria-describedby="nodoc-codex-safety-review-constraints-help" placeholder="Example: Use synthetic data only; do not use PHI; keep the application non-diagnostic; require clinical and technical SME review before publication."></textarea>
+                  <div class="nodoc-codex-prompt-meta">
+                    <span id="nodoc-codex-safety-review-constraints-help">State policy, privacy, safety, security, compliance, or SME-review requirements that Codex must preserve.</span>
+                  </div>
+                  <div class="nodoc-codex-prompt-actions">
+                    <button class="btn nodoc-codex-prompt-build" type="submit">Build Codex prompt</button>
+                  </div>
+                  <p class="nodoc-codex-prompt-status" data-nodoc-codex-prompt-status role="status" aria-live="polite"></p>
+                  <div class="nodoc-codex-prompt-output" data-nodoc-codex-prompt-output hidden>
+                    <div class="nodoc-codex-prompt-output-heading">
+                      <h6>Copy-ready NoDoc Codex prompt</h6>
+                      <button class="btn nodoc-codex-prompt-copy" type="button" data-copy-target="nodoc-codex-workshop-prompt">Copy prompt</button>
+                    </div>
+                    <pre tabindex="0"><code id="nodoc-codex-workshop-prompt"></code></pre>
+                  </div>
+                </form>
+                <!-- Developer-editable template. Keep every {{...}} token unchanged so the local builder can insert the author's inputs. -->
+                <template id="nodoc-codex-workshop-template">
+# Oracle NoDoc LiveLabs Workshop Creation Prompt
+
+You are Codex operating inside Oracle NoDoc as a LiveLabs workshop author and builder.
+
+First inspect the author-selected skill plan below. You must use `livelabs-workshop-author` to build the workshop. Use an optional skill only when it is selected and its listed resources are sufficient. Create the actual first-draft LiveLabs workshop from the author-provided inputs below. Do not return a plan or another prompt. Do not publish, push, ingest, pre-publish, overwrite, update authoritative or remote content, or invoke external actions. Stop before any such action and state which approval is required.
+
+## Author-provided workshop brief (unverified)
+
+{{WORKSHOP_IDEA}}
+
+Treat this as author intent, not verified technical fact. Do not infer or claim product availability, feature behavior, configuration, ownership, policy, data, access, integrations, or source material from it. When evidence is missing, use `[VERIFY: fact required]` and collect the item in Technical Review or SME Review notes.
+
+## Requested scope and delivery details
+
+{{WORKSHOP_SCOPE}}
+
+Create only the Introduction, labs, variants, loaders, and other outputs explicitly requested here. Do not add a fixed lab count, desktop loader, product, service, architecture, quiz, deployment model, or external integration unless the scope calls for it and the required syntax is verified.
+
+## Approved source links (author-supplied)
+
+{{APPROVED_SOURCE_URLS}}
+
+Use only these author-supplied links as source material. Do not invent, replace, supplement, fetch, or claim to verify a URL. Cite or link a technical claim only when these sources support it. If a source is unavailable, insufficient, or conflicts with the brief, mark the affected item `[VERIFY: fact required]` and list it for review.
+
+## Skill plan and supplied resources
+
+{{SKILL_PLAN}}
+
+The selected skills and their resources determine what may be drafted confidently. A missing resource marked `[VERIFY: ...]` is a blocker for that specific skill; do not invent the missing information or claim that a skill ran, succeeded, or is installed.
+
+## Safety and review constraints
+
+{{SAFETY_REVIEW_CONSTRAINTS}}
+
+For any health, personal-data, safety-sensitive, regulated, or policy-controlled workshop, use synthetic examples unless approved otherwise. Do not present the application as an autonomous decision maker, diagnosis engine, treatment recommender, or replacement for a qualified reviewer. Keep unresolved safety wording, owners, escalation language, retention, export, and policy decisions visible for the appropriate SME review.
+
+## Workshop identity and scope
+
+Derive a concise workshop title and article name from the brief and requested scope only. Mark the title, version, estimated time, audience, products, services, environments, prerequisites, and dependencies `[VERIFY: ...]` whenever they are not explicitly provided or supported by an approved source.
+
+Build a coherent learner journey: introduce the problem and finished outcome, prepare the environment, build or validate the required data and services, verify the outcome, and end with the requested review or knowledge check. If the scope asks for a demo-first lab, begin with the finished experience before implementation. If it asks for a loader, create valid LiveLabs loader HTML at the exact requested relative path and keep workshop references relative.
+
+## Authoring requirements
+
+Build a coherent learner journey from context and preparation through implementation, validation, and completion. Every Markdown page must:
+
+* Start with exactly one H1.
+* Include Introduction, Objectives, Estimated Time, and Prerequisites when applicable.
+* Use numbered task headings such as `## Task 1: ...`.
+* Show expected results and validation checkpoints after material actions.
+* End with Summary, Learn More, and Acknowledgements.
+
+Use concise learner-facing paragraphs, descriptive headings, bullets, numbered tasks, and copyable code. Use the LiveLabs `&lt;copy&gt;` convention for runnable SQL, PL/SQL, Python, JSON, shell, and other supported examples. For every substantial code block explain what it changes, how to run it, expected output, how to validate it, and one safe recovery for a common failure.
+
+## Sources, data, and technical verification
+
+Use only the author-supplied source links above. If an authoritative source is missing, add `[VERIFY: approved Oracle documentation URL]` in Learn More rather than inventing a URL. Do not include credentials, secrets, personal data, customer data, or unapproved screenshots. Use synthetic or placeholder data whenever real data is not explicitly approved.
+
+Verify version-sensitive syntax, product behavior, integration assumptions, permissions, APIs, data models, commands, and configuration before presenting them as runnable. Use placeholders for environment-specific values until they are verified. Do not invent examples that could make destructive, billable, privileged, or irreversible changes.
+
+If `oracle-db-skill` is selected, use it to validate database-specific SQL, PL/SQL, JSON, Vector Search, ORDS, security, and version-sensitive behavior before code is presented as runnable. If `freesql` is selected, use it only for verified runnable database work and include an embed or share URL only when one is actually available. If `webpage-screenshot-pipeline` is selected, capture only verified browser states after the relevant flow works; do not fabricate product screenshots. If `feature-doc-assembler` is selected, preserve the approved feature requirements and acceptance criteria in the resulting workshop rather than inventing them.
+
+## Draft and review boundaries
+
+Clearly identify technical-review items, SME-review items, source gaps, environment assumptions, security considerations, accessibility checks, and unresolved decisions. Include quality checks for metadata, page order, links, images and alt text, code-copy behavior, expected results, and the appropriate preview or QA process.
+
+Create only the draft content justified by the brief. Stop before publishing, pushing, ingesting, pre-publishing, overwriting, or modifying authoritative or remote workshop content, and state the approval required for the next step.
+                </template>
+              </section>
+              <section class="tab-pane fade nodoc-creation-panel" id="nodoc-creation-import-panel" role="tabpanel" aria-labelledby="nodoc-creation-import-tab" tabindex="0">
+                <p>Use this option when a published LiveLabs workshop is the correct starting point.</p>
+                <ol>
+                  <li>Select <strong>Import LiveLabs URL</strong>.</li>
+                  <li>Paste the published LiveLabs workshop URL.</li>
+                  <li>Click <strong>Import</strong>.</li>
+                  <img data-nodoc-asset="images/create_article_options_3_import_livelabs_url_1_import.png" alt="Import Workshop URL" class="img-fluid rounded">
+                </ol>
+              </section>
+              <section class="tab-pane fade nodoc-creation-panel" id="nodoc-creation-reuse-panel" role="tabpanel" aria-labelledby="nodoc-creation-reuse-tab" tabindex="0">
+                <h5>Begin from a reusable article</h5>
+                <p>Use this option when an existing article already contains the right foundation.</p>
+                <ol>
+                  <li>Select <strong>Reuse Article</strong>.</li>
+                  <li>Choose the article that is appropriate for the new workshop.</li>
+                  <li>Review the inherited content and page structure before updating the workshop name, version, and metadata.</li>
+                </ol>
+              </section>
+            </div>
+          </div>
+        </li>
       </ol>
     </details>
     <details class="nodoc-task">
@@ -242,43 +436,40 @@
   </div>
 </details>
 <details class="nodoc-tree-group">
-  <summary><span>Lab 6 · Pre-Publish And Release Handoff</span><small>15 minutes</small></summary>
+  <summary><span>Lab 6 · Quality Assurance, Review, And Publishing Request</span><small>15 minutes</small></summary>
   <div class="nodoc-tree-content">
     <div data-video-card data-video-title="Lab 6 walkthrough"
-      data-video-summary="Temporary test clip. Replace this source with the Lab 6 recording when it is ready."
-      data-video-features="Pre-publish checks|Preview|Release handoff"></div>
-    <p>Prepare a publish preview and hand off evidence without treating a preview as approval to release.</p>
+      data-video-summary="Complete Quality Assurance, wait for review, then create the WMS publishing request after the workshop is Completed."
+      data-video-features="Quality Assurance checklist|Review status|Publishing request"></div>
+    <p>Create the article in NoDoc, copy its current preview link, complete the Quality Assurance checklist, and wait for WMS review. Create the publishing request only after WMS status is <strong>Completed</strong>.</p>
     <h4>Objectives</h4>
     <ul>
-      <li>Validate content before publication.</li>
-      <li>Generate a preview or package in the approved non-production path.</li>
-      <li>Record release evidence, ownership, and unresolved risks.</li>
+      <li>Use the NoDoc preview link to check the final article.</li>
+      <li>Complete the Quality Assurance checklist and resolve review comments in NoDoc.</li>
+      <li>Create the WMS publishing request after review is complete.</li>
     </ul>
     <details class="nodoc-task">
-      <summary>Task 1 · Run The Pre-Publish Checks</summary>
+      <summary>Task 1 · Check The NoDoc Article</summary>
       <ol>
-        <li>Confirm required metadata, information-map content, links, code blocks, and page order.</li>
-        <li>Review comments, pending drafts, and open review decisions.</li>
-        <li>Confirm that no secrets or unsupported internal-only data are present.</li>
-        <li>Check representative content in view mode and Markdown source mode when available.</li>
+        <li>Confirm metadata, page order, links, code blocks, and rendered content in the current NoDoc preview.</li>
+        <li>Copy the preview link and add it to the Self Quality Assurance checklist.</li>
+        <li>Save the checklist and move the workshop to <strong>Self Quality Assurance Complete</strong>.</li>
       </ol>
     </details>
     <details class="nodoc-task">
-      <summary>Task 2 · Generate A Preview</summary>
+      <summary>Task 2 · Wait For Review</summary>
       <ol>
-        <li>Open the applicable <strong>LiveLabs Pre-Publish</strong> or OHC preview flow.</li>
-        <li>Select the workshop/article and version.</li>
-        <li>Generate the preview or download package in the approved test target.</li>
-        <li>Inspect rendered output, links, metadata, and navigation.</li>
-        <li>Record preview location and defects; do not push to a production repository.</li>
+        <li>Wait for WMS review rather than creating a separate review document.</li>
+        <li>Resolve requested changes in NoDoc, update the preview link if needed, and repeat the Quality Assurance checks.</li>
+        <li>Continue only when the reviewer has moved the WMS status to <strong>Completed</strong>.</li>
       </ol>
     </details>
     <details class="nodoc-task">
-      <summary>Task 3 · Complete The Handoff</summary>
+      <summary>Task 3 · Create The Publishing Request</summary>
       <ol>
-        <li>Record owner, reviewer, version, environment, preview evidence, and release decision.</li>
-        <li>Link open defects or mark them as release risk.</li>
-        <li>Obtain release-owner approval before any push or overwrite.</li>
+        <li>In WMS, open <strong>Publishing</strong> and click <strong>Publish to LiveLabs</strong>.</li>
+        <li>Enter the final NoDoc location in the matching run URL field, choose the required publishing options, and create the request.</li>
+        <li>Save and verify <strong>Publish Requested</strong>; configure Sandbox Environment only when the workshop needs a LiveLabs sandbox.</li>
       </ol>
     </details>
   </div>
