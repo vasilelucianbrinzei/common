@@ -875,6 +875,43 @@
       activate(Number(button.dataset.nodocNav), Number(button.dataset.nodocTask || 0));
     });
 
+    mode.addEventListener("keydown", function (event) {
+      var tab = event.target.closest(".nodoc-creation-tablist [role=tab]");
+      var tablist;
+      var tabs;
+      var currentIndex;
+      var nextIndex;
+      var nextTab;
+
+      if (!tab || !mode.contains(tab) || ["ArrowLeft", "ArrowRight", "Home", "End"].indexOf(event.key) === -1) {
+        return;
+      }
+
+      tablist = tab.closest(".nodoc-creation-tablist");
+      tabs = tablist ? Array.from(tablist.querySelectorAll('[role="tab"]:not([disabled])')) : [];
+      currentIndex = tabs.indexOf(tab);
+      if (!tabs.length || currentIndex === -1) {
+        return;
+      }
+
+      if (event.key === "Home") {
+        nextIndex = 0;
+      } else if (event.key === "End") {
+        nextIndex = tabs.length - 1;
+      } else {
+        nextIndex = (currentIndex + (event.key === "ArrowRight" ? 1 : -1) + tabs.length) % tabs.length;
+      }
+
+      event.preventDefault();
+      nextTab = tabs[nextIndex];
+      if (window.bootstrap && window.bootstrap.Tab) {
+        window.bootstrap.Tab.getOrCreateInstance(nextTab).show();
+      } else {
+        nextTab.click();
+      }
+      nextTab.focus();
+    });
+
     if (searchInput && searchResults && searchStatus) {
       buildSearchIndex();
       searchInput.addEventListener("input", function () {

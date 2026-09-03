@@ -104,20 +104,20 @@
   </div>
 </details>
 <details class="nodoc-tree-group">
-  <summary><span>Lab 2 · Authoring</span></summary>
+  <summary><span>Lab 2 · Authoring And Collaboration</span></summary>
   <div class="nodoc-tree-content">
     <div data-video-card data-video-title="Lab 2 walkthrough"
-      data-video-summary="Preview learning aid. Verify creation, deletion, Autosave, and metadata controls in the current NoDoc UI."
-      data-video-features="Article shell|Page lifecycle|Autosave|Metadata"></div>
+      data-video-summary="Preview learning aid. Verify creation, deletion, Autosave, metadata, comment, version, and co-author controls in the current NoDoc UI."
+      data-video-features="Article shell|Page lifecycle|Autosave|Metadata|Comments|Versions|Co-authors"></div>
     <p>Create an article and page set, remove only content you own and intend to delete, set Autosave, apply metadata
-      tags, then write and maintain the workshop.</p>
+      tags, write structured content, then manage versions, co-author access, and precise comments.</p>
     <h4>Objectives</h4>
     <ul>
       <li>Create an article with a clear name and content version.</li>
       <li>Choose a page creation method that matches the approved source.</li>
       <li>Delete only authorized content and control Autosave.</li>
       <li>Apply consistent metadata tags and structured LiveLabs content.</li>
-      <li>Maintain page order, relative links, and article versions safely.</li>
+      <li>Maintain page order and relative links, then manage article versions, co-author access, and feedback safely.</li>
     </ul>
     <details class="nodoc-task">
       <summary>Task 1 · Create Article</summary>
@@ -415,74 +415,141 @@ Create only the draft content justified by the brief. Stop before publishing, pu
             class="img-fluid rounded">
           <figcaption>The Add Page dialog lists the available creation methods.</figcaption>
         </figure>
-        <div class="nodoc-feature-grid">
-          <article class="nodoc-feature-card">
-            <h6>Empty File</h6>
-            <p>Start a new page.</p>
-            <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
-              aria-label="Expand image: Empty File page creation option">
-              <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
-              <img data-nodoc-asset="images/add_page_4_empty_file.png" alt="Empty File page creation option"
-                class="img-fluid rounded">
-              <figcaption>Enter a descriptive page name, then choose Enter.</figcaption>
-            </figure>
-          </article>
-          <article class="nodoc-feature-card">
-            <h6>Import From OraHub</h6>
-            <p>Use approved repository content.</p>
-            <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
-              aria-label="Expand image: Import From OraHub page creation options">
-              <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
-              <img data-nodoc-asset="images/add_page_5_import_from_orahub.png"
-                alt="Import From OraHub page creation options" class="img-fluid rounded">
-              <figcaption>Choose the branch, Focus Area, article, and source page, then name the page.</figcaption>
-            </figure>
-          </article>
-          <article class="nodoc-feature-card">
-            <h6>Reuse Content</h6>
-            <p>Reuse suitable content from the selected Focus Area.</p>
-            <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
-              aria-label="Expand image: Reuse Content page creation options">
-              <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
-              <img data-nodoc-asset="images/add_page_6_reuse_content.png" alt="Reuse Content page creation options"
-                class="img-fluid rounded">
-              <figcaption>Select the source version and page, then confirm the resulting edit state.</figcaption>
-            </figure>
-          </article>
-          <article class="nodoc-feature-card">
-            <h6>Upload PDF/URL</h6>
-            <p>Import an approved file or URL.</p>
-            <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
-              aria-label="Expand image: Upload PDF or URL page creation option">
-              <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
-              <img data-nodoc-asset="images/add_page_7_upload.png" alt="Upload PDF or URL page creation option"
-                class="img-fluid rounded">
-              <figcaption>Name the page, then review the converted content before Enter.</figcaption>
-            </figure>
-          </article>
-          <article class="nodoc-feature-card">
-            <h6>Architecture Diagram</h6>
-            <p>Generate a reviewed Mermaid diagram.</p>
-            <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
-              aria-label="Expand image: Architecture Diagram page creation option">
-              <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
-              <img data-nodoc-asset="images/add_page_8_architecture_diagram.png"
-                alt="Architecture Diagram page creation option" class="img-fluid rounded">
-              <figcaption>Use Vibe Drawing to describe the diagram, then review the Mermaid content.</figcaption>
-            </figure>
-          </article>
-          <article class="nodoc-feature-card">
-            <h6>Codex Skills</h6>
-            <p>Use a focused prompt to create a first draft.</p>
-            <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
-              aria-label="Expand image: NoDoc Codex Skills page creation form with page name, selected skills, prompt, and generated content fields">
-              <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
-              <img data-nodoc-asset="images/add_page_9_codex.png"
-                alt="NoDoc Codex Skills page creation form with page name, selected skills, prompt, and generated content fields"
-                class="img-fluid rounded">
-              <figcaption>Enter a page name, select available skills, provide a focused prompt, then review generated content before Enter.</figcaption>
-            </figure>
-          </article>
+        <div class="nodoc-creation-tabs nodoc-page-creation-tabs">
+          <p class="nodoc-creation-tabs-intro">Select the option that matches the approved source and desired page outcome.</p>
+          <div class="nav nav-tabs nodoc-creation-tablist" id="nodoc-page-creation-options" role="tablist"
+            aria-label="Page creation options">
+            <button class="nav-link active nodoc-creation-tab" id="nodoc-page-creation-empty-tab" data-bs-toggle="tab"
+              data-bs-target="#nodoc-page-creation-empty-panel" type="button" role="tab"
+              aria-controls="nodoc-page-creation-empty-panel" aria-selected="true">Empty File</button>
+            <button class="nav-link nodoc-creation-tab" id="nodoc-page-creation-orahub-tab" data-bs-toggle="tab"
+              data-bs-target="#nodoc-page-creation-orahub-panel" type="button" role="tab"
+              aria-controls="nodoc-page-creation-orahub-panel" aria-selected="false">Import From OraHub</button>
+            <button class="nav-link nodoc-creation-tab" id="nodoc-page-creation-reuse-tab" data-bs-toggle="tab"
+              data-bs-target="#nodoc-page-creation-reuse-panel" type="button" role="tab"
+              aria-controls="nodoc-page-creation-reuse-panel" aria-selected="false">Reuse Content</button>
+            <button class="nav-link nodoc-creation-tab" id="nodoc-page-creation-upload-tab" data-bs-toggle="tab"
+              data-bs-target="#nodoc-page-creation-upload-panel" type="button" role="tab"
+              aria-controls="nodoc-page-creation-upload-panel" aria-selected="false">Upload PDF/URL</button>
+            <button class="nav-link nodoc-creation-tab" id="nodoc-page-creation-diagram-tab" data-bs-toggle="tab"
+              data-bs-target="#nodoc-page-creation-diagram-panel" type="button" role="tab"
+              aria-controls="nodoc-page-creation-diagram-panel" aria-selected="false">Architecture Diagram</button>
+            <button class="nav-link nodoc-creation-tab" id="nodoc-page-creation-codex-tab" data-bs-toggle="tab"
+              data-bs-target="#nodoc-page-creation-codex-panel" type="button" role="tab"
+              aria-controls="nodoc-page-creation-codex-panel" aria-selected="false">Codex Skills</button>
+          </div>
+          <div class="tab-content nodoc-creation-tab-content">
+            <section class="tab-pane fade show active nodoc-creation-panel" id="nodoc-page-creation-empty-panel"
+              role="tabpanel" aria-labelledby="nodoc-page-creation-empty-tab" tabindex="0">
+              <h5>Empty File</h5>
+              <p>Use this for a new blank page.</p>
+              <ol>
+                <li>Select <strong>Empty File</strong>.</li>
+                <li>Enter a descriptive <strong>Page Name</strong>.</li>
+                <li>Select <strong>Enter</strong>, then confirm that the page appears under the intended parent.
+                  <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+                    aria-label="Expand image: Empty File page creation option">
+                    <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+                    <img data-nodoc-asset="images/add_page_4_empty_file.png" alt="Empty File page creation option"
+                      class="img-fluid rounded">
+                    <figcaption>Enter a descriptive page name, then choose Enter.</figcaption>
+                  </figure>
+                </li>
+              </ol>
+            </section>
+            <section class="tab-pane fade nodoc-creation-panel" id="nodoc-page-creation-orahub-panel" role="tabpanel"
+              aria-labelledby="nodoc-page-creation-orahub-tab" tabindex="0">
+              <h5>Import From OraHub</h5>
+              <p>Use this for approved repository content.</p>
+              <ol>
+                <li>Select the branch, Focus Area, article, and source page.</li>
+                <li>Enter the new <strong>Page Name</strong>.</li>
+                <li>Select <strong>Enter</strong>, then review the imported content, links, and images.
+                  <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+                    aria-label="Expand image: Import From OraHub page creation options">
+                    <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+                    <img data-nodoc-asset="images/add_page_5_import_from_orahub.png"
+                      alt="Import From OraHub page creation options" class="img-fluid rounded">
+                    <figcaption>Choose the branch, Focus Area, article, and source page, then name the page.</figcaption>
+                  </figure>
+                </li>
+              </ol>
+            </section>
+            <section class="tab-pane fade nodoc-creation-panel" id="nodoc-page-creation-reuse-panel" role="tabpanel"
+              aria-labelledby="nodoc-page-creation-reuse-tab" tabindex="0">
+              <h5>Reuse Content</h5>
+              <p>Use this for approved content already in a Focus Area.</p>
+              <ol>
+                <li>Select the Focus Area.</li>
+                <li>Select the source version and page.</li>
+                <li>Select <strong>Enter</strong>, then confirm the resulting content and edit state.
+                  <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+                    aria-label="Expand image: Reuse Content page creation options">
+                    <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+                    <img data-nodoc-asset="images/add_page_6_reuse_content.png" alt="Reuse Content page creation options"
+                      class="img-fluid rounded">
+                    <figcaption>Select the source version and page, then confirm the resulting edit state.</figcaption>
+                  </figure>
+                </li>
+              </ol>
+            </section>
+            <section class="tab-pane fade nodoc-creation-panel" id="nodoc-page-creation-upload-panel" role="tabpanel"
+              aria-labelledby="nodoc-page-creation-upload-tab" tabindex="0">
+              <h5>Upload PDF/URL</h5>
+              <p>Use this for an approved file or URL.</p>
+              <ol>
+                <li>Choose the available upload option shown in the dialog.</li>
+                <li>Add the approved source and enter a <strong>Page Name</strong>.</li>
+                <li>Review the converted content, then select <strong>Enter</strong>.
+                  <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+                    aria-label="Expand image: Upload PDF or URL page creation option">
+                    <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+                    <img data-nodoc-asset="images/add_page_7_upload.png" alt="Upload PDF or URL page creation option"
+                      class="img-fluid rounded">
+                    <figcaption>Name the page, then review the converted content before Enter.</figcaption>
+                  </figure>
+                </li>
+              </ol>
+            </section>
+            <section class="tab-pane fade nodoc-creation-panel" id="nodoc-page-creation-diagram-panel" role="tabpanel"
+              aria-labelledby="nodoc-page-creation-diagram-tab" tabindex="0">
+              <h5>Architecture Diagram</h5>
+              <p>Use this to draft an architecture diagram.</p>
+              <ol>
+                <li>Select <strong>Architecture Diagram</strong>.</li>
+                <li>Choose <strong>Vibe Drawing</strong> and describe the components and connections.</li>
+                <li>Select <strong>Go</strong>, review the generated Mermaid content, then select <strong>Enter</strong>.
+                  <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+                    aria-label="Expand image: Architecture Diagram page creation option">
+                    <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+                    <img data-nodoc-asset="images/add_page_8_architecture_diagram.png"
+                      alt="Architecture Diagram page creation option" class="img-fluid rounded">
+                    <figcaption>Use Vibe Drawing to describe the diagram, then review the Mermaid content.</figcaption>
+                  </figure>
+                </li>
+              </ol>
+            </section>
+            <section class="tab-pane fade nodoc-creation-panel" id="nodoc-page-creation-codex-panel" role="tabpanel"
+              aria-labelledby="nodoc-page-creation-codex-tab" tabindex="0">
+              <h5>Codex Skills</h5>
+              <p>Use this for a first draft created with approved skills.</p>
+              <ol>
+                <li>Enter a <strong>Page Name</strong>.</li>
+                <li>Select the skills needed for the page.</li>
+                <li>Add a focused prompt and select <strong>Create Content</strong>.</li>
+                <li>Review the generated content, then select <strong>Enter</strong>.
+                  <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+                    aria-label="Expand image: NoDoc Codex Skills page creation form with page name, selected skills, prompt, and generated content fields">
+                    <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+                    <img data-nodoc-asset="images/add_page_9_codex.png"
+                      alt="NoDoc Codex Skills page creation form with page name, selected skills, prompt, and generated content fields"
+                      class="img-fluid rounded">
+                    <figcaption>Enter a page name, select skills, provide a focused prompt, then review generated content before Enter.</figcaption>
+                  </figure>
+                </li>
+              </ol>
+            </section>
+          </div>
         </div>
       </section>
     </details>
@@ -547,12 +614,16 @@ Create only the draft content justified by the brief. Stop before publishing, pu
       <summary>Task 5 · Apply Metadata Tags</summary>
       <section class="nodoc-metadata-guide" aria-labelledby="nodoc-metadata-title">
         <h5 id="nodoc-metadata-title">Metadata tags: what they are and how to use them</h5>
-        <p>Metadata tags are controlled labels at the top of a page. They help organize, filter, ingest, and find
-          pages. Use the current <strong>PagesMetaData</strong> choices for tag values and syntax.</p>
+        <p>Metadata tags are controlled labels at the top of a page. They help organize, filter, ingest, and find pages.
         <ol class="nodoc-compact-list">
-          <li>Open the current page's metadata control or the available <strong>PagesMetaData</strong> reference.</li>
-          <li>Select team-approved tags and exact values for the selected Focus Area.</li>
           <li>Place metadata at the top of the page, then recheck it after a rename or move.</li>
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+              aria-label="Expand image: Tags metadata on Page">
+              <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+              <img data-nodoc-asset="images/how_to_tags.png"
+                alt="Tags" class="img-fluid rounded">
+              <figcaption>Tags metadata on Page</figcaption>
+            </figure>
         </ol>
         <div class="nodoc-reference-table-wrap" role="region" aria-label="NoDoc page metadata tag reference" tabindex="0">
           <table class="nodoc-reference-table">
@@ -589,84 +660,171 @@ Linux-specific instructions.
     <details class="nodoc-task">
       <summary>Task 6 · Write Structured Content</summary>
       <ol>
-        <li>Edit <code>Prepare</code> and add a concise introduction, objectives, and prerequisites. Keep the page
-          self-contained so a reader can understand its purpose without opening a second page.</li>
-        <li>Use headings and a numbered procedure for the learner sequence. Use a note or block quote only when it adds
-          a warning, decision, limitation, or context that should not be buried in a task.</li>
-        <li>Add a code block only for content the learner can use. Select the applicable language when the editor offers
-          it, explain how to run it and validate the result, and never include secrets or unverified commands.</li>
-        <li>For a cross-reference, copy the target page's <strong>Relative Path</strong>, select the link text in edit
-          mode, use the link control, paste the relative path, save, and test the result in view mode.</li>
-        <li>Use supported images with descriptive alt text. Use Markdown source mode, when available, to inspect the
-          generated structure; then review the rendered page as the learner will see it.</li>
-        <li>Use a FreeSQL block only when that control is available and the workshop genuinely needs verified runnable
-          database practice. It is not a substitute for explaining the expected result and validation.</li>
-        <li>Save the page and verify its title, metadata, TOC position, links, images, and rendered content.</li>
+        <li>Open the target page and select <strong>Edit</strong>.
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: NoDoc page with the Edit button highlighted">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/how_to_write_content_1_click_edit_button_to_enable_editing.png"
+              alt="NoDoc page with the Edit button highlighted" class="img-fluid rounded">
+            <figcaption>Select the page, then choose Edit to enter authoring mode.</figcaption>
+          </figure>
+        </li>
+        <li>Confirm editing is enabled: the editor toolbar and <strong>Save &amp; Check In</strong> are visible.
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: NoDoc editing toolbar and Save and Check In button">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/how_to_write_content_2_edit_enabled_check_save_and_check_in_button.png"
+              alt="NoDoc editing toolbar and Save and Check In button" class="img-fluid rounded">
+            <figcaption>The toolbar and Save &amp; Check In confirm that editing is enabled.</figcaption>
+          </figure>
+        </li>
+        <li>Use the toolbar to build or revise the page. Start with a concise introduction, objectives, prerequisites
+          when needed, then headings and numbered learner tasks.
+          <ul class="nodoc-compact-list">
+            <li><strong>Heading</strong> sets the page structure.</li>
+            <li><strong>Bold, Italic, and Strikethrough</strong> apply emphasis or mark text for removal.</li>
+            <li><strong>Quote</strong> and <strong>Note</strong> separate quoted material, warnings, decisions, or context.</li>
+            <li><strong>Code block</strong> adds copyable code; <strong>Tabs</strong> separate different content; <strong>Quiz</strong> adds a knowledge check; <strong>Inline code</strong> formats commands or tokens.</li>
+            <li><strong>Image</strong> and <strong>Link</strong> add approved media with alt text and tested relative links; <strong>Indent/Outdent</strong> changes block nesting.</li>
+            <li><strong>Video, Table, and Lists</strong> add media, structured data, and learner steps; <strong>MD Source</strong> lets you inspect or edit the Markdown source.</li>
+          </ul>
+        </li>
+        <li>Click <strong>Save &amp; Check In</strong> to save progress manually, then review the rendered content, links,
+          images, and page position.</li>
       </ol>
     </details>
     <details class="nodoc-task">
-      <summary>Task 7 · Maintain Structure, Links, And Versions</summary>
+      <summary>Task 7 · Versioning</summary>
       <ol>
-        <li>To rename an article or page, select it in the TOC and use <strong>Edit Name</strong>. Review the metadata
-          values afterwards; a rename can leave tag values that still need manual correction.</li>
-        <li>Move an article only within the Focus Area and move a page only within its article. Recheck page order,
-          relative links, and the rendered preview after the move.</li>
-        <li>As the article owner, create a new article version when a substantial update needs an independent content
-          snapshot. Select the article, choose <strong>Create Version</strong>, enter the agreed label, then make and
-          validate changes in the new version.</li>
-        <li>Ingest a new version separately after its content is ready; creating the version alone does not make it
-          available to Ask NoDoc.</li>
-        <li>Use <strong>Restore Article Version</strong> only as the owner, after confirming the exact target and recovery
-          need. Verify the restored TOC and content before resuming normal edits.</li>
+        <li>As the article owner, select the article, choose <strong>Create Version</strong>, enter the agreed version
+          label, then select <strong>Create Version</strong>.
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: Create a new NoDoc article version">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/how_to_create_version_1_create_version_2_0.png"
+              alt="Create a new NoDoc article version" class="img-fluid rounded">
+            <figcaption>Enter the agreed version label, then create the new content snapshot.</figcaption>
+          </figure>
+        </li>
+        <li>Confirm that the new version appears under the article before making substantial changes.
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: New NoDoc article version shown in the article tree">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/how_to_create_version_2_version_2_0_created.png"
+              alt="New NoDoc article version shown in the article tree" class="img-fluid rounded">
+            <figcaption>Confirm that the new version is available before editing it.</figcaption>
+          </figure>
+        </li>
+        <li>Restore only when needed: choose <strong>Restore Article Version</strong>, select the exact target version,
+          then select <strong>Restore</strong> after verifying it.
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: Restore a selected NoDoc article version">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/how_to_restore_article_version.png"
+              alt="Restore a selected NoDoc article version" class="img-fluid rounded">
+            <figcaption>Select and verify the target version before restoring it.</figcaption>
+          </figure>
+        </li>
+      </ol>
+    </details>
+    <details class="nodoc-task">
+      <summary>Task 8 · Manage Co-Authors</summary>
+      <ol>
+        <li>Only the owner can change co-author access. Open the workshop article you own and choose
+          <strong>Manage Co-Authors</strong>.
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: Manage NoDoc workshop co-authors">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/how_to_manage_co_authors.png" alt="Manage NoDoc workshop co-authors"
+              class="img-fluid rounded">
+            <figcaption>Review current access, then add or remove co-authors for an article you own.</figcaption>
+          </figure>
+        </li>
+        <li>Review the current co-author list before changing access.</li>
+        <li>Choose <strong>Add Coauthor</strong> to grant approved collaboration access.</li>
+        <li>Select a co-author and choose <strong>Remove Coauthor</strong> only when their access should end.</li>
+      </ol>
+    </details>
+    <details class="nodoc-task">
+      <summary>Task 9 · Add A Comment</summary>
+      <ol>
+        <li>Open the page in edit mode and select the exact text that needs feedback.</li>
+        <li>Select the <strong>Comment</strong> control. In the dialog, enter concise feedback and the required
+          <strong>Comment Email</strong>, then select <strong>Save Comment</strong>.
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: Add a comment to selected NoDoc content">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/how_to_add_comment_1_add_comment.png"
+              alt="NoDoc Comment dialog with selected content, Comment Text, Comment Email, and Save Comment"
+              class="img-fluid rounded">
+            <figcaption>Select the affected text, add the comment and email, then save it.</figcaption>
+          </figure>
+        </li>
+        <li>Confirm the <strong>Content saved successfully!!!</strong> message and that the selected passage remains
+          highlighted as the comment anchor.
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: Saved NoDoc comment with highlighted content">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/how_to_add_comment_2_output_highlighted_content.png"
+              alt="NoDoc content saved successfully message with the commented passage highlighted"
+              class="img-fluid rounded">
+            <figcaption>Confirm the saved message and keep the highlighted passage in view for review.</figcaption>
+          </figure>
+        </li>
+        <li>Use <strong>My Comments</strong> to return to a comment; choose <strong>Show All Comments</strong> when you
+          need the wider page discussion.</li>
       </ol>
     </details>
   </div>
 </details>
 <details class="nodoc-tree-group">
-  <summary><span>Lab 3 · Review And Drafts</span><small>15 minutes</small></summary>
+  <summary><span>Lab 3 · Repository Exchange</span><small>10 minutes</small></summary>
   <div class="nodoc-tree-content">
     <div data-video-card data-video-title="Lab 3 walkthrough"
-      data-video-summary="Preview learning aid. Review the current NoDoc labels for comments, drafts, and differences."
-      data-video-features="Comments|Drafts|Review decisions"></div>
-    <p>Use comments for precise feedback and drafts for proposed edits. The original page remains protected until the
-      owner reviews and explicitly overwrites it.</p>
+      data-video-summary="Preview learning aid. Verify current OraHub labels, branches, and permissions before importing or exporting content."
+      data-video-features="From OraHub|To OraHub|Review before overwrite"></div>
+    <p>Use these controls only when the approved workflow needs an OraHub repository copy. They are separate from the
+      standard NoDoc-to-WMS publishing route.</p>
     <h4>Objectives</h4>
     <ul>
-      <li>Add an anchored review comment.</li>
-      <li>Create and inspect a draft.</li>
-      <li>Review differences and apply an owner-approved overwrite.</li>
+      <li>Load approved OraHub Markdown into a selected NoDoc page.</li>
+      <li>Export reviewed NoDoc content to the approved OraHub branch when required.</li>
     </ul>
     <details class="nodoc-task">
-      <summary>Task 1 · Add A Comment</summary>
+      <summary>Task 1 · Load A Selected Page From OraHub</summary>
       <ol>
-        <li>Open the <code>Prepare</code> page in view or edit mode and select the exact sentence that needs
-          clarification.</li>
-        <li>Use the comment control to add a specific, actionable suggestion, then save the comment.</li>
-        <li>Confirm that the comment remains anchored to the selected text. If the environment supports notifications,
-          the page owner receives the comment for follow-up.</li>
-        <li>Use <strong>My Comments</strong>, when available, to find assigned comments and reopen the exact page
-          location instead of searching the TOC manually.</li>
+        <li>For a new page, use the <strong>Import From OraHub</strong> creation option in Lab 2.
+          <p>For an empty or existing selected page, use the upper action-row <strong>From OraHub</strong> control.</p>
+        </li>
+        <li>Select the approved branch, Focus Area, folder, and file.</li>
+        <li>Review the loaded Markdown, then select <strong>Overwrite Changes</strong> only when replacing the target
+          page is approved.</li>
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: How to upload from Orahub">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/how_to_upload_from_orahub.png"
+              alt="How to upload from Orahub"
+              class="img-fluid rounded">
+            <figcaption>How to upload from Orahub.</figcaption>
+          </figure>
       </ol>
     </details>
     <details class="nodoc-task">
-      <summary>Task 2 · Create A Draft</summary>
+      <summary>Task 2 · Export Reviewed Content To OraHub</summary>
       <ol>
-        <li>Sign in as a non-owner reviewer, or use the supplied reviewer account, then open the commented page and
-          choose <strong>Edit</strong>.</li>
-        <li>Accept the prompt to work on a draft. Do not try to work around the ownership boundary.</li>
-        <li>Improve the selected sentence, preserve the page's metadata and links, and save the draft.</li>
-        <li>Confirm that the original page still shows the approved content while the owner has a draft to review.</li>
-      </ol>
-    </details>
-    <details class="nodoc-task">
-      <summary>Task 3 · Review And Approve</summary>
-      <ol>
-        <li>Sign in as the page owner and open <strong>Drafts</strong> to inspect the pending draft.</li>
-        <li>Open the current difference view, labelled <strong>View Diff</strong> or <strong>Difference</strong>
-          depending on the environment, and review every change in context.</li>
-        <li>Accept or reject changes individually, then approve the reviewed draft.</li>
-        <li>Overwrite the original only after confirming the final content, metadata, links, and technical meaning.</li>
-        <li>Reopen the rendered page and resolve or update the related comment so reviewers can see the final decision.</li>
+        <li>Use <strong>To OraHub</strong> only after the selected content has been reviewed and validated.</li>
+        <li>Select the intended scope: <strong>Merged Content</strong> for a first article page, <strong>Page Only</strong>
+          for one page, or <strong>Whole Article</strong> for the full article.</li>
+        <li>Download the Markdown or select the approved branch and choose <strong>Upload to OraHub</strong>. Verify the
+          scope and destination before confirming the export.</li>
+        <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: How to upload to Orahub">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/how_to_upload_to_orahub.png"
+              alt="How to upload to Orahub"
+              class="img-fluid rounded">
+            <figcaption>How to upload to Orahub.</figcaption>
+          </figure>
       </ol>
     </details>
   </div>
@@ -690,7 +848,7 @@ Linux-specific instructions.
       <summary>Task 1 · Run AI Correction Safely</summary>
       <ol>
         <li>Open the <code>Author</code> page as its owner.</li>
-        <li>Choose <strong>Vibe Doc-ing</strong>, then select the action that matches the need: <strong>Apply
+        <li>Use the upper action-row <strong>Vibe Doc-ing</strong> control, then select the action that matches the need: <strong>Apply
           Standards</strong>, a supported persona extraction, a custom prompt, or a checklist available in the current
           UI.</li>
         <li>Review the generated content and open the difference view before making any replacement.</li>
@@ -721,19 +879,6 @@ Linux-specific instructions.
           not automatically modify the pages.</li>
       </ol>
     </details>
-    <details class="nodoc-task">
-      <summary>Task 4 · Generate The Information Map</summary>
-      <ol>
-        <li>Confirm that all workshop pages exist and are saved.</li>
-        <li>Open the first page of the article as the owner. Keep that page to article metadata when you plan to generate
-          an Information Map.</li>
-        <li>Choose <strong>Generate Information Map</strong>.</li>
-        <li>Confirm that NoDoc generates a summary and source link for each child page while the first-page metadata
-          remains intact.</li>
-        <li>Review the map as an article-level navigation aid for people and retrieval; it does not replace the child
-          pages or their normal Quality Assurance review.</li>
-      </ol>
-    </details>
   </div>
 </details>
 <details class="nodoc-tree-group">
@@ -755,19 +900,21 @@ Linux-specific instructions.
       <ol>
         <li>As the owner, confirm that the selected page or article is saved, technically reviewed where required, and
           safe to make available for retrieval.</li>
-        <li>Select the exact page or article and choose <strong>Ingest</strong>. NoDoc chunks and vectorizes that selected
+        <li>Select the exact page or article and choose <strong>Ingest</strong> from the upper action row. NoDoc chunks and vectorizes that selected
           content for retrieval.</li>
         <li>Wait for the ingestion status to complete, record the scope and timestamp, then ask a question that the
           ingested content should answer.</li>
         <li>If the result is not available, first confirm the selected scope, current version, and completion status. Do
           not repeatedly ingest or broaden the scope without understanding what changed.</li>
+        <li>Ingest a new article version after its content is ready; it is not added to the retrieval scope automatically.</li>
         <li>Do not ingest confidential, secret, or unapproved production content into a shared test or authoring flow.</li>
       </ol>
     </details>
     <details class="nodoc-task">
-      <summary>Task 2 · Ask A Focused Question</summary>
+      <summary>Task 2 · Open Ask NoDoc And Ask A Focused Question</summary>
       <ol>
-        <li>Open <strong>Ask NoDoc</strong> from the application menu.</li>
+        <li>Open <strong>Ask NoDoc</strong> from the upper-left action menu or the bottom-right chat button shown in your
+          environment.</li>
         <li>Choose <strong>Focus</strong> and select <strong>NoDoc</strong>. Use the unfiltered option only when the wider
           NoDoc collection is genuinely needed.</li>
         <li>Narrow the context in order: Focus Area, article, then release version.</li>
@@ -776,24 +923,6 @@ Linux-specific instructions.
           unintended article or version.</li>
         <li>Use the selected-articles or filter indicator, when shown, to inspect or remove active filters before
           starting an unrelated question.</li>
-      </ol>
-    </details>
-    <details class="nodoc-task">
-      <summary>Task 3 · Use Search Modes And Manage Chat Context</summary>
-      <ol>
-        <li>Use <strong>MCP (Metatag Command &amp; Processing)</strong> only as the Ask NoDoc metadata mode. It is not a
-          Codex MCP content-creation server.</li>
-        <li>Use <strong>Select &amp; Ask</strong> to ask a question against pages matching selected metadata. Use
-          <strong>Select &amp; Search</strong> to generate a <code>/find</code> result list of matching page links.</li>
-        <li>Use <strong>Vibe Searching</strong> to describe the product, deployment model, or topic type in natural
-          language when you do not yet know the exact metadata combination.</li>
-        <li>Use <strong>URL</strong> focus only for a currently supported, approved Oracle URL and validate the target
-          before asking questions. Use <strong>DBSA</strong> only when the option is visible and your environment grants
-          access.</li>
-        <li>Start a new chat when you need a clean context. Chat history can restore previous filters, so recheck the
-          active focus before relying on an older conversation.</li>
-        <li>Download the current chat JSON only to the approved location and only when it contains no secrets, personal
-          data, or unapproved source material.</li>
       </ol>
     </details>
   </div>
