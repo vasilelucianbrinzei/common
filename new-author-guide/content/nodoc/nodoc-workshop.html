@@ -1,26 +1,34 @@
 <details open class="nodoc-tree-group">
-  <summary><span>Introduction · No Doc One Tool</span><small>Workshop orientation</small></summary>
+  <summary><span>Introduction · NoDoc platform</span><small>Workshop orientation</small></summary>
   <div class="nodoc-tree-content">
-    <p>No Doc is an Oracle APEX documentation workbench for creating, organizing, reviewing, improving, ingesting, and
-      preparing technical content for publication. In this workshop, you build a small documentation set, collaborate
-      through drafts and comments, apply AI-assisted corrections with human review, generate an information map, ingest
-      content for Ask No Doc, and complete a controlled pre-publish review.</p>
+    <p><strong>NoDoc</strong> is an Oracle APEX documentation workbench for creating, organizing, reviewing, improving,
+      ingesting, and preparing technical content for publication. This workshop follows the LiveLabs author journey:
+      select the right Focus Area, create an article and version, build focused pages, review changes, validate the
+      preview, then use the existing WMS publishing request path.</p>
     <h4>Prerequisites</h4>
     <ul>
-      <li>Oracle SSO access to the No Doc environment.</li>
-      <li>A No Doc role: <code>CONTRIBUTOR</code> for authoring or <code>READER</code> for review-only activities.</li>
+      <li>Oracle SSO access to the NoDoc environment.</li>
+      <li>A NoDoc role: <code>CONTRIBUTOR</code> for authoring or <code>READER</code> for review-only activities.</li>
+      <li>The assigned LiveLabs Focus Area and approved source material for the workshop.</li>
     </ul>
+    <aside class="nodoc-guidance-callout" aria-labelledby="nodoc-intro-roles-title">
+      <h5 id="nodoc-intro-roles-title">Role and ownership determine the actions you see</h5>
+      <p>Use the controls that your current NoDoc role and page ownership allow. A contributor normally creates and
+        maintains owned content; a reader or reviewer comments and drafts where allowed; a page owner approves drafts,
+        creates versions, ingests content, and performs other protected actions. Do not assume an unavailable control is
+        a step you should bypass.</p>
+    </aside>
     <h4>Objectives</h4>
     <ul>
-      <li><strong>Navigate</strong> No Doc and select the correct Focus Area.</li>
+      <li><strong>Navigate</strong> NoDoc and select the correct Focus Area.</li>
       <li><strong>Create</strong> an article, version, and page set for a documentation topic.</li>
       <li><strong>Edit</strong> content, apply metadata, and use supported editor features.</li>
       <li><strong>Collaborate</strong> with comments and draft review without overwriting original content accidentally.
       </li>
       <li><strong>Apply AI-assisted correction</strong> and generate an article information map with explicit human
         review.</li>
-      <li><strong>Ingest and query</strong> approved content with Ask No Doc while inspecting source context.</li>
-      <li><strong>Prepare a controlled preview</strong> while keeping release ownership and approvals explicit.</li>
+      <li><strong>Ingest and query</strong> approved content with Ask NoDoc while inspecting source context.</li>
+      <li><strong>Complete Quality Assurance and review</strong> before creating the WMS publishing request.</li>
     </ul>
   </div>
 </details>
@@ -28,16 +36,16 @@
   <summary><span>Lab 1 · Access And Navigation</span><small>10 minutes</small></summary>
   <div class="nodoc-tree-content">
     <div data-video-card data-video-title="Lab 1 walkthrough"
-      data-video-summary="Temporary test clip. Replace this source with the Lab 1 recording when it is ready."
+      data-video-summary="Preview learning aid. Confirm current labels and permissions in the approved NoDoc environment."
       data-video-features="Access and navigation|Role check|LiveLabs repo"></div>
-    <p>Connect to NoDoc, sign in, and open the LiveLabs Focus Area used throughout the workshop.</p>
+    <p>Connect to NoDoc, confirm the assigned role, and open the LiveLabs Focus Area used throughout the workshop.</p>
     <h4>Objectives</h4>
     <ul>
       <li>Sign in through Oracle SSO.</li>
       <li>Navigate the NoDoc platform.</li>
     </ul>
     <details class="nodoc-task">
-      <summary>Task 1 · Reach No Doc Platform</summary>
+      <summary>Task 1 · Reach NoDoc Platform</summary>
       <ol>
         <li>Open the approved NoDoc environment. <span class="wms-platform-actions nodoc-launch-actions"><a
               class="btn btn-primary rounded-pill px-4" href="https://nodoc.oraclecorp.com/" target="_blank"
@@ -45,22 +53,66 @@
               class="wms-platform-note">Requires Oracle VPN and NoDoc access.</span></span></li>
         <li>Sign in through Oracle SSO. If the stage environment requests a bypass code, obtain it through the approved
           manager process; do not paste codes into workshop artifacts.</li>
-        <li>Click on "No Doc" option.</li>
-        <img data-nodoc-asset="images/1_nodoc_entry_page.png" alt="NoDoc platform after successful Oracle SSO sign-in"
-          class="img-fluid rounded">
-        <li>Confirm reaching the "No Doc" platform.</li>
-        <img data-nodoc-asset="images/2_nodoc_platform.png" alt="Reached NoDoc platform" class="img-fluid rounded">
+        <li>Choose the <strong>NoDoc</strong> application.
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: NoDoc platform after successful Oracle SSO sign-in">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/1_nodoc_entry_page.png" alt="NoDoc platform after successful Oracle SSO sign-in"
+              class="img-fluid rounded">
+            <figcaption>Select NoDoc after the Oracle SSO sign-in completes.</figcaption>
+          </figure>
+        </li>
+        <li>Confirm that the NoDoc platform opens, then check the role or ownership indicator available in your tenancy.
+          Use a contributor role to author; use a reader or reviewer role only for the review actions it exposes.
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: Reached NoDoc platform">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/2_nodoc_platform.png" alt="Reached NoDoc platform" class="img-fluid rounded">
+            <figcaption>Confirm that the NoDoc platform is open before continuing.</figcaption>
+          </figure>
+        </li>
       </ol>
     </details>
     <details class="nodoc-task">
       <summary>Task 2 · Open LiveLabs Focus Area</summary>
       <ol>
-        <li>Open the dropdown menu.</li>
-        <li>Select <strong>LiveLabs Focus Area</strong>.</li>
-        <img data-nodoc-asset="images/3_open_hamburger_menu.png" alt="Select the LiveLabs Focus Area" class="img-fluid rounded">
-        <li>In the LiveLabs Focus Area, open the <strong>LiveLabs repo</strong> and confirm that its content is visible.</li>
-        <img data-nodoc-asset="images/4_livelabs_focus_area.png" alt="LiveLabs Focus Area and LiveLabs repo content" class="img-fluid rounded">
+        <li>Open the navigation menu and select <strong>LiveLabs Focus Area</strong>.
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: Select the LiveLabs Focus Area">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/3_open_hamburger_menu.png" alt="Select the LiveLabs Focus Area" class="img-fluid rounded">
+            <figcaption>Choose the LiveLabs Focus Area from the application navigation.</figcaption>
+          </figure>
+        </li>
+        <li>Open the <strong>LiveLabs repo</strong> in that Focus Area and confirm that its content is visible. In this
+          guide, “LiveLabs repo” means the NoDoc workspace content location; it does not require a local Git workflow.
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: LiveLabs Focus Area and LiveLabs repo content">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/4_livelabs_focus_area.png" alt="LiveLabs Focus Area and LiveLabs repo content" class="img-fluid rounded">
+            <figcaption>Open the LiveLabs repo inside the selected Focus Area.</figcaption>
+          </figure>
+        </li>
+        <li>Use <strong>Open All</strong> or <strong>Close All</strong>, if those controls are available, to inspect the
+          article and page hierarchy before adding content.</li>
       </ol>
+    </details>
+    <details class="nodoc-task">
+      <summary>Task 3 · Understand The Workspace Hierarchy</summary>
+      <ol>
+        <li>Use the hierarchy <strong>Focus Area → LiveLabs repo → article → article version → page</strong> to decide
+          where a change belongs.</li>
+        <li>Keep a page focused on one concept, task, example, restriction, reference, or error topic. Create another
+          article instead of inventing an unsupported sub-page level.</li>
+        <li>Work in the assigned LiveLabs Focus Area. Creating, migrating, renaming, or deleting a Focus Area is an
+          owner or administrator action and needs the appropriate content and release approval.</li>
+      </ol>
+      <aside class="nodoc-guidance-callout nodoc-guidance-callout--caution" aria-label="Focus Area administration boundary">
+        <h5>Focus Area administration is not the default LiveLabs author route</h5>
+        <p>The platform can create, rename, delete, and migrate Focus Areas. Use those operations only when the
+          assigned owner or administrator has confirmed the target, source, and recovery path; do not create a parallel
+          Focus Area merely to start a workshop.</p>
+      </aside>
     </details>
   </div>
 </details>
@@ -68,23 +120,48 @@
   <summary><span>Lab 2 · Authoring</span></summary>
   <div class="nodoc-tree-content">
     <div data-video-card data-video-title="Lab 2 walkthrough"
-      data-video-summary="Temporary test clip. Replace this source with the Lab 2 recording when it is ready."
+      data-video-summary="Preview learning aid. Verify creation choices and metadata controls in the current NoDoc UI."
       data-video-features="Article shell|Page structure|Metadata"></div>
-    <p>Create an article and page, create workshop content using the various writing tools at hand</p>
+    <p>Create an article and page set, apply the metadata that makes the content findable, then use the editor only for
+      the purpose each page needs to serve.</p>
     <h4>Objectives</h4>
     <ul>
-      <li>Create an article and pages.</li>
-      <li>Add workshop content using the available writing tools.</li>
+      <li>Create an article with a clear name and content version.</li>
+      <li>Choose a page creation method that matches the approved source.</li>
+      <li>Apply consistent metadata and structured LiveLabs content.</li>
+      <li>Maintain page order, relative links, and article versions safely.</li>
     </ul>
     <details class="nodoc-task">
       <summary>Task 1 · Create Article</summary>
       <ol>
-        <li>In the <strong>LiveLabs repo</strong>, click the <strong>+</strong> icon beside the selected Focus Area.</li>
-        <li>Choose <strong>Article</strong>.</li>
-        <img data-nodoc-asset="images/5_add_article.png" alt="Add Article" class="img-fluid rounded">
+        <li>In the <strong>LiveLabs repo</strong>, click the <strong>+</strong> icon beside the selected Focus Area, then
+          choose <strong>Article</strong>.
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: Add Article control in NoDoc">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/5_add_article.png" alt="Add Article control in NoDoc" class="img-fluid rounded">
+            <figcaption>Add an article from the selected LiveLabs Focus Area.</figcaption>
+          </figure>
+        </li>
+        <li>Enter a concise <strong>Article Name</strong> and a <strong>Version Number</strong>. The version identifies a
+          content snapshot; use the naming convention agreed for the Focus Area instead of assuming it is always the
+          product release number.
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: NoDoc article name and version fields">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/6_add_article_details.png" alt="NoDoc article name and version fields" class="img-fluid rounded">
+            <figcaption>Set the article identity and its content version before selecting the creation route.</figcaption>
+          </figure>
+        </li>
         <li>
-          You can choose between <strong>Create From Scratch</strong>, <strong>Codex</strong>, <strong>Import LiveLabs URL</strong> and <strong>Reuse Article</strong>.
-          <img data-nodoc-asset="images/create_article_options.png" alt="Add Article Options" class="img-fluid rounded">
+          Choose the creation route that matches the approved starting point: <strong>Create From Scratch</strong>,
+          <strong>Codex</strong>, <strong>Import LiveLabs URL</strong>, or <strong>Reuse Article</strong>.
+          <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+            aria-label="Expand image: NoDoc article creation options">
+            <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+            <img data-nodoc-asset="images/create_article_options.png" alt="NoDoc article creation options" class="img-fluid rounded">
+            <figcaption>Select the route that matches the approved source and desired authoring outcome.</figcaption>
+          </figure>
           <div class="nodoc-creation-tabs">
             <p class="nodoc-creation-tabs-intro">Select the option that matches your starting point.</p>
             <div class="nav nav-tabs nodoc-creation-tablist" id="nodoc-creation-options" role="tablist" aria-label="Article creation options">
@@ -95,21 +172,41 @@
             </div>
             <div class="tab-content nodoc-creation-tab-content">
               <section class="tab-pane fade show active nodoc-creation-panel" id="nodoc-creation-scratch-panel" role="tabpanel" aria-labelledby="nodoc-creation-scratch-tab" tabindex="0">
-                <p>Use this option when you want to build the workshop article from the beginning.</p>
+                <p>Use this option when the workshop needs a new article and no approved source should be imported or
+                  reused.</p>
                 <ol>
                   <li>Select <strong>Create From Scratch</strong>.</li>
-                  <li>Click <strong>Create</strong> to create the blank article.</li>
-                  <img data-nodoc-asset="images/create_article_options_1_create_from_scratch.png" alt="Add Blank Article" class="img-fluid rounded">
+                  <li>Click <strong>Create</strong>, then confirm that the new article and version appear in the selected
+                    Focus Area before adding pages.
+                    <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+                      aria-label="Expand image: Create a blank NoDoc article">
+                      <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+                      <img data-nodoc-asset="images/create_article_options_1_create_from_scratch.png" alt="Create a blank NoDoc article" class="img-fluid rounded">
+                      <figcaption>Create the empty article only after its name and version are correct.</figcaption>
+                    </figure>
+                  </li>
                 </ol>
               </section>
               <section class="tab-pane fade nodoc-creation-panel" id="nodoc-creation-codex-panel" role="tabpanel" aria-labelledby="nodoc-creation-codex-tab" tabindex="0">
-                <p>Use this option when a tailored first-draft prompt will help you begin the article.</p>
+                <p>Use this option when a tailored first-draft prompt will help you begin the article. The prompt
+                  builder below runs locally in this guide; it prepares text for the in-product NoDoc Codex route and
+                  does not send your idea to a service.</p>
                 <ol>
                   <li>Select <strong>Codex</strong>.</li>
                   <li>Plan the skills first. <code>livelabs-workshop-author</code> is required to build the workshop; select optional skills only when you can provide their listed resources.</li>
                   <li>Use the Workshop Prompt Builder below: enter the workshop idea, scope, approved source URLs, and any relevant skill resources, then select <strong>Build Codex prompt</strong>.</li>
-                  <li>Copy the generated prompt, paste it into NoDoc Codex, and review the draft plus every <code>[VERIFY: ...]</code> item before continuing.</li>
+                  <li>Copy the generated prompt, paste it into NoDoc Codex, select only the skills available in that
+                    UI, run the draft, review every generated page and every <code>[VERIFY: ...]</code> item, then add
+                    the article only when the output is ready for author review.</li>
                 </ol>
+                <aside class="nodoc-guidance-callout nodoc-guidance-callout--verify" aria-labelledby="nodoc-codex-mcp-note-title">
+                  <h5 id="nodoc-codex-mcp-note-title">Codex authoring is verified; an external Codex MCP connection is not</h5>
+                  <p>The accessible NoDoc documentation verifies the in-product Codex article and page-generation
+                    workflow. It does not provide a current endpoint, authentication flow, allowed tool list, or write
+                    boundary for an external Codex MCP server that creates NoDoc content. Do not treat this local prompt
+                    builder as an MCP client. If your tenancy adds such a connection, obtain its current owner-approved
+                    setup and permissions before using it.</p>
+                </aside>
                 <form class="nodoc-codex-prompt-builder" data-nodoc-codex-prompt-builder novalidate>
                   <section class="nodoc-codex-skill-plan" role="group" aria-labelledby="nodoc-codex-skill-plan-title">
                     <h5 class="nodoc-codex-skill-plan-title" id="nodoc-codex-skill-plan-title">1. Plan the skills that Codex needs</h5>
@@ -258,23 +355,46 @@ Clearly identify technical-review items, SME-review items, source gaps, environm
 
 Create only the draft content justified by the brief. Stop before publishing, pushing, ingesting, pre-publishing, overwriting, or modifying authoritative or remote workshop content, and state the approval required for the next step.
                 </template>
+                <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+                  aria-label="Expand image: Create NoDoc article from Codex input">
+                  <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+                  <img data-nodoc-asset="images/create_article_options_2_codex_input.png" alt="Create NoDoc article from Codex input" class="img-fluid rounded">
+                  <figcaption>Review the Codex input and generated content before adding the article.</figcaption>
+                </figure>
               </section>
               <section class="tab-pane fade nodoc-creation-panel" id="nodoc-creation-import-panel" role="tabpanel" aria-labelledby="nodoc-creation-import-tab" tabindex="0">
-                <p>Use this option when a published LiveLabs workshop is the correct starting point.</p>
+                <p>Use this option only when a published LiveLabs workshop is the approved starting point and the owner
+                  has confirmed that it can be used for the new article.</p>
                 <ol>
                   <li>Select <strong>Import LiveLabs URL</strong>.</li>
                   <li>Paste the published LiveLabs workshop URL.</li>
-                  <li>Click <strong>Import</strong>.</li>
-                  <img data-nodoc-asset="images/create_article_options_3_import_livelabs_url_1_import.png" alt="Import Workshop URL" class="img-fluid rounded">
+                  <li>Click <strong>Import</strong>, then review the resulting article, page order, metadata, links,
+                    code, and images before treating it as an authoring starting point.
+                    <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+                      aria-label="Expand image: Import LiveLabs workshop URL into NoDoc">
+                      <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+                      <img data-nodoc-asset="images/create_article_options_3_import_livelabs_url_1_import.png" alt="Import LiveLabs workshop URL into NoDoc" class="img-fluid rounded">
+                      <figcaption>Import only an approved published workshop URL, then validate the created content.</figcaption>
+                    </figure>
+                  </li>
                 </ol>
               </section>
               <section class="tab-pane fade nodoc-creation-panel" id="nodoc-creation-reuse-panel" role="tabpanel" aria-labelledby="nodoc-creation-reuse-tab" tabindex="0">
-                <h5>Begin from a reusable article</h5>
-                <p>Use this option when an existing article already contains the right foundation.</p>
+                <p>Use this option when an existing article is the approved foundation for the new workshop. Check the
+                  resulting content's edit state and metadata before changing it; do not assume reuse creates an
+                  independent writable copy.</p>
                 <ol>
                   <li>Select <strong>Reuse Article</strong>.</li>
                   <li>Choose the article that is appropriate for the new workshop.</li>
-                  <li>Review the inherited content and page structure before updating the workshop name, version, and metadata.</li>
+                  <li>Click <strong>Reuse</strong>, then verify the new article's title, version, page order, metadata,
+                    and editing permissions.
+                    <figure class="nodoc-route-evidence" data-expandable="true" tabindex="0" role="button"
+                      aria-label="Expand image: Reuse an existing NoDoc article">
+                      <span class="figure-expand-pill" aria-hidden="true">Click to expand</span>
+                      <img data-nodoc-asset="images/create_article_options_4_reuse_article.png" alt="Reuse an existing NoDoc article" class="img-fluid rounded">
+                      <figcaption>Confirm the reused article is the intended starting point before editing it.</figcaption>
+                    </figure>
+                  </li>
                 </ol>
               </section>
             </div>
@@ -285,22 +405,145 @@ Create only the draft content justified by the brief. Stop before publishing, pu
     <details class="nodoc-task">
       <summary>Task 2 · Add Pages</summary>
       <ol>
-        <li>Click <strong>+</strong> beside the article or an existing page.</li>
-        <li>Choose <strong>Page</strong> and create pages named <code>Prepare</code>, <code>Author</code>, and
-          <code>Review</code>.
-        </li>
-        <li>Confirm that pages appear under the intended article.</li>
-        <li>Add metadata tags at the top of each page, including product, release, topic type, and audience.</li>
+        <li>Click <strong>+</strong> beside the intended table-of-contents location and choose <strong>Page</strong>.
+          The current UI may limit the valid parent location; use the item that places the page in the intended article.</li>
+        <li>For this practice article, create <code>Prepare</code>, <code>Author</code>, and <code>Review</code> with
+          <strong>Empty File</strong>. Use another creation method only when it matches an approved source.</li>
+        <li>Confirm that each page appears under the intended article and remains focused on one learner need or task.</li>
       </ol>
+      <section class="nodoc-page-methods" aria-labelledby="nodoc-page-methods-title">
+        <h5 id="nodoc-page-methods-title">Choose the page creation method that matches the source</h5>
+        <div class="nodoc-feature-grid">
+          <article class="nodoc-feature-card">
+            <h6>Empty File</h6>
+            <p>Use for a new page. Provide the page name, then create the structure and content yourself.</p>
+          </article>
+          <article class="nodoc-feature-card">
+            <h6>Import From OraHub</h6>
+            <p>Use an approved repository source. Select the required Focus Area, branch, folder, and file, then review
+              the imported page before saving.</p>
+          </article>
+          <article class="nodoc-feature-card">
+            <h6>Reuse Content</h6>
+            <p>Use a suitable page from the selected Focus Area. The documented page-reuse route is read-only, so confirm
+              the edit state before planning changes.</p>
+          </article>
+          <article class="nodoc-feature-card">
+            <h6>Upload File</h6>
+            <p>Use an approved local Word source. Name the resulting page, upload it, and review its converted structure,
+              links, code, and images.</p>
+          </article>
+          <article class="nodoc-feature-card">
+            <h6>Architecture Diagram</h6>
+            <p>Describe the page and use the available Vibe Drawing flow to generate Mermaid content. Review the diagram
+              and its technical accuracy before creating the page.</p>
+          </article>
+          <article class="nodoc-feature-card">
+            <h6>Codex Skill</h6>
+            <p>Provide a page name, select relevant available skills, enter a constrained prompt, then review the
+              generated content before choosing <strong>Enter</strong>.</p>
+          </article>
+        </div>
+      </section>
+      <section class="nodoc-metadata-guide" aria-labelledby="nodoc-metadata-title">
+        <h5 id="nodoc-metadata-title">Metadata tags: what they are and how to use them</h5>
+        <p>Metadata tags are structured labels that make pages easier to organize, filter, ingest, and find in Ask
+          NoDoc. Add the team-approved tags near the top of each page. Use the current <strong>PagesMetaData</strong>
+          choices in NoDoc as the authority for values and tag syntax; do not invent a value simply because a tag name
+          exists.</p>
+        <ol class="nodoc-compact-list">
+          <li>Open the current page's metadata control or the available <strong>PagesMetaData</strong> reference.</li>
+          <li>Select the tags that describe the page and use the exact approved values for the selected Focus Area.</li>
+          <li>Place the metadata at the top of the page, save, and verify that the rendered page still has the intended
+            title, content, and hierarchy.</li>
+          <li>After a rename or move, review the metadata again. The content name can change while tag values still need
+            manual correction.</li>
+        </ol>
+        <div class="nodoc-reference-table-wrap" role="region" aria-label="NoDoc page metadata tag reference" tabindex="0">
+          <table class="nodoc-reference-table">
+            <caption>Use the approved Focus Area values for these documented page metadata categories.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Tag</th>
+                <th scope="col">Use it to record</th>
+                <th scope="col">Author guidance</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><th scope="row"><code>Product</code></th><td>The product associated with the page.</td><td>Keep it at the top; a page normally belongs to one product.</td></tr>
+              <tr><th scope="row"><code>ReleaseVersion</code></th><td>The relevant release or content version.</td><td>Use the controlled release label agreed for the article.</td></tr>
+              <tr><th scope="row"><code>ReleaseDeprecation</code></th><td>Deprecation context when it applies.</td><td>Add only when the team has supplied the approved deprecation value.</td></tr>
+              <tr><th scope="row"><code>Platform</code></th><td>The target platform or deployment context.</td><td>Use it for platform-specific content instead of duplicating a full page.</td></tr>
+              <tr><th scope="row"><code>Licensing</code></th><td>License or reuse context.</td><td>Use the approved policy label; do not infer licensing from the source.</td></tr>
+              <tr><th scope="row"><code>CodeLanguage</code></th><td>The programming or markup language used by the page.</td><td>Add it when code language changes how a learner finds or uses the page.</td></tr>
+              <tr><th scope="row"><code>TopicType</code></th><td>The learner intent for the page.</td><td>Use an available value such as <code>WhatsNew</code>, <code>GetStarted</code>, <code>Concept</code>, <code>SetupInstall</code>, <code>Upgrade</code>, a <code>Role...</code> value, <code>Optimize</code>, <code>Diagnose</code>, <code>Reference</code>, <code>ErrorMessage</code>, or <code>Reuse</code>.</td></tr>
+              <tr><th scope="row"><code>Language</code></th><td>The reader-facing natural language.</td><td>Use the Focus Area's supported language value.</td></tr>
+              <tr><th scope="row"><code>Location</code></th><td>The canonical published location when one exists.</td><td>Use an approved URL; do not add a temporary or signed link.</td></tr>
+              <tr><th scope="row"><code>info-map-feature-number</code><br><code>info-map-label</code></th><td>Information Map ordering and display label.</td><td>Use these only when the article's Information Map design calls for them.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <aside class="nodoc-guidance-callout nodoc-guidance-callout--metadata">
+          <h6>Article metadata and Information Maps</h6>
+          <p>If you will generate an Information Map, reserve the first article page for article-level metadata. Generate
+            the map only after all child pages exist; the documented flow replaces that first page's normal body while
+            preserving its metadata.</p>
+        </aside>
+        <details class="nodoc-reference">
+          <summary>Use filter tags only for intentional in-page variants</summary>
+          <p>Filter tags are not metadata tags. They delimit content that applies to a platform, language, product,
+            license, or version so shared content is not duplicated. Define the name with the team, and always provide a
+            matching end marker.</p>
+          <pre><code>@@@LINUX-BEGIN
+Linux-specific instructions.
+@@@LINUX-END</code></pre>
+        </details>
+      </section>
     </details>
     <details class="nodoc-task">
       <summary>Task 3 · Add Structured Content</summary>
       <ol>
-        <li>Edit <code>Prepare</code> and add a short introduction, objectives, and prerequisites.</li>
-        <li>Add a numbered procedure, a note, a link, and a code block.</li>
-        <li>Use Markdown source mode to inspect the generated content when available.</li>
-        <li>Save the page and verify that the TOC and content remain aligned.</li>
+        <li>Edit <code>Prepare</code> and add a concise introduction, objectives, and prerequisites. Keep the page
+          self-contained so a reader can understand its purpose without opening a second page.</li>
+        <li>Use headings and a numbered procedure for the learner sequence. Use a note or block quote only when it adds
+          a warning, decision, limitation, or context that should not be buried in a task.</li>
+        <li>Add a code block only for content the learner can use. Select the applicable language when the editor offers
+          it, explain how to run it and validate the result, and never include secrets or unverified commands.</li>
+        <li>For a cross-reference, copy the target page's <strong>Relative Path</strong>, select the link text in edit
+          mode, use the link control, paste the relative path, save, and test the result in view mode.</li>
+        <li>Use supported images with descriptive alt text. Use Markdown source mode, when available, to inspect the
+          generated structure; then review the rendered page as the learner will see it.</li>
+        <li>Use a FreeSQL block only when that control is available and the workshop genuinely needs verified runnable
+          database practice. It is not a substitute for explaining the expected result and validation.</li>
+        <li>Save the page and verify its title, metadata, TOC position, links, images, and rendered content.</li>
       </ol>
+      <aside class="nodoc-guidance-callout" aria-labelledby="nodoc-structured-check-title">
+        <h5 id="nodoc-structured-check-title">Expected result</h5>
+        <p>The <code>Prepare</code>, <code>Author</code>, and <code>Review</code> pages are visible in the intended
+          order, each has a distinct purpose, and their metadata and relative links match the current article version.</p>
+      </aside>
+    </details>
+    <details class="nodoc-task">
+      <summary>Task 4 · Maintain Structure, Links, And Versions</summary>
+      <ol>
+        <li>To rename an article or page, select it in the TOC and use <strong>Edit Name</strong>. Review the metadata
+          values afterwards; a rename can leave tag values that still need manual correction.</li>
+        <li>Move an article only within the Focus Area and move a page only within its article. Recheck page order,
+          relative links, and the rendered preview after the move.</li>
+        <li>As the article owner, create a new article version when a substantial update needs an independent content
+          snapshot. Select the article, choose <strong>Create Version</strong>, enter the agreed label, then make and
+          validate changes in the new version.</li>
+        <li>Ingest a new version separately after its content is ready; creating the version alone does not make it
+          available to Ask NoDoc.</li>
+        <li>Use <strong>Restore Article Version</strong> only as the owner, after confirming the exact target and recovery
+          need. Verify the restored TOC and content before resuming normal edits.</li>
+      </ol>
+      <aside class="nodoc-guidance-callout nodoc-guidance-callout--caution">
+        <h5>High-impact operations stay role-gated</h5>
+        <p>Deletion, Focus Area migration, direct repository conversion, and legacy pre-publish or push operations are
+          not part of this guide's default LiveLabs author route. Use them only with the owning administrator or release
+          owner, an approved target, and a recovery plan.</p>
+      </aside>
     </details>
   </div>
 </details>
@@ -308,68 +551,90 @@ Create only the draft content justified by the brief. Stop before publishing, pu
   <summary><span>Lab 3 · Review And Drafts</span><small>15 minutes</small></summary>
   <div class="nodoc-tree-content">
     <div data-video-card data-video-title="Lab 3 walkthrough"
-      data-video-summary="Temporary test clip. Replace this source with the Lab 3 recording when it is ready."
+      data-video-summary="Preview learning aid. Review the current NoDoc labels for comments, drafts, and differences."
       data-video-features="Comments|Drafts|Review decisions"></div>
-    <p>Use comments and drafts to collaborate without changing source content until the owner approves the change.</p>
+    <p>Use comments for precise feedback and drafts for proposed edits. The original page remains protected until the
+      owner reviews and explicitly overwrites it.</p>
     <h4>Objectives</h4>
     <ul>
       <li>Add an anchored review comment.</li>
       <li>Create and inspect a draft.</li>
       <li>Review differences and apply an owner-approved overwrite.</li>
     </ul>
+    <aside class="nodoc-guidance-callout" aria-labelledby="nodoc-draft-lifecycle-title">
+      <h5 id="nodoc-draft-lifecycle-title">Draft lifecycle</h5>
+      <p>A non-owner's edit is a draft, not a change to the original. Saving that draft leaves the original intact and
+        notifies the owner where the current environment supports notification. The owner then reviews the difference,
+        accepts or rejects individual changes, approves the reviewed draft, and overwrites the original only when the
+        final change set is correct.</p>
+    </aside>
     <details class="nodoc-task">
       <summary>Task 1 · Add A Comment</summary>
       <ol>
-        <li>Open the <code>Prepare</code> page in view or edit mode.</li>
-        <li>Select a sentence that needs clarification.</li>
-        <li>Add an inline comment with a specific, actionable suggestion.</li>
-        <li>Save and confirm the comment is anchored to the selected text.</li>
+        <li>Open the <code>Prepare</code> page in view or edit mode and select the exact sentence that needs
+          clarification.</li>
+        <li>Use the comment control to add a specific, actionable suggestion, then save the comment.</li>
+        <li>Confirm that the comment remains anchored to the selected text. If the environment supports notifications,
+          the page owner receives the comment for follow-up.</li>
+        <li>Use <strong>My Comments</strong>, when available, to find assigned comments and reopen the exact page
+          location instead of searching the TOC manually.</li>
       </ol>
     </details>
     <details class="nodoc-task">
       <summary>Task 2 · Create A Draft</summary>
       <ol>
-        <li>Sign in as a non-owner reviewer, or use the supplied reviewer account.</li>
-        <li>Open the commented page and click <strong>Edit</strong>.</li>
-        <li>Accept the prompt to work on a draft.</li>
-        <li>Improve the selected sentence and save the draft.</li>
+        <li>Sign in as a non-owner reviewer, or use the supplied reviewer account, then open the commented page and
+          choose <strong>Edit</strong>.</li>
+        <li>Accept the prompt to work on a draft. Do not try to work around the ownership boundary.</li>
+        <li>Improve the selected sentence, preserve the page's metadata and links, and save the draft.</li>
+        <li>Confirm that the original page still shows the approved content while the owner has a draft to review.</li>
       </ol>
     </details>
     <details class="nodoc-task">
       <summary>Task 3 · Review And Approve</summary>
       <ol>
-        <li>Sign in as the page owner.</li>
-        <li>Open <strong>Drafts</strong> and inspect the pending draft.</li>
-        <li>Use <strong>View Diff</strong> to review each change.</li>
-        <li>Accept or reject changes individually.</li>
-        <li>Approve and overwrite only after confirming the final content.</li>
+        <li>Sign in as the page owner and open <strong>Drafts</strong> to inspect the pending draft.</li>
+        <li>Open the current difference view, labelled <strong>View Diff</strong> or <strong>Difference</strong>
+          depending on the environment, and review every change in context.</li>
+        <li>Accept or reject changes individually, then approve the reviewed draft.</li>
+        <li>Overwrite the original only after confirming the final content, metadata, links, and technical meaning.</li>
+        <li>Reopen the rendered page and resolve or update the related comment so reviewers can see the final decision.</li>
       </ol>
     </details>
   </div>
 </details>
 <details class="nodoc-tree-group">
-  <summary><span>Lab 4 · AI Correction And Information Maps</span><small>15 minutes</small></summary>
+  <summary><span>Lab 4 · AI Assistance, Codex Skills, And Information Maps</span><small>15 minutes</small></summary>
   <div class="nodoc-tree-content">
     <div data-video-card data-video-title="Lab 4 walkthrough"
-      data-video-summary="Temporary test clip. Replace this source with the Lab 4 recording when it is ready."
-      data-video-features="AI correction|Difference review|Information maps"></div>
-    <p>Improve a page with AI-assisted tools while preserving human review, then generate an article information map
-      after all pages exist.</p>
+      data-video-summary="Preview learning aid. Confirm available AI actions and Codex skills in the approved NoDoc environment."
+      data-video-features="AI correction|Difference review|Codex skills|Information maps"></div>
+    <p>Use NoDoc AI assistance to improve an author-reviewed draft, use available focus-area Codex skills for analysis,
+      then generate an article Information Map only after the page set is complete.</p>
     <h4>Objectives</h4>
     <ul>
       <li>Run a standards or persona-based AI correction.</li>
       <li>Inspect differences before overwrite.</li>
+      <li>Run an available focus-area Codex skill on selected content.</li>
       <li>Generate an information map from the article's first page.</li>
     </ul>
+    <aside class="nodoc-guidance-callout nodoc-guidance-callout--verify" aria-labelledby="nodoc-ai-boundary-title">
+      <h5 id="nodoc-ai-boundary-title">AI creates a proposal, not an approved change</h5>
+      <p>Vibe Doc-ing can apply standards, use a persona or custom prompt, and rewrite selected text. It does not prove
+        technical correctness, policy compliance, or source accuracy. Compare the proposal with the original, reject
+        unsupported wording, and overwrite only after the page owner completes human review.</p>
+    </aside>
     <details class="nodoc-task">
       <summary>Task 1 · Run AI Correction Safely</summary>
       <ol>
         <li>Open the <code>Author</code> page as its owner.</li>
-        <li>Choose <strong>Vibe Doc-ing</strong> and select <strong>Apply Standards</strong> or a supported persona
-          extraction.</li>
-        <li>Review generated content and open <strong>Difference</strong>.</li>
-        <li>Reject unsupported changes; keep only improvements that preserve technical meaning.</li>
-        <li>Use <strong>Overwrite</strong> only after human review, then save.</li>
+        <li>Choose <strong>Vibe Doc-ing</strong>, then select the action that matches the need: <strong>Apply
+          Standards</strong>, a supported persona extraction, a custom prompt, or a checklist available in the current
+          UI.</li>
+        <li>Review the generated content and open the difference view before making any replacement.</li>
+        <li>Reject unsupported changes. Keep only improvements that preserve the approved technical meaning, required
+          metadata, links, code behavior, and safety or review constraints.</li>
+        <li>Use <strong>Overwrite</strong> only after human review, then save and recheck the rendered page.</li>
       </ol>
     </details>
     <details class="nodoc-task">
@@ -377,61 +642,110 @@ Create only the draft content justified by the brief. Stop before publishing, pu
       <ol>
         <li>Select one sentence on the page.</li>
         <li>Right-click and choose <strong>Vibe Doc-ing</strong>.</li>
-        <li>Select <strong>Formal</strong>, <strong>Heading</strong>, or a custom prompt.</li>
-        <li>Review the result and replace only the selected text if accurate.</li>
+        <li>Select <strong>Formal</strong>, <strong>Heading</strong>, or a custom prompt when that action is available.</li>
+        <li>Review the result, edit it if needed, and replace only the selected text if it is accurate. Save the page
+          after the change.</li>
       </ol>
     </details>
     <details class="nodoc-task">
-      <summary>Task 3 · Generate The Information Map</summary>
+      <summary>Task 3 · Use A Focus-Area Codex Skill</summary>
+      <ol>
+        <li>Open the <strong>Codex</strong> control at the Focus Area level, if your role and tenancy show it.</li>
+        <li>Use <strong>Open All</strong> or <strong>Close All</strong> to choose only the articles and pages that need
+          analysis.</li>
+        <li>Run only a skill available in that UI. The accessible source material documents a <strong>Grade</strong>
+          skill that analyzes selected pages and produces recommendations.</li>
+        <li>Review the result and, when offered, download its CSV report. Treat recommendations as review input; they do
+          not automatically modify the pages.</li>
+      </ol>
+    </details>
+    <details class="nodoc-task">
+      <summary>Task 4 · Generate The Information Map</summary>
       <ol>
         <li>Confirm that all workshop pages exist and are saved.</li>
-        <li>Open the first page of the article as the owner.</li>
+        <li>Open the first page of the article as the owner. Keep that page to article metadata when you plan to generate
+          an Information Map.</li>
         <li>Choose <strong>Generate Information Map</strong>.</li>
-        <li>Confirm that page summaries and source links are generated while metadata remains intact.</li>
+        <li>Confirm that NoDoc generates a summary and source link for each child page while the first-page metadata
+          remains intact.</li>
+        <li>Review the map as an article-level navigation aid for people and retrieval; it does not replace the child
+          pages or their normal Quality Assurance review.</li>
       </ol>
     </details>
   </div>
 </details>
 <details class="nodoc-tree-group">
-  <summary><span>Lab 5 · Ingest And Ask No Doc</span><small>15 minutes</small></summary>
+  <summary><span>Lab 5 · Ingest And Ask NoDoc</span><small>15 minutes</small></summary>
   <div class="nodoc-tree-content">
     <div data-video-card data-video-title="Lab 5 walkthrough"
-      data-video-summary="Temporary test clip. Replace this source with the Lab 5 recording when it is ready."
+      data-video-summary="Preview learning aid. Confirm available source modes and filtering controls in the approved NoDoc environment."
       data-video-features="Ingestion|Focused questions|Source context"></div>
-    <p>Make approved content available to Ask No Doc, then constrain a question to the right Focus Area, article, and
+    <p>Make approved content available to Ask NoDoc, then constrain a question to the right Focus Area, article, and
       version.</p>
     <h4>Objectives</h4>
     <ul>
       <li>Ingest a page or article deliberately.</li>
-      <li>Select a focused Ask No Doc context.</li>
+      <li>Select a focused Ask NoDoc context.</li>
       <li>Check that answers remain grounded in workshop content.</li>
     </ul>
+    <aside class="nodoc-guidance-callout" aria-labelledby="nodoc-ingest-lifecycle-title">
+      <h5 id="nodoc-ingest-lifecycle-title">Ingest before you ask</h5>
+      <p>The author workflow is: save and approve the page or article, ingest the intended scope as its owner, wait for
+        completion, select a narrow Ask NoDoc focus, then inspect the answer and its source context. A newly created
+        article version has its own ingestion state, so update it before relying on it in Ask NoDoc.</p>
+    </aside>
     <details class="nodoc-task">
       <summary>Task 1 · Ingest Approved Content</summary>
       <ol>
-        <li>Confirm that the article content is approved and saved.</li>
-        <li>Select the article or a page and choose <strong>Ingest</strong>.</li>
-        <li>Wait for ingestion to complete; record status and timestamp.</li>
-        <li>Do not ingest production or confidential content.</li>
+        <li>As the owner, confirm that the selected page or article is saved, technically reviewed where required, and
+          safe to make available for retrieval.</li>
+        <li>Select the exact page or article and choose <strong>Ingest</strong>. NoDoc chunks and vectorizes that selected
+          content for retrieval.</li>
+        <li>Wait for the ingestion status to complete, record the scope and timestamp, then ask a question that the
+          ingested content should answer.</li>
+        <li>If the result is not available, first confirm the selected scope, current version, and completion status. Do
+          not repeatedly ingest or broaden the scope without understanding what changed.</li>
+        <li>Do not ingest confidential, secret, or unapproved production content into a shared test or authoring flow.</li>
       </ol>
     </details>
     <details class="nodoc-task">
       <summary>Task 2 · Ask A Focused Question</summary>
       <ol>
-        <li>Open <strong>Ask No Doc</strong> from the application menu.</li>
-        <li>Choose <strong>Focus</strong> and select <strong>NoDoc</strong>.</li>
-        <li>Narrow context by Focus Area, article, and release version.</li>
+        <li>Open <strong>Ask NoDoc</strong> from the application menu.</li>
+        <li>Choose <strong>Focus</strong> and select <strong>NoDoc</strong>. Use the unfiltered option only when the wider
+          NoDoc collection is genuinely needed.</li>
+        <li>Narrow the context in order: Focus Area, article, then release version.</li>
         <li>Ask a question answered by the <code>Prepare</code> page.</li>
-        <li>Inspect the answer and source/link context; tighten focus if needed.</li>
+        <li>Inspect the answer and source or link context. Tighten the focus if the answer mixes content from an
+          unintended article or version.</li>
+        <li>Use the selected-articles or filter indicator, when shown, to inspect or remove active filters before
+          starting an unrelated question.</li>
       </ol>
     </details>
     <details class="nodoc-task">
-      <summary>Task 3 · Search And Export</summary>
+      <summary>Task 3 · Use Search Modes And Manage Chat Context</summary>
       <ol>
-        <li>Use metadata select-and-search or Vibe Searching to find a workshop page.</li>
-        <li>Start a new chat if you need a clean context.</li>
-        <li>Download the current chat JSON only to the approved local test location.</li>
+        <li>Use <strong>MCP (Metatag Command &amp; Processing)</strong> only as the Ask NoDoc metadata mode. It is not a
+          Codex MCP content-creation server.</li>
+        <li>Use <strong>Select &amp; Ask</strong> to ask a question against pages matching selected metadata. Use
+          <strong>Select &amp; Search</strong> to generate a <code>/find</code> result list of matching page links.</li>
+        <li>Use <strong>Vibe Searching</strong> to describe the product, deployment model, or topic type in natural
+          language when you do not yet know the exact metadata combination.</li>
+        <li>Use <strong>URL</strong> focus only for a currently supported, approved Oracle URL and validate the target
+          before asking questions. Use <strong>DBSA</strong> only when the option is visible and your environment grants
+          access.</li>
+        <li>Start a new chat when you need a clean context. Chat history can restore previous filters, so recheck the
+          active focus before relying on an older conversation.</li>
+        <li>Download the current chat JSON only to the approved location and only when it contains no secrets, personal
+          data, or unapproved source material.</li>
       </ol>
+      <aside class="nodoc-guidance-callout nodoc-guidance-callout--verify">
+        <h5>Why this guide does not add a Codex MCP-server procedure</h5>
+        <p>Available NoDoc material uses “MCP” in two different ways: the metadata search mode above, and a conceptual
+          Model Context Protocol integration for documentation retrieval. It does not verify a currently deployed Codex
+          MCP server that can write NoDoc content. Follow only the in-product Codex authoring route until product owners
+          publish the current connection, authentication, tool scope, and approval requirements.</p>
+      </aside>
     </details>
   </div>
 </details>
@@ -439,7 +753,7 @@ Create only the draft content justified by the brief. Stop before publishing, pu
   <summary><span>Lab 6 · Quality Assurance, Review, And Publishing Request</span><small>15 minutes</small></summary>
   <div class="nodoc-tree-content">
     <div data-video-card data-video-title="Lab 6 walkthrough"
-      data-video-summary="Complete Quality Assurance, wait for review, then create the WMS publishing request after the workshop is Completed."
+      data-video-summary="Preview learning aid for the NoDoc Quality Assurance, review, and WMS publishing-request sequence."
       data-video-features="Quality Assurance checklist|Review status|Publishing request"></div>
     <p>Create the article in NoDoc, copy its current preview link, complete the Quality Assurance checklist, and wait for WMS review. Create the publishing request only after WMS status is <strong>Completed</strong>.</p>
     <h4>Objectives</h4>
@@ -448,10 +762,18 @@ Create only the draft content justified by the brief. Stop before publishing, pu
       <li>Complete the Quality Assurance checklist and resolve review comments in NoDoc.</li>
       <li>Create the WMS publishing request after review is complete.</li>
     </ul>
+    <aside class="nodoc-guidance-callout" aria-labelledby="nodoc-wms-bridge-title">
+      <h5 id="nodoc-wms-bridge-title">NoDoc checks and WMS checks have different roles</h5>
+      <p>Use NoDoc to check the article, metadata, page order, links, and current preview. Use WMS to record the
+        Self Quality Assurance checklist, status, review outcome, and publishing request. Follow the shared
+        <a href="../quickstart/index.html#step-3">Review &amp; Publish walkthrough</a> for the WMS controls instead of
+        creating a separate handoff document.</p>
+    </aside>
     <details class="nodoc-task">
       <summary>Task 1 · Check The NoDoc Article</summary>
       <ol>
-        <li>Confirm metadata, page order, links, code blocks, and rendered content in the current NoDoc preview.</li>
+        <li>Confirm metadata, page order, links, code blocks, images and alt text, and rendered content in the current
+          NoDoc preview.</li>
         <li>Copy the preview link and add it to the Self Quality Assurance checklist.</li>
         <li>Save the checklist and move the workshop to <strong>Self Quality Assurance Complete</strong>.</li>
       </ol>
@@ -460,7 +782,8 @@ Create only the draft content justified by the brief. Stop before publishing, pu
       <summary>Task 2 · Wait For Review</summary>
       <ol>
         <li>Wait for WMS review rather than creating a separate review document.</li>
-        <li>Resolve requested changes in NoDoc, update the preview link if needed, and repeat the Quality Assurance checks.</li>
+        <li>Resolve requested changes in NoDoc, update the preview link if needed, and repeat the Quality Assurance
+          checks.</li>
         <li>Continue only when the reviewer has moved the WMS status to <strong>Completed</strong>.</li>
       </ol>
     </details>
@@ -468,8 +791,10 @@ Create only the draft content justified by the brief. Stop before publishing, pu
       <summary>Task 3 · Create The Publishing Request</summary>
       <ol>
         <li>In WMS, open <strong>Publishing</strong> and click <strong>Publish to LiveLabs</strong>.</li>
-        <li>Enter the final NoDoc location in the matching run URL field, choose the required publishing options, and create the request.</li>
-        <li>Save and verify <strong>Publish Requested</strong>; configure Sandbox Environment only when the workshop needs a LiveLabs sandbox.</li>
+        <li>Enter the approved production location for the final workshop instructions, choose the required publishing
+          options, and create the request.</li>
+        <li>Save and confirm <strong>Publish Requested</strong>. Configure Sandbox Environment only when the workshop
+          needs a LiveLabs sandbox.</li>
       </ol>
     </details>
   </div>
