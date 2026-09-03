@@ -659,15 +659,37 @@
       }
     });
 
+    function workshopHash(panelIndex, taskIndex) {
+      var panel = Number(panelIndex || 0);
+      var task = Number(taskIndex || 0);
+
+      if (panel === 0 && task === 0) {
+        return "#nodoc";
+      }
+
+      return "#nodoc:" + panel + (task > 0 ? ":" + task : "");
+    }
+
+    function readWorkshopHash() {
+      var deepLinkMatch = window.location.hash.match(/^#nodoc:(\d+)(?::(\d+))?$/i);
+
+      return {
+        panel: deepLinkMatch ? Number(deepLinkMatch[1]) : 0,
+        task: deepLinkMatch && deepLinkMatch[2] ? Number(deepLinkMatch[2]) : 0,
+        matched: !!deepLinkMatch
+      };
+    }
+
     function activate(panelIndex, taskIndex, options) {
       // Keep panel visibility, active menu state, task expansion, and deep-link
       // scrolling in one place so navigation and search behave identically.
-      var config = Object.assign({ scroll: true }, options || {});
+      var config = Object.assign({ scroll: true, syncHash: true }, options || {});
       var selectedPanel = panels[panelIndex] || panels[0];
       var selectedIndex = panels.indexOf(selectedPanel);
       var selectedTask = Number(taskIndex || 0);
       var target;
       var focusTarget;
+      var nextHash;
 
       panels.forEach(function (panel, index) {
         panel.hidden = index !== selectedIndex;
@@ -714,6 +736,13 @@
             focusTarget.focus({ preventScroll: true });
           }
         });
+      }
+
+      if (config.syncHash) {
+        nextHash = workshopHash(selectedIndex, selectedTask);
+        if (window.location.hash !== nextHash) {
+          window.location.hash = nextHash;
+        }
       }
     }
 
@@ -882,13 +911,16 @@
       });
     }
 
-    // Global search uses this compact deep link so its result can open the exact
-    // workshop lab or task after the externally maintained fragment has loaded.
-    var deepLinkMatch = window.location.hash.match(/^#nodoc:(\d+)(?::(\d+))?$/i);
-    var deepLinkPanel = deepLinkMatch ? Number(deepLinkMatch[1]) : 0;
-    var deepLinkTask = deepLinkMatch && deepLinkMatch[2] ? Number(deepLinkMatch[2]) : 0;
+    // Global search, the left navigation, and browser history all use the
+    // same compact deep link for the exact workshop lab or task.
+    window.addEventListener("hashchange", function () {
+      var hash = readWorkshopHash();
 
-    activate(deepLinkPanel, deepLinkTask, { scroll: !!deepLinkMatch });
+      activate(hash.panel, hash.task, { scroll: true, syncHash: false });
+    });
+
+    var initialHash = readWorkshopHash();
+    activate(initialHash.panel, initialHash.task, { scroll: initialHash.matched, syncHash: false });
   }
 
   if (document.readyState === "loading") {

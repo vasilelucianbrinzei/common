@@ -667,9 +667,9 @@
     var lastSegment = (segments[segments.length - 1] || "").toLowerCase();
     var previousSegment = (segments[segments.length - 2] || "").toLowerCase();
 
-    // Public routes are real static objects such as quickstart/index.html.
-    // Remove both route segments when finding the guide root; otherwise a
-    // page would generate nested URLs such as quickstart/quickstart.
+    // GitHub Pages serves each route directory through its index.html. Remove
+    // route segments when finding the guide root; otherwise a page would
+    // generate nested URLs such as quickstart/quickstart.
     if (lastSegment === "index.html" && routeNames.indexOf(previousSegment) !== -1) {
       segments.splice(-2, 2);
     } else if (lastSegment === "index.html") {
@@ -735,8 +735,8 @@
     var cleaned = String(hash || "").replace(/^#/, "").toLowerCase();
     var pageFile = function (cleanName) {
       return cleanName === "home"
-        ? routeBasePath + "index.html"
-        : routeBasePath + cleanName + "/index.html";
+        ? routeBasePath
+        : routeBasePath + cleanName + "/";
     };
     var pageUrl = function (cleanName, pageHash) {
       var authoring = "";

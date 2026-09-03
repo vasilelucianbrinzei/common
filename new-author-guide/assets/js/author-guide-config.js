@@ -1,4 +1,34 @@
 (function () {
+      var routeNames = ["home", "quickstart", "cheatsheet", "nodoc"];
+
+      function canonicalizeCurrentRoute() {
+        var current = new URL(window.location.href);
+        var segments = current.pathname.split("/").filter(Boolean);
+        var lastSegment = (segments[segments.length - 1] || "").toLowerCase();
+        var changed = false;
+
+        // GitHub Pages serves a directory's index.html automatically. Keep
+        // the directory URL visible, while retaining old direct links as
+        // compatible entry points.
+        if (lastSegment === "index.html") {
+          segments.pop();
+          changed = true;
+        }
+
+        // Home is the guide root, not a second public route.
+        if ((segments[segments.length - 1] || "").toLowerCase() === "home") {
+          segments.pop();
+          changed = true;
+        }
+
+        if (!changed) {
+          return;
+        }
+
+        current.pathname = "/" + (segments.length ? segments.join("/") + "/" : "");
+        window.history.replaceState(window.history.state, document.title, current.pathname + current.search + current.hash);
+      }
+
       var url = new URL(window.location.href);
       var experience = url.searchParams.get("experience");
       var lab = url.searchParams.get("lab");
@@ -26,7 +56,6 @@
       function guideRootUrl() {
         var current = new URL(window.location.href);
         var segments = current.pathname.split("/").filter(Boolean);
-        var routeNames = ["home", "quickstart", "cheatsheet", "nodoc"];
         var lastSegment = segments[segments.length - 1] || "";
         var previousSegment = segments[segments.length - 2] || "";
 
@@ -64,9 +93,9 @@
           var route = guideRoutes[link.getAttribute("data-mode-target")];
 
           if (route) {
-            // Explicit objects work on static Object Storage endpoints without
-            // requiring directory-index or clean-URL rewrite behavior.
-            link.href = new URL(route + "/index.html", guideRootUrl()).toString();
+            link.href = route === "home"
+              ? guideRootUrl().toString()
+              : new URL(route + "/", guideRootUrl()).toString();
           }
         });
       }
@@ -93,6 +122,7 @@
         resolve: assetUrl
       };
       document.addEventListener("DOMContentLoaded", function () {
+        canonicalizeCurrentRoute();
         hydrateAssets();
         hydrateRouteLinks();
         document.querySelectorAll("[data-full-guide-link]").forEach(function (link) {

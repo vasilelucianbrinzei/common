@@ -14,7 +14,7 @@
       var supported = ["home", "quickstart", "cheatsheet", "nodoc"];
       var base = path.slice(0, path.length - route.length);
       var target = supported.indexOf(route) !== -1 ? route : "home";
-      window.location.replace(base + "index.html?route=" + encodeURIComponent(target));
+      window.location.replace(base + (target === "home" ? "" : target + "/") + window.location.search + window.location.hash);
     }());
   </script>
 </body>

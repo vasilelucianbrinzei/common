@@ -4617,46 +4617,6 @@ body.home-no-scroll #app .hub-hero {
   }
 }
 
-/* NoDoc documentation reference components: keep the source fragment editable
-   while giving role notes, metadata, and page-method guidance the same compact
-   reader treatment as the rest of the author guide. */
-#nodocMode .nodoc-guidance-callout {
-  margin: 1rem 0;
-  padding: .9rem 1rem;
-  border: 1px solid rgba(36, 59, 83, .14);
-  border-left: 4px solid #486581;
-  border-radius: .7rem;
-  background: rgba(246, 248, 250, .92);
-  color: #334e68;
-}
-
-#nodocMode .nodoc-guidance-callout h5,
-#nodocMode .nodoc-guidance-callout h6 {
-  margin: 0 0 .4rem;
-  color: #172b4d;
-  font-size: .98rem;
-  font-weight: 800;
-}
-
-#nodocMode .nodoc-guidance-callout p:last-child {
-  margin-bottom: 0;
-}
-
-#nodocMode .nodoc-guidance-callout--caution {
-  border-left-color: #c74634;
-  background: #fff6f3;
-}
-
-#nodocMode .nodoc-guidance-callout--verify {
-  border-left-color: #7c5e10;
-  background: #fff9e8;
-}
-
-#nodocMode .nodoc-guidance-callout--metadata {
-  border-left-color: #2f855a;
-  background: #f1fbf5;
-}
-
 #nodocMode .nodoc-page-methods,
 #nodocMode .nodoc-metadata-guide {
   margin: 1.15rem 0 0;
@@ -4988,6 +4948,49 @@ body.home-no-scroll #app .hub-hero {
   border: 1px solid rgba(49, 45, 42, 0.14);
   border-radius: 0.85rem;
   background: rgba(255, 255, 255, 0.88);
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] #nodocMode .nodoc-task-section .nodoc-route-evidence {
+  display: grid;
+  gap: .55rem;
+  width: min(100%, 46rem);
+  margin: 1rem 0 1.25rem;
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] #nodocMode .nodoc-task-section .nodoc-route-evidence figcaption {
+  margin: 0 .15rem;
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] #nodocMode .nodoc-evidence-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin: 1rem 0 1.25rem;
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] #nodocMode .nodoc-evidence-grid .nodoc-route-evidence {
+  width: 100%;
+  margin: 0;
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] #nodocMode .nodoc-feature-card .nodoc-route-evidence {
+  width: 100%;
+  margin: .75rem 0 0;
+  padding: .5rem;
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] #nodocMode .nodoc-feature-card .nodoc-route-evidence img {
+  max-height: min(12rem, 30vh);
+}
+
+#app[data-redwood-creator-pass="2026-05-25"] #nodocMode .nodoc-feature-card .nodoc-route-evidence figcaption {
+  font-size: .8rem;
+}
+
+@media (max-width: 700px) {
+  #app[data-redwood-creator-pass="2026-05-25"] #nodocMode .nodoc-evidence-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 #app[data-redwood-creator-pass="2026-05-25"] .nodoc-route-evidence img {
