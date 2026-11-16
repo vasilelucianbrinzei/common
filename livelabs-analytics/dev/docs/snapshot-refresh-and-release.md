@@ -1,3 +1,9 @@
+# Snapshot refresh and release
+
+Status on 12 November 2026: the importer accepts CSV/XLSX WMS and Sprint tables, maps the observed WMS header aliases, and reads both current A-C and legacy B-D views layouts. It preserves duplicate input rows and rejects missing, conflicting, or invalid Sprint flags instead of silently labeling unknown items as Workshops. The current inventory still uses the 28 September WMS/views snapshot and the 15 October Jenkins run; neither is fresh data.
+
+The 12 November source bundle is not ready for a full candidate refresh: it has no complete Sprint Flg export or the four required tag exports. The Jenkins JSON can be archived and reviewed, but its grouped identities cannot be applied row by row; obtain the matching per-ID report or reconciled JSON/CSV pair first. No inventory promotion, Jenkins merge, or object storage upload has been performed.
+
 ## Inputs to retain together
 
 - WMS inventory export, Sprint classification export, views workbook, and the four product/role/focus/sales-play tag exports identified by `dev/config/snapshot-source-manifest.example.json`.

@@ -27,7 +27,7 @@ card width. The selected tab's text contrast is tested against the 4.5:1 minimum
 Validation covers exact existing column sets/order, ID filter and numeric sort,
 both content types, row preservation, filter-field order, Admin type counts and
 mobile menu contrast/overflow. Screenshots are retained in
-`output/screenshots/wms-table-order-20261109/`. Changes are local.
+`archive/2026-11-12/output/screenshots/wms-table-order-20261109/`. Changes are local.
 
 ## Objectives
 

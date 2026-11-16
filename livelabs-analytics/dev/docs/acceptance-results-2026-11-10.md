@@ -10,7 +10,7 @@ The live Pages dashboard loaded 889 public records, but `/api/dashboard-admin-st
 
 The public Pages URL also served the approximately 29 MB full inventory. The local Python service protects that inventory, but publishing repository files directly bypasses its route protection. The reviewed static builder already excludes the full inventory; Pages was not serving that reviewed artifact.
 
-Evidence: `github-pages-baseline.json` and `output/screenshots/acceptance-20261110/github-pages-baseline.png`.
+Evidence: `github-pages-baseline.json`; the screenshot is retained locally under `archive/2026-11-12/output/screenshots/acceptance-20261110/` and is excluded from the public project tree.
 
 ## Fixes implemented locally
 

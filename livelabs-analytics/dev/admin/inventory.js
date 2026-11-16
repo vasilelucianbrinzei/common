@@ -1,8 +1,11 @@
 (() => {
-  const pageSize = 50;
+  let pageSize = 10;
   let records = [];
   let filtered = [];
+  let visibleInventoryRecords = [];
   let page = 1;
+  let sortKey = "";
+  let sortDirection = "asc";
   let scope = "all";
   let jenkinsOverlay = {};
   let csrf = '';
@@ -13,6 +16,7 @@
   const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[character]);
   const text = (value) => String(value ?? "").trim();
   const normalized = (value) => text(value).toLocaleLowerCase();
+  const inventoryCollator = new Intl.Collator(undefined, { numeric: true, sensitivity: "base" });
   const publicPublished = (record) => normalized(record.publishType) === "public" && normalized(record.publishStatus) === "published";
   const disabledOrArchived = (record) => normalized(record.publishType) === "disabled"
     || normalized(record.status) === "delete requested"
@@ -60,6 +64,30 @@
     const pair = (record.details || []).find((item) => Array.isArray(item) && ["Owner Email", "Author Email", "Manager Email", "Owner Group"].includes(item[0]) && text(item[1]));
     return pair ? text(pair[1]) : "—";
   };
+  const sortValueFor = (record, key) => {
+    if (key === "title") return text(record.title);
+    if (key === "livelabsId") return text(record.livelabsId);
+    if (key === "wmsId") return text(record.wmsId);
+    if (key === "owner") return ownerFor(record);
+    if (key === "type") return text(record.type);
+    if (key === "priority") return jenkinsState(record);
+    if (key === "review") return text(record.review?.tierLabel);
+    return "";
+  };
+  const sortedInventoryRecords = () => {
+    const sourceOrder = new Map(records.map((record, index) => [record, index]));
+    return filtered.slice().sort((left, right) => {
+      if (!sortKey) return (sourceOrder.get(left) ?? 0) - (sourceOrder.get(right) ?? 0);
+      const leftValue = sortValueFor(left, sortKey);
+      const rightValue = sortValueFor(right, sortKey);
+      const missingLeft = !leftValue || leftValue === "—";
+      const missingRight = !rightValue || rightValue === "—";
+      if (missingLeft !== missingRight) return missingLeft ? 1 : -1;
+      const comparison = inventoryCollator.compare(leftValue, rightValue);
+      if (comparison === 0) return (sourceOrder.get(left) ?? 0) - (sourceOrder.get(right) ?? 0);
+      return sortDirection === "desc" ? -comparison : comparison;
+    });
+  };
   const applyFilters = () => {
     const query = normalized(byId("inventory-search")?.value);
     const type = byId("inventory-type")?.value || "";
@@ -94,10 +122,12 @@
     renderRows();
   };
   const renderRows = () => {
-    const pages = Math.max(1, Math.ceil(filtered.length / pageSize));
+    const ordered = sortedInventoryRecords();
+    const pages = Math.max(1, Math.ceil(ordered.length / pageSize));
     page = Math.min(Math.max(1, page), pages);
     const start = (page - 1) * pageSize;
-    const visible = filtered.slice(start, start + pageSize);
+    const visible = ordered.slice(start, start + pageSize);
+    visibleInventoryRecords = visible;
     byId("inventory-rows").innerHTML = visible.length ? visible.map((record) => `<tr>
       <td>${escapeHtml(record.livelabsId || "—")}</td><td>${escapeHtml(record.wmsId || "—")}</td>
       <td>${escapeHtml(text(record.title) || "Untitled item")}</td><td>${escapeHtml(ownerFor(record))}</td><td>${escapeHtml(record.type)}</td><td>${focusHtml(record)}</td>
@@ -108,9 +138,80 @@
       <td>${escapeHtml(record.review?.tierLabel || 'Outside dashboard scope')}<br><small>${escapeHtml(record.review?.readiness?.replaceAll('-', ' ') || '')} · ${escapeHtml(record.review?.confidence || '')}</small><br><button type="button" data-manage-key="${escapeHtml(record.dashboardGovernance?.recordKey)}">Manage</button></td></tr>`).join("")
       : '<tr><td colspan="13" class="empty">No records match these filters.</td></tr>';
     byId("inventory-count").textContent = `${filtered.length.toLocaleString()} records`;
-    byId("inventory-page-status").textContent = filtered.length ? `Showing ${start + 1}–${start + visible.length} of ${filtered.length.toLocaleString()}` : "No records to show";
-    byId("inventory-previous").disabled = page <= 1;
-    byId("inventory-next").disabled = page >= pages;
+    document.querySelectorAll("[data-inventory-page-status]").forEach((node) => {
+      node.textContent = filtered.length ? `Showing ${start + 1}–${start + visible.length} of ${filtered.length.toLocaleString()}` : "No records to show";
+    });
+    document.querySelectorAll("[data-inventory-page-label]").forEach((node) => { node.textContent = `Page ${page} of ${pages}`; });
+    document.querySelectorAll("[data-inventory-page-size]").forEach((select) => { select.value = String(pageSize); });
+    document.querySelectorAll('[data-inventory-page-action="previous"]').forEach((button) => { button.disabled = page <= 1; });
+    document.querySelectorAll('[data-inventory-page-action="next"]').forEach((button) => { button.disabled = page >= pages; });
+    document.querySelectorAll("[data-inventory-export-format]").forEach((button) => { button.disabled = visible.length === 0; });
+    const sortDirectionButton = byId("inventory-sort-direction");
+    if (sortDirectionButton) {
+      sortDirectionButton.disabled = !sortKey;
+      sortDirectionButton.textContent = sortDirection === "desc" ? "Desc" : "Asc";
+      sortDirectionButton.setAttribute("aria-label", sortDirection === "desc" ? "Sort descending" : "Sort ascending");
+      sortDirectionButton.setAttribute("aria-pressed", sortKey ? "true" : "false");
+    }
+  };
+  const exportColumns = ["LiveLabs ID", "WMS ID", "Title", "Author / owner", "Type", "Review focus", "Publish type", "Publish status", "Workflow status", "Jenkins Error Score", "Jenkins findings", "Dashboard visibility", "Review"];
+  const exportRow = (record) => {
+    const visibility = record.dashboardGovernance?.visible ? "Visible" : "Admin only";
+    const classification = (record.dashboardGovernance?.classification || "unreviewed").replaceAll("_", " ");
+    const governanceReason = text(record.dashboardGovernance?.reason);
+    const review = [record.review?.tierLabel || "Outside dashboard scope", record.review?.readiness?.replaceAll("-", " "), record.review?.confidence].filter(Boolean).join(" · ");
+    return {
+      "LiveLabs ID": record.livelabsId || "—",
+      "WMS ID": record.wmsId || "—",
+      Title: text(record.title) || "Untitled item",
+      "Author / owner": ownerFor(record),
+      Type: record.type || "—",
+      "Review focus": focusFor(record).join("; ") || "—",
+      "Publish type": record.publishType || "Unclassified",
+      "Publish status": record.publishStatus || "Not set",
+      "Workflow status": record.status || "Not set",
+      "Jenkins Error Score": jenkinsScore(record),
+      "Jenkins findings": jenkinsSummary(record),
+      "Dashboard visibility": [visibility, classification, governanceReason].filter(Boolean).join(" · "),
+      Review: review || "—",
+    };
+  };
+  const activeExportFilters = () => {
+    const labels = {
+      "inventory-search": "Search", "inventory-type": "Type", "inventory-jenkins-priority": "Jenkins priority",
+      "inventory-scope": "View", "inventory-publish-type": "Publish type", "inventory-publish-status": "Publish status",
+      "inventory-workflow": "Workflow status", "inventory-team": "Team member or contact", "inventory-review-focus": "Review focus",
+      "inventory-cleanup-queue": "Cleanup queue", "inventory-review-band": "Review band",
+    };
+    const defaults = { "inventory-scope": "all", "inventory-type": "", "inventory-jenkins-priority": "", "inventory-publish-type": "", "inventory-publish-status": "", "inventory-workflow": "", "inventory-team": "", "inventory-review-focus": "", "inventory-cleanup-queue": "", "inventory-review-band": "" };
+    return Object.fromEntries(Object.entries(labels).flatMap(([id, label]) => {
+      const control = byId(id);
+      const rawValue = control?.tagName === "SELECT" ? control.value : text(control?.value);
+      const value = control?.tagName === "SELECT" ? control.selectedOptions?.[0]?.textContent?.trim() : rawValue;
+      if (!value || rawValue === defaults[id]) return [];
+      return [[label, value]];
+    }));
+  };
+  const exportInventoryPage = (format) => {
+    if (!visibleInventoryRecords.length) throw new Error("There are no visible rows to export.");
+    if (!window.LiveLabsExport) throw new Error("Export tools have not loaded yet.");
+    const rows = visibleInventoryRecords.map(exportRow);
+    const matrix = [exportColumns, ...rows.map((record) => exportColumns.map((column) => record[column]))];
+    const filename = `livelabs-admin-inventory-page-${page}-${rows.length}-rows`;
+    if (format === "csv") window.LiveLabsExport.csv(matrix, `${filename}.csv`);
+    else if (format === "xlsx") window.LiveLabsExport.xlsx(matrix, `${filename}.xlsx`);
+    else if (format === "json") window.LiveLabsExport.json({
+      source: "LiveLabs Analytics Admin inventory",
+      exportedAt: new Date().toISOString(),
+      appliedFilters: activeExportFilters(),
+      appliedSort: { by: byId("inventory-sort")?.selectedOptions?.[0]?.textContent?.trim() || "As listed", direction: sortKey ? sortDirection : "none" },
+      pagination: { page, pageSize, filteredRows: filtered.length, firstRow: filtered.length ? (page - 1) * pageSize + 1 : 0, exportedRows: rows.length },
+      columns: exportColumns,
+      rowCount: rows.length,
+      rows,
+    }, `${filename}.json`);
+    else throw new Error("Choose CSV, Excel or JSON.");
+    byId("inventory-export-status").textContent = `${rows.length.toLocaleString()} visible page rows exported.`;
   };
   const load = async () => {
     try {
@@ -197,13 +298,28 @@
       const element = byId(id);
       element?.addEventListener(element.tagName === "SELECT" ? "change" : "input", applyFilters);
     });
-    document.querySelectorAll("[data-inventory-scope]").forEach((button) => button.addEventListener("click", () => {
-      scope = button.dataset.inventoryScope || "all";
-      document.querySelectorAll("[data-inventory-scope]").forEach((item) => item.setAttribute("aria-pressed", String(item === button)));
-      applyFilters();
+    byId("inventory-scope")?.addEventListener("change", () => { scope = byId("inventory-scope").value || "all"; applyFilters(); });
+    document.querySelectorAll("[data-inventory-page-size]").forEach((select) => select.addEventListener("change", () => {
+      pageSize = Math.max(1, Number(select.value) || 10);
+      page = 1;
+      renderRows();
     }));
-    byId("inventory-previous")?.addEventListener("click", () => { page -= 1; renderRows(); });
-    byId("inventory-next")?.addEventListener("click", () => { page += 1; renderRows(); });
+    document.querySelectorAll('[data-inventory-page-action="previous"]').forEach((button) => button.addEventListener("click", () => { page -= 1; renderRows(); }));
+    document.querySelectorAll('[data-inventory-page-action="next"]').forEach((button) => button.addEventListener("click", () => { page += 1; renderRows(); }));
+    byId("inventory-sort")?.addEventListener("change", () => { sortKey = byId("inventory-sort").value; page = 1; renderRows(); });
+    byId("inventory-sort-direction")?.addEventListener("click", () => {
+      if (!sortKey) return;
+      sortDirection = sortDirection === "desc" ? "asc" : "desc";
+      page = 1;
+      renderRows();
+    });
+    document.addEventListener("click", (event) => {
+      const button = event.target.closest?.("[data-inventory-export-format]");
+      if (!button) return;
+      try { exportInventoryPage(button.dataset.inventoryExportFormat); }
+      catch (error) { byId("inventory-export-status").textContent = error?.message || "The visible rows could not be exported."; }
+      button.closest(".table-export-dropdown")?.removeAttribute("open");
+    });
     byId('inventory-rows').addEventListener('click', event => { const button = event.target.closest('[data-manage-key]'); if (button) editRecord(button.dataset.manageKey); });
     byId('policy-cancel').addEventListener('click', () => { byId('policy-editor').hidden = true; });
     byId('audit-preview').addEventListener('click', () => loadAudit().catch(error => { byId('audit-status').textContent = error.message; }));

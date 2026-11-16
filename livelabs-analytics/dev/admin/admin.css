@@ -259,6 +259,15 @@
 .admin-page th { position:sticky; top:0; z-index:1; background:#F8F3EF; color:var(--muted); font-size:11px; font-weight:700; text-transform:uppercase; }
 .admin-page tr:hover td { background:var(--page); }
 .admin-page .table-wrap > p,.admin-page .table-wrap > .controls { margin:12px; }
+.admin-page .admin-paged-table { display:grid; gap:12px; }
+.admin-page .admin-table-pagination { margin:0; }
+.admin-page .admin-table-pagination .pagination-actions { gap:10px; }
+.admin-page .admin-table-pagination .pagination-actions label { display:inline-flex; flex:0 0 auto; align-items:center; gap:7px; }
+.admin-page .admin-table-pagination select { width:auto; min-width:70px; min-height:36px; padding:6px 8px; }
+.admin-page .admin-table-pagination [data-admin-page-label] { min-width:95px; text-align:center; color:var(--ink); font-weight:600; }
+.admin-page .admin-table-sort { min-height:0; padding:0; border:0; background:transparent; color:inherit; font:inherit; font-weight:700; text-align:left; }
+.admin-page .admin-table-sort:hover:not(:disabled) { border:0; background:transparent; color:var(--oracle-teal); }
+.admin-page .admin-table-sort:focus-visible { outline:2px solid var(--oracle-teal); outline-offset:3px; }
 .admin-page .summary { display:flex; flex-wrap:wrap; gap:10px; }
 .admin-page .summary span { padding:12px 16px; border:1px solid var(--line-soft); border-top:3px solid var(--oracle-teal); border-radius:8px; background:var(--page); }
 .admin-page #status { min-height:22px; margin:18px 0; color:var(--oracle-bark); }
@@ -510,10 +519,13 @@
 .admin-management-page .assignment-filter-disclosure { margin:12px 0; padding:12px; border:1px solid #c5d2d4; border-radius:8px; background:#f5f8f7; }
 .admin-management-page .assignment-filter-disclosure > summary { color:#1d414c; font-weight:600; cursor:pointer; }
 .admin-management-page .assignment-table-toolbar { display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin:16px 0 12px; font-size:13px; }
+.admin-management-page .assignment-table-toolbar.pagination-controls { justify-content:space-between; padding:14px 16px; border:1px solid var(--line-soft); border-radius:8px; background:rgba(255,255,255,.86); }
+.admin-management-page .assignment-table-toolbar.pagination-controls-bottom { margin:14px 0 0; }
 .admin-management-page .assignment-table-toolbar p { flex:1 1 160px; margin:0; color:#334a55; }
 .admin-management-page .assignment-table-toolbar label { display:flex; align-items:center; gap:8px; margin:0; color:#334a55; }
 .admin-management-page .assignment-table-toolbar select { width:80px; margin:0; }
-.admin-management-page .assignment-table-toolbar nav { display:flex; flex-wrap:wrap; align-items:center; gap:10px; }
+.admin-management-page .assignment-table-toolbar .pagination-actions { justify-content:flex-end; gap:10px; }
+.admin-management-page .assignment-table-toolbar [id$="page-number"],.admin-management-page .assignment-table-toolbar [data-assignment-page-number] { min-width:95px; text-align:center; color:var(--ink); font-weight:600; }
 .admin-management-page .assignment-table-scroll { container-type:inline-size; position:relative; max-width:100%; overflow:auto; border:1px solid #c5d2d4; border-radius:8px; }
 .admin-management-page #assignment-table { table-layout:fixed; min-width:1080px; margin:0; font-size:13px; }
 .admin-management-page #assignment-table th { min-width:0; background:#edf3f2; color:#334a55; text-transform:none; vertical-align:middle; padding:8px 12px; white-space:normal; }

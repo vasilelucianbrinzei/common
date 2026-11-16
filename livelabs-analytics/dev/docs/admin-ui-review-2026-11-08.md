@@ -23,7 +23,7 @@ Jenkins filtering and retest/history navigation, retired settings redirects, and
 The existing full saved Jenkins report was also copied into the disposable archive for
 read-only checks of P1 filters and expanded findings at both widths.
 
-Screenshots: `output/screenshots/admin-consistency-20261108/`.
+Screenshots retained locally under `archive/2026-11-12/output/screenshots/admin-consistency-20261108/`; excluded from the public project tree.
 No credentials, source snapshots, applied merges or archived report files were changed.
 The local service was restarted. Deployment and refreshed source inputs remain pending.
 

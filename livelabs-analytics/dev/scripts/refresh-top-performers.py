@@ -189,18 +189,18 @@ def table(records: list[dict], content_type: str, snapshot_date: date) -> str:
         views = view_map(record)
         detail_id = f"{table_id}-detail-{index}"
         body.append(
-            f'<tr class="expandable-row" data-filter-row="true" {row_attributes(record)} data-original-index="{index}" data-detail-row-id="{detail_id}" data-expanded="false" tabindex="0" aria-expanded="false">'
+            f'<tr class="record-navigation-row" data-filter-row="true" {row_attributes(record)} data-original-index="{index}" data-detail-row-id="{detail_id}" tabindex="0">'
             + td(index + 1, "number") + td(record.get("title")) + td(author) + td(record.get("wmsId"), "number") + td(record.get("livelabsId"), "number")
             + td(record.get("category")) + td(int(views["recent_views_12m"]), "number") + td(int(views["recent_views_90d"]), "number") + td(updated, "date") + td(f"{score:.2f}", "number")
             + td(record.get('type')) + "</tr>"
         )
-        body.append(f'<tr class="detail-row" data-detail-for="{detail_id}" hidden><td colspan="11"><div class="detail-shell"><p class="detail-title">Details for {escape(clean(record.get("title")))}.</p>{detail_table(record, components)}</div></td></tr>')
+        body.append(f'<template data-detail-for="{detail_id}"><div class="detail-shell"><p class="detail-title">Details for {escape(clean(record.get("title")))}.</p>{detail_table(record, components)}</div></template>')
     plural = "Workshops" if content_type == "Workshop" else "Sprints"
     return (
         f'<section class="panel ranked-table-panel"><div class="panel-head"><h3>Top Performers</h3><span>{len(scored)} rows</span></div>'
         f'<div class="toggle-body">'
         f'<div class="table-tools"><span class="table-count" data-table-count-for="{table_id}">{len(scored)} rows</span>'
-        f'<span class="table-hint">Click a row for more details.</span><button class="filter-reset" type="button" data-clear-filters-for="{table_id}">Clear filters</button></div>'
+        f'<span class="table-hint">Select a row to open its full details.</span><button class="filter-reset" type="button" data-clear-filters-for="{table_id}">Clear filters</button></div>'
         f'<details class="filter-disclosure"><summary><svg class="filter-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16"></path><path d="M8 12h8"></path><path d="M11 17h2"></path></svg><span>Apply filters</span><span class="filter-chevron" aria-hidden="true"></span></summary>'
         f'{controls(table_id)}<div class="filter-grid">{filter_grid(table_id)}</div></details><div class="table-wrap" data-filter-table="{table_id}">'
         f'<table class="data-table" id="{table_id}"><thead><tr>{header}</tr></thead><tbody>{"".join(body)}</tbody></table></div></div></section>'

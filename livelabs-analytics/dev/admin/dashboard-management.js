@@ -30,6 +30,7 @@
   const editDrafts = new Map();
   const assignmentDrafts = new Map();
   const assignmentView = {page:1, size:10, sort:'livelabsId', direction:1, expanded:'', removing:'', busy:false, message:''};
+  let visibleAssignments = [];
   const assignmentFilterIds = ['assignment-search','assignment-type','assignment-livelabs-filter','assignment-wms-filter','assignment-council','assignment-tag','assignment-target-filter'];
 
   function status(message) { $('status').textContent = message; }
@@ -281,10 +282,17 @@
     const pages=Math.max(1,Math.ceil(filtered.length/assignmentView.size));
     assignmentView.page=Math.max(1,Math.min(assignmentView.page,pages));
     const start=(assignmentView.page-1)*assignmentView.size, visible=filtered.slice(start,start+assignmentView.size);
+    visibleAssignments = visible;
     $('assignment-page-status').textContent=filtered.length?`${start+1}–${start+visible.length} of ${filtered.length} rows`:'No records to show';
     $('assignment-page-number').textContent=`Page ${assignmentView.page} of ${pages}`;
     $('assignment-previous').disabled=assignmentView.page===1;
     $('assignment-next').disabled=assignmentView.page===pages;
+    document.querySelectorAll('[data-assignment-page-status]').forEach(node=>{node.textContent=filtered.length?`${start+1}–${start+visible.length} of ${filtered.length} rows`:'No records to show';});
+    document.querySelectorAll('[data-assignment-page-number]').forEach(node=>{node.textContent=`Page ${assignmentView.page} of ${pages}`;});
+    $('assignment-page-size').value=String(assignmentView.size);
+    $('assignment-page-size-bottom').value=String(assignmentView.size);
+    $('assignment-previous-bottom').disabled=assignmentView.page===1;
+    $('assignment-next-bottom').disabled=assignmentView.page===pages;
     $('assignment-export').disabled=!filtered.length;
     document.querySelectorAll('[data-assignment-sort]').forEach(button=>{
       if(button.dataset.assignmentSort===assignmentView.sort)button.parentElement.setAttribute('aria-sort',assignmentView.direction===1?'ascending':'descending');
@@ -345,9 +353,9 @@
     const fields=['livelabsId','wmsId','title','category','owner','type','tags','rule','createdAt'];
     const headers=Array.from($('assignment-table').querySelectorAll('thead th')).map(th=>th.textContent.trim());
     const cell=value=>{let text=String(value??'');if(/^[\s]*[=+@-]/.test(text)||/^[\t\r\n]/.test(text))text="'"+text;return '"'+text.replaceAll('"','""')+'"';};
-    const csv=[headers,...filteredAssignmentRows().map(row=>fields.map(field=>assignmentCell(row,field)))].map(row=>row.map(cell).join(',')).join('\r\n');
+    const csv=[headers,...visibleAssignments.map(row=>fields.map(field=>assignmentCell(row,field)))].map(row=>row.map(cell).join(',')).join('\r\n');
     const url=URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));
-    const link=document.createElement('a');link.href=url;link.download='current-assignments.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+    const link=document.createElement('a');link.href=url;link.download=`current-assignments-page-${assignmentView.page}.csv`;link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
   }
 
   $('tag-color').innerHTML=colorOptions('teal');
@@ -369,6 +377,9 @@
   $('assignment-page-size').addEventListener('change',()=>{assignmentView.size=Number($('assignment-page-size').value);assignmentView.page=1;renderAssignments();});
   $('assignment-previous').addEventListener('click',()=>{assignmentView.page--;renderAssignments();});
   $('assignment-next').addEventListener('click',()=>{assignmentView.page++;renderAssignments();});
+  $('assignment-page-size-bottom').addEventListener('change',()=>{assignmentView.size=Number($('assignment-page-size-bottom').value);assignmentView.page=1;renderAssignments();});
+  $('assignment-previous-bottom').addEventListener('click',()=>{assignmentView.page--;renderAssignments();});
+  $('assignment-next-bottom').addEventListener('click',()=>{assignmentView.page++;renderAssignments();});
   $('assignment-export').addEventListener('click',exportAssignments);
   document.querySelectorAll('[data-assignment-sort]').forEach(button=>button.addEventListener('click',()=>{
     const field=button.dataset.assignmentSort;

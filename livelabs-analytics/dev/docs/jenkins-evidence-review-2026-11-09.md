@@ -33,7 +33,7 @@ These are different export variants; sharing a run ID alone does not establish a
 - Dashboard validator: 80 passed, zero warnings or failures.
 - Full browser suite: 17 passed, covering Admin pages, assignment actions, dashboard calculations, filters, responsive layouts and detailed report exports.
 - Browser regression verifies LiveLabs 4021: both model downloads, two source locations per model, Markdown lines 308 and 311, HTTP 401, source and lab URLs, masked URL/source copying, typo highlighting at line 85, CSV export, desktop/mobile layout and no page errors.
-- Desktop and mobile screenshots were inspected in `output/screenshots/jenkins-evidence-20261109/`.
+- Desktop and mobile screenshots were inspected and retained locally under `archive/2026-11-12/output/screenshots/jenkins-evidence-20261109/`.
 - An existing score test initially read a lazy table before the QA overlay applied. It now waits for the exact applied merge ID before comparing every score; scoring code was not changed.
 
 All changes are local. No remote QA Hub access, WMS changes, new QA execution, source-data refresh, or Object Storage publication occurred.
@@ -44,7 +44,7 @@ Error expansion now starts with each affected item and a visible **Check here fi
 
 LiveLabs 3570 from the follow-up screenshot now leads with **Lab 2: Load JSON tweets**, **Task 1: Upload JSON tweets into Object Storage**, **Markdown line 29**, highlighting `labfiles/JSON_Full_tweets.jsonn`. The source label's workshop/context prefix follows the excerpt so the lab name appears first. No evidence or score data changed.
 
-Validation: five detail-page browser tests passed, rendering unit checks passed, and 80 dashboard checks passed. The final location test was rerun after label/color refinements. Desktop/mobile screenshots in `output/screenshots/jenkins-location-first-20261109/` were inspected. CSV export retains guidance, technical fields and other locations even when their disclosures are closed.
+Validation: five detail-page browser tests passed, rendering unit checks passed, and 80 dashboard checks passed. The final location test was rerun after label/color refinements. Desktop/mobile screenshots in `archive/2026-11-12/output/screenshots/jenkins-location-first-20261109/` were inspected. CSV export retains guidance, technical fields and other locations even when their disclosures are closed.
 
 ## Follow-up: compact record details
 
@@ -52,7 +52,7 @@ Ownership and publishing now appears first and opens by default. Error summaries
 
 Removed the requested activity, retirement-readiness and shared-demand paragraphs. The score table retains its four columns in a compact layout with readable desktop and phone widths. Scoring and underlying evidence are unchanged.
 
-Validation: 11 browser checks passed, including ownership ordering, compact error groups, mobile column overflow, score values, copying and CSV exports. Rendering unit checks and 80 dashboard checks passed. Desktop and phone screenshots were inspected in `output/screenshots/compact-record-20261109/`. These are local UI changes; no new report run or publication occurred.
+Validation: 11 browser checks passed, including ownership ordering, compact error groups, mobile column overflow, score values, copying and CSV exports. Rendering unit checks and 80 dashboard checks passed. Desktop and phone screenshots were inspected and retained locally under `archive/2026-11-12/output/screenshots/compact-record-20261109/`. These are local UI changes; no new report run or publication occurred.
 
 ## Objectives
 

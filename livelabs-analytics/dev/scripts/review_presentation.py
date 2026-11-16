@@ -14,7 +14,7 @@ def focus_cell(record):
 
 def row_attributes(record):
     tags = record.get('review', {}).get('focusTags', [])
-    return f'data-content-type="{escape(record.get("type", ""))}" data-review-focus="{escape(json.dumps(tags))}" data-livelabs-id="{escape(str(record.get("livelabsId", "")))}"'
+    return f'data-content-type="{escape(record.get("type", ""))}" data-review-focus="{escape(json.dumps(tags))}" data-livelabs-id="{escape(str(record.get("livelabsId", "")))}" data-wms-id="{escape(str(record.get("wmsId", "")))}"'
 
 
 def controls(table_id):

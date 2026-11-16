@@ -49,6 +49,7 @@ if (JSON.stringify(expectedKeys) !== JSON.stringify(observedKeys) || sourcePaylo
 const releaseInputs = [
   { source: "index.html", target: "index.html" },
   { source: "dashboard/index.html", target: "dashboard/index.html" },
+  { source: "views/index.html", target: "views/index.html" },
   { source: "search/index.html", target: "search/index.html" },
   { source: "dev/config/.nojekyll", target: ".nojekyll" },
   { source: "dev/config/release-manifest.json", target: "release-manifest.json" },

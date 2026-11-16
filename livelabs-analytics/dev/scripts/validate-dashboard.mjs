@@ -96,6 +96,8 @@ function checkDashboardScripts() {
   }
   new vm.Script(fs.readFileSync(path.join(root, "dev/admin/inventory.js"), "utf8"), { filename: "dev/admin/inventory.js" });
   pass("Admin Inventory script parse", "protected inventory page script parses");
+  new vm.Script(fs.readFileSync(path.join(root, "dev/admin/weekly-update.js"), "utf8"), { filename: "dev/admin/weekly-update.js" });
+  pass("Admin Weekly Update script parse", "protected weekly update page script parses");
 }
 
 function checkInventoryPageContract() {
@@ -103,7 +105,7 @@ function checkInventoryPageContract() {
   const html = fs.readFileSync(filePath, "utf8");
   const script = fs.readFileSync(path.join(root, "dev/admin/inventory.js"), "utf8");
   const server = fs.readFileSync(path.join(root, "dev/scripts/admin-server.py"), "utf8");
-  const required = ["/admin-assets/inventory.js", 'id="inventory-jenkins-priority"', "Jenkins Error Score", 'id="count-public"', 'id="count-disabled"'];
+  const required = ["/admin-assets/inventory.js", 'id="inventory-jenkins-priority"', 'id="inventory-scope"', 'class="inventory-filter-disclosure"', "Workshop Owner, Support Contact", "Jenkins Error Score", 'id="count-public"', 'id="count-disabled"'];
   const missing = required.filter((marker) => !html.includes(marker));
   const scriptMarkers = ["/api/admin/inventory", "/api/admin/qa-overlay", "jenkinsState(record)", "Outside Jenkins public scan scope"];
   const missingScript = scriptMarkers.filter((marker) => !script.includes(marker));
@@ -113,6 +115,40 @@ function checkInventoryPageContract() {
   } else {
     pass("Admin Inventory contract", "full inventory is behind the Admin session and includes Jenkins state and priority filtering");
   }
+}
+
+function checkWeeklyUpdateContract() {
+  const html = fs.readFileSync(path.join(root, "dev/admin/weekly-update.html"), "utf8");
+  const script = fs.readFileSync(path.join(root, "dev/admin/weekly-update.js"), "utf8");
+  const login = fs.readFileSync(path.join(root, "dev/admin/login.js"), "utf8");
+  const server = fs.readFileSync(path.join(root, "dev/scripts/admin-server.py"), "utf8");
+  const builder = fs.readFileSync(path.join(root, "dev/scripts/build-admin-service.py"), "utf8");
+  const required = [
+    [html, 'id="weekly-steps"'], [html, "monthly view history"], [html, "video watching minutes"],
+    [script, "/api/admin/weekly-runs"], [login, "'/admin/weekly-update'"], [server, "'/admin/weekly-update': 'weekly-update.html'"],
+    [server, "if path == '/api/admin/weekly-runs':"], [server, "X-CSRF-Token"],
+    [builder, "weekly-update.html"], [builder, "weeklyUpdatePage"]
+  ];
+  const missing = required.filter(([source, marker]) => !source.includes(marker)).map(([, marker]) => marker);
+  missing.length
+    ? fail("Weekly update workflow contract", `missing: ${missing.join(", ")}`)
+    : pass("Weekly update workflow contract", "dated checklist is protected, CSRF guarded, retained in Admin storage, and packaged for the service release");
+}
+
+function checkDashboardExportAndContactContract() {
+  const dashboard = fs.readFileSync(path.join(root, "assets/js/dashboard.js"), "utf8");
+  const exporter = fs.readFileSync(path.join(root, "assets/js/report-export.js"), "utf8");
+  const searchHtml = fs.readFileSync(path.join(root, "search/index.html"), "utf8");
+  const requirements = [
+    [dashboard, 'data-export-format="csv"'], [dashboard, 'data-export-format="xlsx"'], [dashboard, 'data-export-format="json"'],
+    [dashboard, "rowMatchesFilters(row, filters)"], [dashboard, "Owner or support contact"],
+    [dashboard, "function exportSearchDetailJson"], [dashboard, "data-export-search-json"],
+    [exporter, "function json(data, filename)"], [exporter, "function xlsx(rows, filename)"], [searchHtml, "report-export.js"]
+  ];
+  const missing = requirements.filter(([source, marker]) => !source.includes(marker)).map(([, marker]) => marker);
+  missing.length
+    ? fail("Dashboard contact filter and export contract", `missing: ${missing.join(", ")}`)
+    : pass("Dashboard contact filter and export contract", "ranked tables and full search detail offer filtered CSV, Excel, and JSON exports with owner/contact matching");
 }
 
 function checkInternalContactData() {
@@ -553,11 +589,11 @@ async function checkHttpSmoke() {
     ["/dashboard/?view=performance", 200], ["/dashboard/?view=errors", 200],
     ["/dashboard/?view=retirement", 200], ["/dashboard/?view=stats", 200],
     ["/inventory/", 302], ["/inventory/index.html", 302],
-    ["/assets/css/dashboard.css", 200], ["/assets/js/dashboard.js", 200],
+    ["/assets/css/dashboard.css", 200], ["/assets/js/dashboard.js", 200], ["/assets/js/report-export.js", 200],
     ["/inventory/data/public_portfolio_inventory.json", 200], ["/inventory/data/portfolio_inventory.json", 404],
     ["/?q=autonomous%20database", 302], ["/?livelabs_id=4074", 302],
     ["/search/?livelabs_id=4074", 200], ["/inventory/?wms_id=11040", 302],
-    ["/admin", 200], ["/admin/inventory", 200], ["/api/admin/inventory", 401], ["/api/dashboard-admin-state", 200],
+    ["/admin", 200], ["/admin/inventory", 200], ["/admin/weekly-update", 200], ["/api/admin/inventory", 401], ["/api/admin/weekly-runs", 401], ["/api/dashboard-admin-state", 200],
     ["/assets/images/oracle-logo-white.svg", 200], ["/assets/images/livelabs-logo-white.svg", 200],
     ["/assets/images/ill-abst-000109-16x9.png", 200], ["/assets/images/color-strip.png", 200],
     ["/assets/fonts/OracleSans_Rg.ttf", 200], ["/assets/fonts/OracleSans_SBd.ttf", 200], ["/assets/fonts/OracleSans_Bd.ttf", 200],
@@ -683,6 +719,8 @@ function printResults() {
 try {
   checkDashboardScripts();
   checkInventoryPageContract();
+  checkWeeklyUpdateContract();
+  checkDashboardExportAndContactContract();
   checkHtmlReferences();
   checkStylesheetReferences();
   checkStaticBoundary();

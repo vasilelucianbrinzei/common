@@ -15,7 +15,7 @@ Replaced Dashboard management's assignment cards with a full-width table. The ta
 - Full Playwright suite: **16 passed**, including Admin navigation, table behavior, saved-state read-back, family rules, mobile layout, keyboard expansion, removal, failed-save recovery, and CSV export.
 - Dashboard validator: **80 passed, 0 warnings, 0 failures**.
 - JavaScript syntax and scoped diff whitespace checks passed.
-- Desktop and mobile screenshots inspected under `output/screenshots/assignment-table-20261109/`. These use synthetic assignment records and a disposable authenticated Admin service; tests do not modify the user's saved assignments.
+- Desktop and mobile screenshots inspected and retained locally under `archive/2026-11-12/output/screenshots/assignment-table-20261109/`. These use synthetic assignment records and a disposable authenticated Admin service; tests do not modify the user's saved assignments.
 - Local implementation only. No release package or Object Storage publication was performed.
 
 ## Objectives

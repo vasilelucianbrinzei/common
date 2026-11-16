@@ -5,9 +5,10 @@ Archived source files stay immutable; only the served HTML receives the shell.
 import re
 
 PAGES = (
-    ('/admin/dashboard-management', 'Dashboard tags'),
+    ('/admin/weekly-update', 'Weekly update'),
     ('/admin/data-merge', 'Data merge'),
     ('/admin/jenkins', 'Jenkins reports'),
+    ('/admin/dashboard-management', 'Dashboard tags'),
     ('/admin/inventory', 'Portfolio inventory'),
 )
 ASSETS = ('<link rel="stylesheet" href="/admin-assets/admin-shell.css?v=20261108">'

@@ -76,8 +76,8 @@ test('every Admin page shares compact navigation, responsive layout and working 
   const capture = await page.request.post(`${baseURL}/api/admin/snapshots`, {data:{captureCurrent:true},headers:{Origin:baseURL,'X-CSRF-Token':session.csrf}});
   expect(capture.ok()).toBe(true);
   const pages = [
-    ['dashboard-management','Dashboard tags'],['governance','Data governance'],
-    ['data-merge','Data merge'],['jenkins','Jenkins reports'],['inventory','Portfolio inventory']
+    ['weekly-update','Weekly analytics update'],['data-merge','Data merge'],['jenkins','Jenkins reports'],
+    ['dashboard-management','Dashboard tags'],['inventory','Portfolio inventory'],['governance','Data governance']
   ];
   for (const width of [1440,390]) {
     await page.setViewportSize({width,height:1000});
@@ -85,9 +85,9 @@ test('every Admin page shares compact navigation, responsive layout and working 
       await page.goto(`${baseURL}/admin/${route}`);
       await expect(page.locator('html')).not.toHaveClass(/page-loading/);
       await expect(page.locator('h1')).toHaveText(title);
-      await expect(page.locator('.analytics-nav a')).toHaveText(pages.filter(p=>p[0]!=='governance').map(p=>p[1]));
+      await expect(page.locator('.analytics-nav a')).toHaveText(pages.filter(p=>p[0]!=='governance').map(p=>p[0]==='weekly-update'?'Weekly update':p[1]));
       if (route === 'governance') await expect(page.locator('.analytics-nav a[aria-current="page"]')).toHaveCount(0);
-      else await expect(page.locator('.analytics-nav a[aria-current="page"]')).toHaveText(title);
+      else await expect(page.locator('.analytics-nav a[aria-current="page"]')).toHaveText(route==='weekly-update'?'Weekly update':title);
       await expect(page.locator('.analytics-shell-layout a').filter({hasText:/^Back to dashboard$/})).toHaveCount(1);
       await expect(page.locator('main a[href^="/dashboard/"]')).toHaveCount(0);
       if (width < 950) {
@@ -220,10 +220,11 @@ test('Admin inventory searches, filters types, pages and opens the correct recor
     const expected=payload.records.filter(r=>r.type===kind);
     await expect(page.locator('#inventory-count')).toHaveText(expected.length.toLocaleString()+' records');
     expect(await page.locator('#inventory-rows tr').evaluateAll((rows,kind)=>rows.every(row=>row.cells[4].textContent===kind),kind)).toBe(true);
-    await page.locator('#inventory-next').click();
-    await expect(page.locator('#inventory-page-status')).toContainText('Showing 51');
-    await page.locator('#inventory-previous').click();
-    await expect(page.locator('#inventory-page-status')).toContainText('Showing 1');
+    const topPagination=page.locator('[data-inventory-pagination="top"]');
+    await topPagination.locator('[data-inventory-page-action="next"]').click();
+    await expect(topPagination.locator('[data-inventory-page-status]')).toContainText('Showing 11');
+    await topPagination.locator('[data-inventory-page-action="previous"]').click();
+    await expect(topPagination.locator('[data-inventory-page-status]')).toContainText('Showing 1');
   }
   await page.locator('#inventory-type').selectOption('');
   const target=payload.records.find(r=>r.livelabsId==='3570');
@@ -377,7 +378,7 @@ test('sign-in loads Dashboard management and its protected inventory', async ({ 
   const scriptErrors = [];
   page.on('pageerror', error => scriptErrors.push(error.message));
   expect((await page.request.get(`${baseURL}/api/admin/inventory`)).status()).toBe(401);
-  await page.goto(`${baseURL}/admin`);
+  await page.goto(`${baseURL}/admin?next=${encodeURIComponent('/admin/weekly-update')}`);
   await expect(page.locator('html')).not.toHaveClass(/page-loading/);
   await expect(page.locator('.rail')).toHaveCount(0);
   await expect(page.getByRole('link', {name:'Back to dashboard',exact:true})).toHaveCount(1);
@@ -385,7 +386,9 @@ test('sign-in loads Dashboard management and its protected inventory', async ({ 
   await page.getByLabel('Username', { exact: true }).fill('regression-reviewer');
   await page.getByLabel('Password', { exact: true }).fill(password);
   await page.getByRole('button', { name: 'Sign in', exact: true }).click();
-  await expect(page).toHaveURL(`${baseURL}/admin/dashboard-management`);
+  await expect(page).toHaveURL(`${baseURL}/admin/weekly-update`);
+  await expect(page.locator('#weekly-run-status')).toContainText('No weekly update run is selected');
+  await page.goto(`${baseURL}/admin/dashboard-management`);
   await expect(page.locator('#status')).toContainText(/Loaded (saved dashboard|existing browser) tags/);
   await expect(page.getByText('Unable to load this page', { exact: true })).not.toBeVisible();
   const inventoryResponse = await page.request.get(`${baseURL}/api/admin/inventory`);
@@ -408,6 +411,23 @@ test('sign-in loads Dashboard management and its protected inventory', async ({ 
     expect(kinds.every(value=>value===kind)).toBe(true);
   }
   await page.locator('#inventory-type').selectOption('');
+  await expect(page.locator('#inventory-search')).toBeVisible();
+  const contactRecord=inventory.records.find(record=>(record.details||[]).some(pair=>Array.isArray(pair)&&/support contact|workshop owner/i.test(String(pair[0]))&&String(pair[1]||'').trim()));
+  if(contactRecord) {
+    const contactValue=contactRecord.details.find(pair=>Array.isArray(pair)&&/support contact|workshop owner/i.test(String(pair[0]))&&String(pair[1]||'').trim())[1];
+    await page.locator('#inventory-search').click();
+    await page.locator('#inventory-search').pressSequentially(contactValue);
+    const expectedMatches=inventory.records.filter(record=>[record.title,record.livelabsId,record.wmsId,record.owner,record.searchable,...(record.details||[]).flatMap(pair=>Array.isArray(pair)?pair:[])].join(' ').toLocaleLowerCase().includes(String(contactValue).toLocaleLowerCase()));
+    await expect(page.locator('#inventory-search')).toHaveValue(contactValue);
+    await expect(page.locator('#inventory-count')).toHaveText(`${expectedMatches.length.toLocaleString()} records`);
+    expect(expectedMatches.length).toBeLessThan(inventory.records.length);
+    await page.locator('#inventory-search').fill('');
+  }
+  const filterDisclosure=page.locator('.inventory-filter-disclosure');
+  await filterDisclosure.locator(':scope > summary').click();
+  await page.locator('#inventory-scope').selectOption('public');
+  await expect(page.locator('#inventory-count')).toHaveText(`${inventory.records.filter(r=>String(r.publishType||'').toLowerCase()==='public'&&String(r.publishStatus||'').toLowerCase()==='published').length.toLocaleString()} records`);
+  await page.locator('#inventory-scope').selectOption('all');
   await expect(page.locator('#audit-calibration')).toContainText('Threshold sensitivity by content type');
   await page.locator('#inventory-cleanup-queue').selectOption({label:'Removal requests'});
   const requests=inventory.records.filter(r=>r.cleanupQueues.includes('Removal requests'));
@@ -416,4 +436,30 @@ test('sign-in loads Dashboard management and its protected inventory', async ({ 
   await expect(page.locator('#review-current')).toContainText('Source retirement confirmed: no');
   expect(scriptErrors).toEqual([]);
   await page.screenshot({path:testInfo.outputPath('cleanup-inventory.png'),fullPage:true});
+});
+
+test('weekly update checklist saves a dated run and resumes progress', async ({page}) => {
+  const errors=[]; page.on('pageerror',error=>errors.push(error.message));
+  expect((await page.request.get(`${baseURL}/api/admin/weekly-runs`)).status()).toBe(401);
+  const login=await page.request.post(`${baseURL}/api/admin/login`,{data:{username:'regression-reviewer',password},headers:{Origin:baseURL}});
+  expect(login.ok()).toBe(true);
+  await page.goto(`${baseURL}/admin/weekly-update`);
+  await expect(page.locator('#weekly-run-status')).toContainText('No weekly update run is selected');
+  await page.getByRole('button',{name:'Start this week’s update'}).click();
+  await expect(page.locator('.weekly-step')).toHaveCount(17);
+  const first=page.locator('.weekly-step').first();
+  await first.locator('[data-step-complete]').check();
+  await first.locator('[data-step-evidence]').fill('fixture source folder · 2026-11-12 · SHA-256 verified');
+  await page.getByRole('button',{name:'Save progress'}).click();
+  await expect(page.locator('#weekly-save-status')).toHaveText('Saved');
+  const list=await (await page.request.get(`${baseURL}/api/admin/weekly-runs`)).json();
+  expect(list.runs).toHaveLength(1);
+  expect(list.runs[0].runId).toMatch(/^update-\d{8}-[a-f0-9]{8}$/);
+  expect(list.runs[0].steps[0]).toMatchObject({status:'COMPLETE',evidence:'fixture source folder · 2026-11-12 · SHA-256 verified'});
+  await page.reload();
+  await expect(page.locator('.weekly-step')).toHaveCount(17);
+  await expect(page.locator('.weekly-step').first().locator('[data-step-complete]')).toBeChecked();
+  await expect(page.locator('.weekly-step').first().locator('[data-step-evidence]')).toHaveValue('fixture source folder · 2026-11-12 · SHA-256 verified');
+  await expect(page.locator('#weekly-progress-label')).toHaveText('1 of 17 steps complete');
+  expect(errors).toEqual([]);
 });
